@@ -32,14 +32,14 @@ export type Language = z.infer<typeof LanguageSchema>
 export const FamilySchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255),
-  created_at: z.string().datetime(),
+  created_at: z.string(),
 })
 
 export const ParentSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   family_id: z.string().uuid(),
-  created_at: z.string().datetime(),
+  created_at: z.string(),
 })
 
 export const ChildSchema = z.object({
@@ -57,7 +57,7 @@ export const TaskSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().min(1, 'Title required').max(255),
   description: z.string().max(1000).optional(),
-  category: z.enum(['cleaning', 'homework', 'pets', 'other']),
+  category: z.enum(['cleaning', 'homework', 'pets', 'helping', 'other']),
   priority: z.enum(['low', 'medium', 'high']),
   due_date: z.coerce.date(),
   family_id: z.string().uuid(),
@@ -66,7 +66,7 @@ export const TaskSchema = z.object({
   image_url: z.string().optional().nullable(),
   image_alt_text: z.string().optional().nullable(),
   image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
-  created_at: z.string().datetime().optional(),
+  created_at: z.string().optional(),
 })
 
 // Task Image Library Schema
@@ -77,35 +77,44 @@ export const TaskImageSchema = z.object({
   file_path: z.string(),
   alt_text: z.string(),
   keywords: z.array(z.string()),
-  created_at: z.string().datetime(),
+  created_at: z.string(),
 })
 
 // Task Creation Schema (for POST requests)
 export const CreateTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   description: z.string().max(1000).optional(),
-  category: z.enum(['cleaning', 'homework', 'pets', 'other']),
+  category: z.enum(['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime', 'other']),
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
-  due_date: z.string().optional(), // ISO date string
+  due_date: z.string().min(1).optional().or(z.literal('').transform(() => undefined)), // ISO date string, empty string -> undefined
   recurring: z.boolean().default(false),
-  recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
+  recurring_type: z.enum(['daily', 'weekly', 'monthly', 'business_days']).optional().nullable(),
   image_url: z.string().optional().nullable().refine(isValidImageUrl, {
     message: 'Image URL must be from approved sources only'
   }),
   image_alt_text: z.string().max(200).optional().nullable(),
   image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
   assigned_children: z.array(z.string().uuid()).optional(),
-})
+}).refine(
+  (data) => {
+    // Task must have either a due_date OR be recurring
+    return !!(data.due_date || data.recurring)
+  },
+  {
+    message: 'Task must have a due date or be recurring',
+    path: ['due_date'], // Show error on due_date field
+  }
+)
 
 // Task Update Schema (for PATCH requests)
 export const UpdateTaskSchema = z.object({
   title: z.string().min(1).max(255).optional(),
   description: z.string().max(1000).optional().nullable(),
-  category: z.enum(['cleaning', 'homework', 'pets', 'other']).optional(),
+  category: z.enum(['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime', 'other']).optional(),
   priority: z.enum(['low', 'medium', 'high']).optional(),
-  due_date: z.string().optional().nullable(), // ISO date string
+  due_date: z.string().min(1).optional().nullable().or(z.literal('').transform(() => null)), // ISO date string, empty string -> null
   recurring: z.boolean().optional(),
-  recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
+  recurring_type: z.enum(['daily', 'weekly', 'monthly', 'business_days']).optional().nullable(),
   image_url: z.string().optional().nullable().refine(isValidImageUrl, {
     message: 'Image URL must be from approved sources only'
   }),
@@ -127,7 +136,7 @@ export const TaskAssignmentSchema = z.object({
   id: z.string().uuid().optional(),
   task_id: z.string().uuid(),
   child_id: z.string().uuid(),
-  created_at: z.string().datetime().optional(),
+  created_at: z.string().optional(),
 })
 
 // Task Completion Schemas
@@ -141,7 +150,7 @@ export const TaskCompletionSchema = z.object({
   status: z.enum(['pending', 'pending_review', 'completed', 'rejected']).default('pending'),
   reviewed_by: z.string().uuid().nullable().optional(),
   feedback: z.string().max(500).optional(),
-  created_at: z.string().datetime().optional(),
+  created_at: z.string().optional(),
 })
 
 // Rating Schema
@@ -162,7 +171,7 @@ export const SubtaskSchema = z.object({
   task_id: z.string().uuid(),
   title: z.string().min(1).max(255),
   completed: z.boolean().default(false),
-  created_at: z.string().datetime().optional(),
+  created_at: z.string().optional(),
 })
 
 // Type exports

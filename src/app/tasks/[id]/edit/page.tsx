@@ -121,7 +121,17 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || t('tasks.messages.error_updating'))
+        // Extract user-friendly error message
+        let errorMessage = t('tasks.messages.error_updating')
+        if (error.error) {
+          errorMessage = error.error
+        }
+        if (error.details && Array.isArray(error.details)) {
+          // Zod validation errors
+          const fieldErrors = error.details.map((d: any) => `${d.path.join('.')}: ${d.message}`).join(', ')
+          errorMessage = `${t('errors.validation')}\n${fieldErrors}`
+        }
+        throw new Error(errorMessage)
       }
 
       // Navigate back to tasks list

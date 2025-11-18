@@ -7,6 +7,7 @@ import {
   UsersIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
+  CheckCircleIcon,
   CogIcon,
   ChevronLeftIcon,
   ChevronRightIcon
@@ -18,6 +19,7 @@ const navigation = [
   { name: 'nav.dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
   { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
+  { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
   { name: 'nav.reports', href: '/dashboard/reports', icon: ChartBarIcon },
   { name: 'nav.settings', href: '/dashboard/settings', icon: CogIcon },
 ]

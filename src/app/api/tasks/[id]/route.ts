@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { UpdateTaskSchema, TaskSchema } from '@/lib/schemas'
+import { UpdateTaskSchema } from '@/lib/schemas'
 import { z } from 'zod'
 
 /**

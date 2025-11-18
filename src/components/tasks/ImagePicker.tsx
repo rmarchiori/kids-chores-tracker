@@ -163,32 +163,42 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
               role="grid"
               aria-label={t('tasks.image_picker.title')}
             >
-              {filteredImages.map(image => (
-                <button
-                  key={image.id}
-                  onClick={() => onSelect(image.file_path, image.alt_text, 'library')}
-                  role="gridcell"
-                  className={`
-                    relative aspect-square rounded-lg border-2 overflow-hidden
-                    transition-all hover:scale-105 bg-white
-                    ${currentImage === image.file_path
-                      ? 'border-blue-600 ring-2 ring-blue-600'
-                      : 'border-gray-200 hover:border-blue-400'}
-                  `}
-                  aria-label={image.name}
-                  aria-pressed={currentImage === image.file_path}
-                >
-                  <Image
-                    src={image.file_path}
-                    alt={image.alt_text}
-                    fill
-                    className="object-contain p-2"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center truncate">
-                    {image.name}
-                  </div>
-                </button>
-              ))}
+              {filteredImages.map(image => {
+                // Generate translation key from image name (e.g., "Make Bed" -> "make_bed")
+                const translationKey = image.name.toLowerCase().replace(/\s+/g, '_')
+                const nameKey = `tasks.images.${translationKey}`
+                const altKey = `tasks.images.${translationKey}_alt`
+                // If translation returns the key itself, use the fallback (database value)
+                const translatedName = t(nameKey) !== nameKey ? t(nameKey) : image.name
+                const translatedAlt = t(altKey) !== altKey ? t(altKey) : image.alt_text
+
+                return (
+                  <button
+                    key={image.id}
+                    onClick={() => onSelect(image.file_path, translatedAlt, 'library')}
+                    role="gridcell"
+                    className={`
+                      relative aspect-square rounded-lg border-2 overflow-hidden
+                      transition-all hover:scale-105 bg-white
+                      ${currentImage === image.file_path
+                        ? 'border-blue-600 ring-2 ring-blue-600'
+                        : 'border-gray-200 hover:border-blue-400'}
+                    `}
+                    aria-label={translatedName}
+                    aria-pressed={currentImage === image.file_path}
+                  >
+                    <Image
+                      src={image.file_path}
+                      alt={translatedAlt}
+                      fill
+                      className="object-contain p-2"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 text-center truncate">
+                      {translatedName}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>
@@ -200,23 +210,29 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
           aria-labelledby="emoji-tab"
           className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 max-h-96 overflow-y-auto p-2"
         >
-          {EMOJI_OPTIONS.map(option => (
-            <button
-              key={option.emoji}
-              onClick={() => onSelect(option.emoji, option.name, 'emoji')}
-              className={`
-                aspect-square rounded-lg border-2 flex items-center justify-center
-                text-4xl transition-all hover:scale-110 bg-white
-                ${currentImage === option.emoji
-                  ? 'border-blue-600 ring-2 ring-blue-600'
-                  : 'border-gray-200 hover:border-blue-400'}
-              `}
-              aria-label={option.name}
-              aria-pressed={currentImage === option.emoji}
-            >
-              {option.emoji}
-            </button>
-          ))}
+          {EMOJI_OPTIONS.map(option => {
+            const translationKey = option.name.toLowerCase().replace(/\s+/g, '_')
+            const emojiKey = `tasks.emojis.${translationKey}`
+            const translatedName = t(emojiKey) !== emojiKey ? t(emojiKey) : option.name
+
+            return (
+              <button
+                key={option.emoji}
+                onClick={() => onSelect(option.emoji, translatedName, 'emoji')}
+                className={`
+                  aspect-square rounded-lg border-2 flex items-center justify-center
+                  text-4xl transition-all hover:scale-110 bg-white
+                  ${currentImage === option.emoji
+                    ? 'border-blue-600 ring-2 ring-blue-600'
+                    : 'border-gray-200 hover:border-blue-400'}
+                `}
+                aria-label={translatedName}
+                aria-pressed={currentImage === option.emoji}
+              >
+                {option.emoji}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>

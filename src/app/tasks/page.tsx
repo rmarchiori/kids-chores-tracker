@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
-import { createClient } from '@/lib/supabase/client'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
 import { PlusIcon } from '@heroicons/react/24/outline'
@@ -39,7 +38,6 @@ interface Task {
 export default function TasksPage() {
   const { t } = useTranslation()
   const router = useRouter()
-  const supabase = createClient()
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [filterPriority, setFilterPriority] = useState<string>('all')
 
@@ -65,7 +63,7 @@ export default function TasksPage() {
 
   const tasks = data?.tasks || []
 
-  async function handleDelete(taskId: string, taskTitle: string) {
+  async function handleDelete(taskId: string, _taskTitle: string) {
     if (!confirm(t('tasks.delete_confirm'))) {
       return
     }

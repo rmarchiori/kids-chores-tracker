@@ -50,6 +50,8 @@ export function TaskForm({
     watch
   } = useForm<TaskFormData>({
     resolver: zodResolver(CreateTaskSchema),
+    mode: 'onBlur', // Validate on blur instead of onChange
+    reValidateMode: 'onBlur', // Re-validate on blur
     defaultValues: {
       title: initialData?.title || '',
       description: initialData?.description || '',
@@ -318,6 +320,7 @@ export function TaskForm({
             <option value="daily">{t('tasks.recurring_options.daily')}</option>
             <option value="weekly">{t('tasks.recurring_options.weekly')}</option>
             <option value="monthly">{t('tasks.recurring_options.monthly')}</option>
+            <option value="business_days">{t('tasks.recurring_options.business_days')}</option>
           </select>
           {errors.recurring_type && (
             <p className="mt-1 text-sm text-red-600" role="alert">{errors.recurring_type.message}</p>

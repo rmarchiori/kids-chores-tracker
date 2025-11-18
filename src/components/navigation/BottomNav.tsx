@@ -6,7 +6,7 @@ import {
   HomeIcon,
   UsersIcon,
   ClipboardDocumentListIcon,
-  ChartBarIcon,
+  CheckCircleIcon,
   CogIcon
 } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -15,7 +15,7 @@ const navigation = [
   { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
   { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
-  { name: 'nav.reports', href: '/dashboard/reports', icon: ChartBarIcon },
+  { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
   { name: 'nav.settings', href: '/dashboard/settings', icon: CogIcon },
 ]
 

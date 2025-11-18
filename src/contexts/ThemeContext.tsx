@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useLayoutEffect, useMemo, useState, useCallback } from 'react'
+import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react'
 import { getThemeCSSVariables, type ThemeType } from '@/lib/themes'
 
 interface ThemeContextType {

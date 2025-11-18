@@ -127,7 +127,7 @@ export const getButtonClasses = (
 ): string => {
   const themeClasses = getThemeClasses(theme)
   const baseButton = themeClasses.button
-  const variantColor = themeClasses[variant] || themeClasses.primary
+  const variantColor = (themeClasses as any)[variant] || themeClasses.primary
 
   return `${baseButton} ${variantColor} transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2`
 }
