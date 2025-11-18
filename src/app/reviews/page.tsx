@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { StarRating } from '@/components/StarRating'
 import { ReviewDialog } from '@/components/ReviewDialog'
+import useSWR from 'swr'
 
 interface PendingReview {
   id: string

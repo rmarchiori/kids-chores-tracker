@@ -5,35 +5,72 @@ import { getClientLocale, type Language } from '@/lib/i18n'
 
 type Translations = Record<string, any>
 
+// Global cache for translations (shared across all hook instances)
+const translationCache = new Map<Language, Translations>()
+let cachedLocale: Language | null = null
+let loadingPromise: Promise<void> | null = null
+
 export function useTranslation() {
-  const [locale, setLocale] = useState<Language>('en-CA')
-  const [translations, setTranslations] = useState<Translations>({})
-  const [isLoading, setIsLoading] = useState(true)
+  const [locale, setLocale] = useState<Language>(() => {
+    if (cachedLocale) return cachedLocale
+    return getClientLocale()
+  })
+  const [translations, setTranslations] = useState<Translations>(() => {
+    // Return cached translations if available
+    return translationCache.get(locale) || {}
+  })
+  const [isLoading, setIsLoading] = useState(() => !translationCache.has(locale))
 
   useEffect(() => {
     const loadTranslations = async () => {
-      setIsLoading(true)
-
       // Get current locale
       const currentLocale = getClientLocale()
+      cachedLocale = currentLocale
       setLocale(currentLocale)
 
-      try {
-        // Load translation file for current locale
-        const translationModule = await import(`../../public/locales/${currentLocale}/common.json`)
-        setTranslations(translationModule.default || translationModule)
-      } catch (error) {
-        console.error('Failed to load translations:', error)
-        // Fallback to English
-        try {
-          const fallbackModule = await import(`../../public/locales/en-CA/common.json`)
-          setTranslations(fallbackModule.default || fallbackModule)
-        } catch (fallbackError) {
-          console.error('Failed to load fallback translations:', fallbackError)
+      // If already cached, use cached version
+      if (translationCache.has(currentLocale)) {
+        setTranslations(translationCache.get(currentLocale)!)
+        setIsLoading(false)
+        return
+      }
+
+      // If another component is already loading, wait for it
+      if (loadingPromise) {
+        await loadingPromise
+        if (translationCache.has(currentLocale)) {
+          setTranslations(translationCache.get(currentLocale)!)
+          setIsLoading(false)
+          return
         }
       }
 
-      setIsLoading(false)
+      // Load translations for the first time
+      setIsLoading(true)
+      loadingPromise = (async () => {
+        try {
+          // Load translation file for current locale
+          const translationModule = await import(`../../public/locales/${currentLocale}/common.json`)
+          const loadedTranslations = translationModule.default || translationModule
+          translationCache.set(currentLocale, loadedTranslations)
+          setTranslations(loadedTranslations)
+        } catch (error) {
+          console.error('Failed to load translations:', error)
+          // Fallback to English
+          try {
+            const fallbackModule = await import(`../../public/locales/en-CA/common.json`)
+            const fallbackTranslations = fallbackModule.default || fallbackModule
+            translationCache.set(currentLocale, fallbackTranslations)
+            setTranslations(fallbackTranslations)
+          } catch (fallbackError) {
+            console.error('Failed to load fallback translations:', fallbackError)
+          }
+        }
+        setIsLoading(false)
+      })()
+
+      await loadingPromise
+      loadingPromise = null
     }
 
     loadTranslations()

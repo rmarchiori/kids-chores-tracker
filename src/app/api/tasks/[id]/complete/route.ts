@@ -61,6 +61,24 @@ export async function POST(
       return NextResponse.json({ error: 'Child not found in this family' }, { status: 404 })
     }
 
+    // Check if task was already completed today to prevent duplicates
+    const today = new Date().toISOString().split('T')[0]
+    const { data: existingCompletion } = await supabase
+      .from('task_completions')
+      .select('id')
+      .eq('task_id', params.id)
+      .eq('child_id', child_id)
+      .gte('completed_at', `${today}T00:00:00Z`)
+      .lte('completed_at', `${today}T23:59:59Z`)
+      .maybeSingle()
+
+    if (existingCompletion) {
+      return NextResponse.json(
+        { error: 'Task already completed today' },
+        { status: 409 }
+      )
+    }
+
     // Create completion record with rating (status: pending_review)
     const { data: completion, error: completionError } = await supabase
       .from('task_completions')
@@ -69,7 +87,7 @@ export async function POST(
         child_id,
         status: 'pending_review',
         child_rating,
-        child_notes: child_notes || null,
+        child_notes: child_notes && child_notes.trim() !== '' ? child_notes.trim() : null,
         completed_at: new Date().toISOString()
       })
       .select()

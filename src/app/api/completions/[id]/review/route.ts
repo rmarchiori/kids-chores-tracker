@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 const ReviewSchema = z.object({
   parent_rating: z.number().int().min(1).max(5),
-  parent_feedback: z.string().min(1).max(1000),
+  parent_feedback: z.string().min(1).max(1000).transform(val => val.trim()),
 })
 
 export async function POST(
@@ -25,13 +25,14 @@ export async function POST(
     const body = await request.json()
     const { parent_rating, parent_feedback } = ReviewSchema.parse(body)
 
-    // Verify completion exists and user has access
+    // Verify completion exists and user has access (get version for optimistic locking)
     const { data: completion, error: completionError } = await supabase
       .from('task_completions')
       .select(`
         id,
         task_id,
         status,
+        version,
         tasks!inner (
           id,
           family_id
@@ -41,7 +42,7 @@ export async function POST(
       .single()
 
     if (completionError || !completion) {
-      return NextResponse.json({ error: 'Completion not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Resource not found or access denied' }, { status: 404 })
     }
 
     // Verify user is member of this family with admin or parent role
@@ -58,10 +59,13 @@ export async function POST(
 
     // Verify completion is pending review
     if (completion.status !== 'pending_review') {
-      return NextResponse.json({ error: 'Completion is not pending review' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'This task has already been reviewed' },
+        { status: 409 }
+      )
     }
 
-    // Update completion with parent review
+    // Update completion with parent review using optimistic locking
     const { data: updatedCompletion, error: updateError } = await supabase
       .from('task_completions')
       .update({
@@ -72,11 +76,15 @@ export async function POST(
         status: 'completed'
       })
       .eq('id', params.id)
+      .eq('status', 'pending_review')  // Only update if still pending review
       .select()
       .single()
 
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 })
+    if (updateError || !updatedCompletion) {
+      return NextResponse.json(
+        { error: 'Review conflict - task may have been reviewed by another parent' },
+        { status: 409 }
+      )
     }
 
     return NextResponse.json(updatedCompletion, { status: 200 })
