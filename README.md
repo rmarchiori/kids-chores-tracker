@@ -2,6 +2,21 @@
 
 A family chore management app where parents assign tasks to children, children complete tasks and self-rate quality (1-5 stars), and parents review and provide feedback.
 
+**Status**: 🚀 MVP 85% Complete - Ready for Testing & Deployment (Phase 3)
+
+## Features
+
+- ✅ Multi-parent family management with role-based permissions
+- ✅ Age-specific theming (5-8 playful, 9-12 mature)
+- ✅ Task creation with 40+ image library
+- ✅ Daily recurring tasks
+- ✅ Child task completion with 5-star self-rating
+- ✅ Parent review workflow with feedback
+- ✅ Completion history and progress tracking
+- ✅ Multi-language support (English, Portuguese, French)
+- ✅ Fully accessible (WCAG AA)
+- ✅ Mobile-responsive design
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14 + React 19 + TypeScript
@@ -72,13 +87,22 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Documentation
 
-See `docs/README.md` for complete project documentation:
+### Project Planning
+- **[project-status.md](project-status.md)** - Current status, completed/remaining phases
+- **[docs/analysis/requirements.md](docs/analysis/requirements.md)** - MVP features and specifications
+- **[docs/analysis/implementation-plan-mvp-1.0.md](docs/analysis/implementation-plan-mvp-1.0.md)** - Sprint-by-sprint plan
+- **[docs/analysis/tech-stack.md](docs/analysis/tech-stack.md)** - Technology choices and rationale
 
-- **requirements.md** - MVP features and specifications
-- **tech-stack.md** - Technology choices and rationale
-- **dev-ops.md** - Deployment and operations
-- **implementation-plan-mvp-1.0.md** - Sprint-by-sprint plan
-- **implementation-plan-next-release.md** - Phase 2+ features
+### Testing & Deployment (Phase 3)
+- **[docs/TESTING.md](docs/TESTING.md)** - Comprehensive testing guide and checklists
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Step-by-step deployment guide for production
+- **[docs/PRODUCTION-CHECKLIST.md](docs/PRODUCTION-CHECKLIST.md)** - Final production readiness checklist
+
+### Database
+- **[database/migrations/](database/migrations/)** - All database migrations (01-13)
+- **[database/schema.sql](database/schema.sql)** - Complete database schema
+
+See **[docs/README.md](docs/README.md)** for complete documentation index.
 
 ## License
 
