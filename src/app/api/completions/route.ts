@@ -7,7 +7,11 @@ const QueryParamsSchema = z.object({
   child_id: z.string().uuid().optional(),
   task_id: z.string().uuid().optional(),
   status: z.enum(['pending', 'pending_review', 'completed', 'rejected']).optional(),
-  limit: z.string().optional().transform(val => val ? parseInt(val) : 50),
+  limit: z.string()
+    .optional()
+    .transform(val => val ? parseInt(val) : 50)
+    .pipe(z.number().int().min(1).max(100))
+    .default(50),
 })
 
 export async function GET(request: Request) {
@@ -47,7 +51,7 @@ export async function GET(request: Request) {
 
     const { child_id, task_id, status, limit } = queryParams.data
 
-    // Build query
+    // Build query with family filtering in database (not JavaScript)
     let query = supabase
       .from('task_completions')
       .select(`
@@ -59,7 +63,11 @@ export async function GET(request: Request) {
         reviewed_by,
         reviewed_at,
         notes,
-        tasks (
+        child_rating,
+        child_notes,
+        parent_rating,
+        parent_feedback,
+        tasks!inner (
           id,
           title,
           description,
@@ -77,6 +85,7 @@ export async function GET(request: Request) {
           profile_photo_url
         )
       `)
+      .in('tasks.family_id', familyIds)  // Filter by family in database query
       .order('completed_at', { ascending: false })
       .limit(limit)
 
@@ -101,13 +110,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // Filter to only include completions from user's families
-    const filteredCompletions = completions?.filter(c => {
-      const task = c.tasks as any
-      return task && !Array.isArray(task) && task.family_id && familyIds.includes(task.family_id)
-    }) || []
-
-    return NextResponse.json(filteredCompletions)
+    // Return directly - no client-side filtering needed
+    return NextResponse.json(completions || [])
   } catch (error) {
     console.error('Error fetching completions:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

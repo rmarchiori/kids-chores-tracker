@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
+import { TaskCompletionModal } from '@/components/TaskCompletionModal'
 
 interface Task {
   id: string
@@ -24,6 +25,21 @@ interface Child {
   name: string
   age_group: '5-8' | '9-12'
   profile_photo_url?: string
+}
+
+interface TaskAssignment {
+  task_id: string
+  tasks: {
+    id: string
+    title: string
+    description?: string
+    category: string
+    priority: string
+    due_date?: string
+    image_url?: string
+    image_alt_text?: string
+    image_source?: 'library' | 'custom' | 'emoji'
+  }
 }
 
 const POSITIVE_MESSAGES_YOUNG = [
@@ -56,27 +72,63 @@ export default function ChildTasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [showCompletionModal, setShowCompletionModal] = useState(false)
   const [showMessage, setShowMessage] = useState<string | null>(null)
   const supabase = createClient()
 
   const childId = params.id as string
 
   useEffect(() => {
-    fetchChildAndTasks()
+    let isMounted = true
+
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchChildAndTasks()
+      }
+    }
+
+    loadData()
+
+    return () => {
+      isMounted = false
+    }
   }, [childId])
 
   async function fetchChildAndTasks() {
     try {
       setLoading(true)
 
-      // Fetch child info
+      // Verify user is authenticated
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+        return
+      }
+
+      // Fetch child info with family_id for authorization
       const { data: childData, error: childError } = await supabase
         .from('children')
-        .select('id, name, age_group, profile_photo_url')
+        .select('id, name, age_group, profile_photo_url, family_id')
         .eq('id', childId)
         .single()
 
       if (childError) throw childError
+
+      // Verify user is a member of this child's family
+      const { data: membership, error: membershipError } = await supabase
+        .from('family_members')
+        .select('role')
+        .eq('family_id', childData.family_id)
+        .eq('user_id', session.user.id)
+        .single()
+
+      if (membershipError || !membership) {
+        console.error('Unauthorized access attempt to child tasks page')
+        router.push('/dashboard')
+        return
+      }
+
       setChild(childData)
 
       // Fetch tasks assigned to this child
@@ -97,6 +149,7 @@ export default function ChildTasksPage() {
           )
         `)
         .eq('child_id', childId)
+        .returns<TaskAssignment[]>()
 
       if (assignmentsError) throw assignmentsError
 
@@ -104,7 +157,7 @@ export default function ChildTasksPage() {
       const today = new Date().toISOString().split('T')[0]
 
       // Extract task IDs for completion check
-      const taskIds = assignmentsData?.map(a => (a.tasks as any).id).filter(Boolean) || []
+      const taskIds = assignmentsData?.map(a => a.tasks.id).filter(Boolean) || []
 
       const { data: completionsData } = await supabase
         .from('task_completions')
@@ -118,18 +171,17 @@ export default function ChildTasksPage() {
 
       // Map tasks with completion status
       const tasksWithStatus: Task[] = (assignmentsData || []).map(a => {
-        const taskData = a.tasks as any
         return {
-          id: taskData.id,
-          title: taskData.title,
-          description: taskData.description,
-          category: taskData.category,
-          priority: taskData.priority,
-          due_date: taskData.due_date,
-          image_url: taskData.image_url,
-          image_alt_text: taskData.image_alt_text,
-          image_source: taskData.image_source,
-          completed_today: completedTaskIds.has(taskData.id)
+          id: a.tasks.id,
+          title: a.tasks.title,
+          description: a.tasks.description,
+          category: a.tasks.category,
+          priority: a.tasks.priority,
+          due_date: a.tasks.due_date,
+          image_url: a.tasks.image_url,
+          image_alt_text: a.tasks.image_alt_text,
+          image_source: a.tasks.image_source,
+          completed_today: completedTaskIds.has(a.tasks.id)
         }
       })
 
@@ -142,20 +194,35 @@ export default function ChildTasksPage() {
     }
   }
 
-  async function handleCompleteTask(taskId: string) {
-    try {
-      setCompletingTaskId(taskId)
+  function handleCompleteTask(task: Task) {
+    setSelectedTask(task)
+    setShowCompletionModal(true)
+  }
 
-      const response = await fetch(`/api/tasks/${taskId}/complete`, {
+  async function handleSubmitCompletion(rating: number, notes: string) {
+    if (!selectedTask) return
+
+    try {
+      setCompletingTaskId(selectedTask.id)
+
+      const response = await fetch(`/api/tasks/${selectedTask.id}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ child_id: childId }),
+        body: JSON.stringify({
+          child_id: childId,
+          child_rating: rating,
+          child_notes: notes || undefined,
+        }),
       })
 
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to complete task')
       }
+
+      // Close modal
+      setShowCompletionModal(false)
+      setSelectedTask(null)
 
       // Show positive message
       const messages = child?.age_group === '5-8' ? POSITIVE_MESSAGES_YOUNG : POSITIVE_MESSAGES_OLDER
@@ -169,7 +236,7 @@ export default function ChildTasksPage() {
       await fetchChildAndTasks()
     } catch (error) {
       console.error('Error completing task:', error)
-      alert(error instanceof Error ? error.message : t('errors.generic'))
+      throw error // Re-throw to let modal handle the error
     } finally {
       setCompletingTaskId(null)
     }
@@ -274,7 +341,7 @@ export default function ChildTasksPage() {
 
                 {/* Complete Button */}
                 <button
-                  onClick={() => handleCompleteTask(task.id)}
+                  onClick={() => handleCompleteTask(task)}
                   disabled={completingTaskId === task.id}
                   className={`
                     w-full py-4 rounded-xl font-bold text-xl transition-all
@@ -340,6 +407,20 @@ export default function ChildTasksPage() {
         <div className="max-w-4xl mx-auto text-center py-16">
           <p className="text-2xl text-gray-500">No tasks assigned yet!</p>
         </div>
+      )}
+
+      {/* Task Completion Modal */}
+      {child && selectedTask && (
+        <TaskCompletionModal
+          isOpen={showCompletionModal}
+          onClose={() => {
+            setShowCompletionModal(false)
+            setSelectedTask(null)
+          }}
+          onSubmit={handleSubmitCompletion}
+          taskTitle={selectedTask.title}
+          ageGroup={child.age_group}
+        />
       )}
     </div>
   )
