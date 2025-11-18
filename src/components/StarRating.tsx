@@ -56,8 +56,17 @@ export function StarRating({
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent, rating: number) => {
+    if (!readonly && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault()
+      handleClick(rating)
+    }
+  }
+
   const displayValue = hoverValue || value
-  const currentLabel = labels[displayValue - 1] || ''
+  const currentLabel = displayValue > 0 && displayValue <= labels.length
+    ? labels[displayValue - 1]
+    : ''
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -68,6 +77,7 @@ export function StarRating({
             key={rating}
             type="button"
             onClick={() => handleClick(rating)}
+            onKeyDown={(e) => handleKeyDown(e, rating)}
             onMouseEnter={() => handleMouseEnter(rating)}
             onMouseLeave={handleMouseLeave}
             disabled={readonly}
@@ -77,6 +87,7 @@ export function StarRating({
               ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}
               ${rating <= displayValue ? 'text-yellow-400' : 'text-gray-300'}
               ${!readonly && rating <= hoverValue ? 'animate-pulse' : ''}
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded
             `}
             aria-label={`${rating} star${rating > 1 ? 's' : ''}`}
           >

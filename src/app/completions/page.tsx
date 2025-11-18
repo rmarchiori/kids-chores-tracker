@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { StarRating } from '@/components/StarRating'
+import { useCompletions } from '@/lib/hooks/useData'
+import { createClient } from '@/lib/supabase/client'
 
 interface Completion {
   id: string
@@ -38,79 +38,60 @@ interface Completion {
 }
 
 export default function CompletionsPage() {
-  const router = useRouter()
   const { t } = useTranslation()
-  const [completions, setCompletions] = useState<Completion[]>([])
-  const [loading, setLoading] = useState(true)
   const [filterChild, setFilterChild] = useState<string>('all')
   const [children, setChildren] = useState<Array<{ id: string; name: string }>>([])
+  const [childrenLoading, setChildrenLoading] = useState(true)
   const supabase = createClient()
 
+  // Use SWR hook for completions with filter
+  const { data: completions = [], error, isLoading: completionsLoading } = useCompletions(
+    filterChild !== 'all' ? filterChild : undefined,
+    undefined,
+    100
+  )
+
+  // Fetch children list for filter dropdown
   useEffect(() => {
-    fetchData()
+    let isMounted = true
+
+    const loadChildren = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return
+
+        const { data: membership } = await supabase
+          .from('family_members')
+          .select('family_id')
+          .eq('user_id', session.user.id)
+          .single()
+
+        if (!membership || !isMounted) return
+
+        const { data: childrenData } = await supabase
+          .from('children')
+          .select('id, name')
+          .eq('family_id', membership.family_id)
+          .order('name')
+
+        if (isMounted) {
+          setChildren(childrenData || [])
+          setChildrenLoading(false)
+        }
+      } catch (error) {
+        console.error('Error fetching children:', error)
+        if (isMounted) setChildrenLoading(false)
+      }
+    }
+
+    loadChildren()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
-  async function fetchData() {
-    try {
-      setLoading(true)
-
-      // Fetch family to get children list
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/auth/login')
-        return
-      }
-
-      const { data: membership } = await supabase
-        .from('family_members')
-        .select('family_id')
-        .eq('user_id', session.user.id)
-        .single()
-
-      if (!membership) {
-        return
-      }
-
-      // Fetch children
-      const { data: childrenData } = await supabase
-        .from('children')
-        .select('id, name')
-        .eq('family_id', membership.family_id)
-        .order('name')
-
-      setChildren(childrenData || [])
-
-      // Fetch completions
-      await fetchCompletions()
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  async function fetchCompletions() {
-    try {
-      let url = '/api/completions?limit=100'
-      if (filterChild !== 'all') {
-        url += `&child_id=${filterChild}`
-      }
-
-      const response = await fetch(url)
-      if (!response.ok) throw new Error('Failed to fetch completions')
-
-      const data = await response.json()
-      setCompletions(data)
-    } catch (error) {
-      console.error('Error fetching completions:', error)
-    }
-  }
-
-  useEffect(() => {
-    if (!loading) {
-      fetchCompletions()
-    }
-  }, [filterChild])
+  const loading = childrenLoading || completionsLoading
 
   function formatDate(dateString: string): string {
     const date = new Date(dateString)

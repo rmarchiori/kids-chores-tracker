@@ -8,6 +8,17 @@ const ReviewSchema = z.object({
   parent_feedback: z.string().min(1).max(1000).transform(val => val.trim()),
 })
 
+interface CompletionWithTask {
+  id: string
+  task_id: string
+  status: string
+  version: number
+  tasks: {
+    id: string
+    family_id: string
+  }
+}
+
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
@@ -39,6 +50,7 @@ export async function POST(
         )
       `)
       .eq('id', params.id)
+      .returns<CompletionWithTask>()
       .single()
 
     if (completionError || !completion) {
@@ -49,7 +61,7 @@ export async function POST(
     const { data: membership } = await supabase
       .from('family_members')
       .select('role')
-      .eq('family_id', (completion.tasks as any).family_id)
+      .eq('family_id', completion.tasks.family_id)
       .eq('user_id', session.user.id)
       .single()
 

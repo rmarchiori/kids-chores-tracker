@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { StarRating } from '@/components/StarRating'
 import { ReviewDialog } from '@/components/ReviewDialog'
-import useSWR from 'swr'
+import { usePendingReviews } from '@/lib/hooks/useData'
 
 interface PendingReview {
   id: string
@@ -38,79 +37,9 @@ interface PendingReview {
 export default function ReviewsPage() {
   const router = useRouter()
   const { t } = useTranslation()
-  const [pendingReviews, setPendingReviews] = useState<PendingReview[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: pendingReviews = [], error, isLoading: loading, mutate } = usePendingReviews()
   const [selectedReview, setSelectedReview] = useState<PendingReview | null>(null)
   const [showReviewDialog, setShowReviewDialog] = useState(false)
-  const supabase = createClient()
-
-  useEffect(() => {
-    fetchPendingReviews()
-  }, [])
-
-  async function fetchPendingReviews() {
-    try {
-      setLoading(true)
-
-      // Fetch user's family
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/auth/login')
-        return
-      }
-
-      const { data: membership } = await supabase
-        .from('family_members')
-        .select('family_id')
-        .eq('user_id', session.user.id)
-        .single()
-
-      if (!membership) {
-        return
-      }
-
-      // Fetch pending reviews for this family
-      const { data: completionsData, error: completionsError } = await supabase
-        .from('task_completions')
-        .select(`
-          id,
-          task_id,
-          child_id,
-          completed_at,
-          child_rating,
-          child_notes,
-          tasks!inner (
-            id,
-            title,
-            description,
-            category,
-            priority,
-            image_url,
-            image_alt_text,
-            image_source,
-            family_id
-          ),
-          children!inner (
-            id,
-            name,
-            age_group,
-            profile_photo_url
-          )
-        `)
-        .eq('status', 'pending_review')
-        .eq('tasks.family_id', membership.family_id)
-        .order('completed_at', { ascending: false })
-
-      if (completionsError) throw completionsError
-
-      setPendingReviews(completionsData as any)
-    } catch (error) {
-      console.error('Error fetching pending reviews:', error)
-      alert(t('errors.generic'))
-    } finally {
-      setLoading(false)
-    }
-  }
 
   function handleReview(review: PendingReview) {
     setSelectedReview(review)
@@ -139,8 +68,8 @@ export default function ReviewsPage() {
       setShowReviewDialog(false)
       setSelectedReview(null)
 
-      // Refresh pending reviews
-      await fetchPendingReviews()
+      // Refresh pending reviews via SWR
+      await mutate()
     } catch (error) {
       console.error('Error submitting review:', error)
       throw error // Re-throw to let dialog handle the error

@@ -30,6 +30,29 @@ interface TaskAssignment {
   completion_id?: string
 }
 
+interface TaskAssignmentQuery {
+  task_id: string
+  child_id: string
+  tasks: {
+    id: string
+    title: string
+    description?: string
+    category: string
+    priority: string
+    image_url?: string
+    image_alt_text?: string
+    image_source?: 'library' | 'custom' | 'emoji'
+    family_id: string
+  }
+  children: {
+    id: string
+    name: string
+    age_group: '5-8' | '9-12'
+    profile_photo_url?: string
+    family_id: string
+  }
+}
+
 interface ChildProgress {
   id: string
   name: string
@@ -50,7 +73,19 @@ export default function DailyTasksPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    fetchDailyTasks()
+    let isMounted = true
+
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchDailyTasks()
+      }
+    }
+
+    loadData()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   async function fetchDailyTasks() {
@@ -105,12 +140,13 @@ export default function DailyTasksPage() {
           )
         `)
         .eq('children.family_id', membership.family_id)
+        .returns<TaskAssignmentQuery[]>()
 
       if (assignmentsError) throw assignmentsError
 
       // Fetch today's completions for these assignments
-      const taskIds = assignmentsData?.map(a => (a.tasks as any).id) || []
-      const childIds = assignmentsData?.map(a => (a.children as any).id) || []
+      const taskIds = assignmentsData?.map(a => a.tasks.id) || []
+      const childIds = assignmentsData?.map(a => a.children.id) || []
 
       const { data: completionsData } = await supabase
         .from('task_completions')
@@ -128,29 +164,27 @@ export default function DailyTasksPage() {
       })
 
       const enrichedAssignments: TaskAssignment[] = (assignmentsData || []).map(a => {
-        const taskData = a.tasks as any
-        const childData = a.children as any
-        const key = `${taskData.id}-${childData.id}`
+        const key = `${a.tasks.id}-${a.children.id}`
         const completion = completionsMap.get(key)
 
         return {
-          task_id: taskData.id,
-          child_id: childData.id,
+          task_id: a.tasks.id,
+          child_id: a.children.id,
           task: {
-            id: taskData.id,
-            title: taskData.title,
-            description: taskData.description,
-            category: taskData.category,
-            priority: taskData.priority,
-            image_url: taskData.image_url,
-            image_alt_text: taskData.image_alt_text,
-            image_source: taskData.image_source,
+            id: a.tasks.id,
+            title: a.tasks.title,
+            description: a.tasks.description,
+            category: a.tasks.category,
+            priority: a.tasks.priority,
+            image_url: a.tasks.image_url,
+            image_alt_text: a.tasks.image_alt_text,
+            image_source: a.tasks.image_source,
           },
           child: {
-            id: childData.id,
-            name: childData.name,
-            age_group: childData.age_group,
-            profile_photo_url: childData.profile_photo_url,
+            id: a.children.id,
+            name: a.children.name,
+            age_group: a.children.age_group,
+            profile_photo_url: a.children.profile_photo_url,
           },
           completion_status: completion
             ? (completion.status === 'completed' ? 'completed' : 'pending_review')

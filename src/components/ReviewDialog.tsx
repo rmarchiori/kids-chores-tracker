@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { StarRating } from './StarRating'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
@@ -32,6 +32,7 @@ export function ReviewDialog({
   const [parentFeedback, setParentFeedback] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const modalRef = useRef<HTMLDivElement>(null)
 
   // Initialize parent rating with child's rating
   useEffect(() => {
@@ -41,6 +42,48 @@ export function ReviewDialog({
       setError('')
     }
   }, [isOpen, completionData.childRating])
+
+  // Handle ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !submitting) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEsc)
+      return () => document.removeEventListener('keydown', handleEsc)
+    }
+  }, [isOpen, submitting])
+
+  // Focus trap
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const firstElement = focusableElements[0] as HTMLElement
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+      }
+
+      document.addEventListener('keydown', handleTab)
+      firstElement?.focus()
+
+      return () => document.removeEventListener('keydown', handleTab)
+    }
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,12 +129,26 @@ export function ReviewDialog({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !submitting) {
+          handleClose()
+        }
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="review-modal-title"
+    >
+      <div
+        ref={modalRef}
+        className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8 max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <form onSubmit={handleSubmit} className="p-6 md:p-8">
           {/* Header */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Review Task</h2>
+            <h2 id="review-modal-title" className="text-2xl font-bold text-gray-900 mb-2">Review Task</h2>
             <p className="text-gray-600">
               Provide feedback and adjust the rating if needed
             </p>

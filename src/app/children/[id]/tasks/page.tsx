@@ -27,6 +27,21 @@ interface Child {
   profile_photo_url?: string
 }
 
+interface TaskAssignment {
+  task_id: string
+  tasks: {
+    id: string
+    title: string
+    description?: string
+    category: string
+    priority: string
+    due_date?: string
+    image_url?: string
+    image_alt_text?: string
+    image_source?: 'library' | 'custom' | 'emoji'
+  }
+}
+
 const POSITIVE_MESSAGES_YOUNG = [
   '🌟 Amazing job!',
   '🎉 You did it!',
@@ -65,21 +80,55 @@ export default function ChildTasksPage() {
   const childId = params.id as string
 
   useEffect(() => {
-    fetchChildAndTasks()
+    let isMounted = true
+
+    const loadData = async () => {
+      if (isMounted) {
+        await fetchChildAndTasks()
+      }
+    }
+
+    loadData()
+
+    return () => {
+      isMounted = false
+    }
   }, [childId])
 
   async function fetchChildAndTasks() {
     try {
       setLoading(true)
 
-      // Fetch child info
+      // Verify user is authenticated
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+        return
+      }
+
+      // Fetch child info with family_id for authorization
       const { data: childData, error: childError } = await supabase
         .from('children')
-        .select('id, name, age_group, profile_photo_url')
+        .select('id, name, age_group, profile_photo_url, family_id')
         .eq('id', childId)
         .single()
 
       if (childError) throw childError
+
+      // Verify user is a member of this child's family
+      const { data: membership, error: membershipError } = await supabase
+        .from('family_members')
+        .select('role')
+        .eq('family_id', childData.family_id)
+        .eq('user_id', session.user.id)
+        .single()
+
+      if (membershipError || !membership) {
+        console.error('Unauthorized access attempt to child tasks page')
+        router.push('/dashboard')
+        return
+      }
+
       setChild(childData)
 
       // Fetch tasks assigned to this child
@@ -100,6 +149,7 @@ export default function ChildTasksPage() {
           )
         `)
         .eq('child_id', childId)
+        .returns<TaskAssignment[]>()
 
       if (assignmentsError) throw assignmentsError
 
@@ -107,7 +157,7 @@ export default function ChildTasksPage() {
       const today = new Date().toISOString().split('T')[0]
 
       // Extract task IDs for completion check
-      const taskIds = assignmentsData?.map(a => (a.tasks as any).id).filter(Boolean) || []
+      const taskIds = assignmentsData?.map(a => a.tasks.id).filter(Boolean) || []
 
       const { data: completionsData } = await supabase
         .from('task_completions')
@@ -121,18 +171,17 @@ export default function ChildTasksPage() {
 
       // Map tasks with completion status
       const tasksWithStatus: Task[] = (assignmentsData || []).map(a => {
-        const taskData = a.tasks as any
         return {
-          id: taskData.id,
-          title: taskData.title,
-          description: taskData.description,
-          category: taskData.category,
-          priority: taskData.priority,
-          due_date: taskData.due_date,
-          image_url: taskData.image_url,
-          image_alt_text: taskData.image_alt_text,
-          image_source: taskData.image_source,
-          completed_today: completedTaskIds.has(taskData.id)
+          id: a.tasks.id,
+          title: a.tasks.title,
+          description: a.tasks.description,
+          category: a.tasks.category,
+          priority: a.tasks.priority,
+          due_date: a.tasks.due_date,
+          image_url: a.tasks.image_url,
+          image_alt_text: a.tasks.image_alt_text,
+          image_source: a.tasks.image_source,
+          completed_today: completedTaskIds.has(a.tasks.id)
         }
       })
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { StarRating } from './StarRating'
 import { useTranslation } from '@/hooks/useTranslation'
 
@@ -24,6 +24,49 @@ export function TaskCompletionModal({
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  // Handle ESC key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !submitting) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEsc)
+      return () => document.removeEventListener('keydown', handleEsc)
+    }
+  }, [isOpen, submitting])
+
+  // Focus trap
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      const focusableElements = modalRef.current.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+      const firstElement = focusableElements[0] as HTMLElement
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+      const handleTab = (e: KeyboardEvent) => {
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+      }
+
+      document.addEventListener('keydown', handleTab)
+      firstElement?.focus()
+
+      return () => document.removeEventListener('keydown', handleTab)
+    }
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -64,15 +107,32 @@ export function TaskCompletionModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !submitting) {
+          handleClose()
+        }
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        ref={modalRef}
+        className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         <form onSubmit={handleSubmit} className="p-6 md:p-8">
           {/* Header */}
           <div className="mb-6">
-            <h2 className={`
-              font-bold mb-2
-              ${ageGroup === '5-8' ? 'text-2xl text-purple-600' : 'text-xl text-gray-900'}
-            `}>
+            <h2
+              id="modal-title"
+              className={`
+                font-bold mb-2
+                ${ageGroup === '5-8' ? 'text-2xl text-purple-600' : 'text-xl text-gray-900'}
+              `}
+            >
               {ageGroup === '5-8' ? '🎉 Great job!' : 'Task Completed!'}
             </h2>
             <p className="text-gray-600 font-medium">{taskTitle}</p>
