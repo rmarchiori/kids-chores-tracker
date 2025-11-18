@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { ImagePicker } from './ImagePicker'
 import { CustomImageUpload } from './CustomImageUpload'
 import { CreateTaskSchema } from '@/lib/schemas'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type TaskFormData = z.infer<typeof CreateTaskSchema>
 
@@ -28,9 +29,10 @@ export function TaskForm({
   taskId,
   initialData,
   onSubmit,
-  submitLabel = 'Create Task',
+  submitLabel,
   availableChildren = []
 }: TaskFormProps) {
+  const { t } = useTranslation()
   const [submitting, setSubmitting] = useState(false)
   const [showImagePicker, setShowImagePicker] = useState(false)
   const [showCustomUpload, setShowCustomUpload] = useState(false)
@@ -100,53 +102,58 @@ export function TaskForm({
       {/* Task Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-          Task Title *
+          {t('tasks.task_title')} *
         </label>
         <input
           id="title"
           type="text"
           {...register('title')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="e.g., Make your bed"
+          placeholder={t('tasks.title_placeholder')}
+          aria-label={t('tasks.task_title')}
+          aria-required="true"
         />
         {errors.title && (
-          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+          <p className="mt-1 text-sm text-red-600" role="alert">{errors.title.message}</p>
         )}
       </div>
 
       {/* Task Description */}
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Description (optional)
+          {t('tasks.description')}
         </label>
         <textarea
           id="description"
           {...register('description')}
           rows={3}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Additional details about the task..."
+          placeholder={t('tasks.description_placeholder')}
+          aria-label={t('tasks.description')}
         />
+        <p className="mt-1 text-xs text-gray-500">{t('tasks.description_help')}</p>
         {errors.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+          <p className="mt-1 text-sm text-red-600" role="alert">{errors.description.message}</p>
         )}
       </div>
 
       {/* Task Image Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Task Image (optional)
+          {t('tasks.task_image')}
         </label>
+        <p className="text-xs text-gray-500 mb-2">{t('tasks.image_help')}</p>
 
         {/* Current Image Preview */}
         {selectedImage.url && (
           <div className="mb-4 flex items-center gap-4">
-            <div className="w-16 h-16 border-2 border-gray-200 rounded-lg overflow-hidden flex items-center justify-center bg-white">
+            <div className="w-16 h-16 border-2 border-gray-200 rounded-lg overflow-hidden flex items-center justify-center bg-white" aria-label={t('tasks.image_preview')}>
               {selectedImage.source === 'emoji' ? (
                 <span className="text-3xl">{selectedImage.url}</span>
               ) : (
                 <img
                   src={selectedImage.url}
-                  alt={selectedImage.altText || ''}
+                  alt={selectedImage.altText || t('tasks.task_image')}
                   className="w-full h-full object-contain"
                 />
               )}
@@ -155,8 +162,9 @@ export function TaskForm({
               type="button"
               onClick={() => setSelectedImage({ url: null, altText: null, source: null })}
               className="text-sm text-red-600 hover:text-red-700"
+              aria-label={t('tasks.remove_image')}
             >
-              Remove Image
+              {t('tasks.remove_image')}
             </button>
           </div>
         )}
@@ -170,8 +178,10 @@ export function TaskForm({
               setShowCustomUpload(false)
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            aria-expanded={showImagePicker}
+            aria-controls="image-picker"
           >
-            {showImagePicker ? 'Hide' : 'Choose'} from Library
+            {showImagePicker ? t('common.close') : t('tasks.choose_from_library')}
           </button>
           <button
             type="button"
@@ -180,14 +190,16 @@ export function TaskForm({
               setShowImagePicker(false)
             }}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            aria-expanded={showCustomUpload}
+            aria-controls="custom-upload"
           >
-            {showCustomUpload ? 'Hide' : 'Upload'} Custom Image
+            {showCustomUpload ? t('common.close') : t('tasks.upload_custom')}
           </button>
         </div>
 
         {/* Image Picker */}
         {showImagePicker && (
-          <div className="mt-4 border border-gray-200 rounded-lg p-4">
+          <div id="image-picker" className="mt-4 border border-gray-200 rounded-lg p-4">
             <ImagePicker
               onSelect={handleImageSelect}
               currentImage={selectedImage.url || undefined}
@@ -197,7 +209,7 @@ export function TaskForm({
 
         {/* Custom Upload */}
         {showCustomUpload && (
-          <div className="mt-4">
+          <div id="custom-upload" className="mt-4">
             <CustomImageUpload
               familyId={familyId}
               taskId={taskId}
@@ -212,39 +224,48 @@ export function TaskForm({
         {/* Category */}
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-            Category *
+            {t('tasks.category')} *
           </label>
           <select
             id="category"
             {...register('category')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={t('tasks.category')}
+            aria-required="true"
           >
-            <option value="cleaning">Cleaning</option>
-            <option value="homework">Homework</option>
-            <option value="pets">Pets</option>
-            <option value="other">Other</option>
+            <option value="cleaning">{t('tasks.categories.cleaning')}</option>
+            <option value="homework">{t('tasks.categories.homework')}</option>
+            <option value="hygiene">{t('tasks.categories.hygiene')}</option>
+            <option value="outdoor">{t('tasks.categories.outdoor')}</option>
+            <option value="helping">{t('tasks.categories.helping')}</option>
+            <option value="meals">{t('tasks.categories.meals')}</option>
+            <option value="pets">{t('tasks.categories.pets')}</option>
+            <option value="bedtime">{t('tasks.categories.bedtime')}</option>
+            <option value="other">{t('tasks.categories.other')}</option>
           </select>
           {errors.category && (
-            <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>
+            <p className="mt-1 text-sm text-red-600" role="alert">{errors.category.message}</p>
           )}
         </div>
 
         {/* Priority */}
         <div>
           <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-            Priority *
+            {t('tasks.priority')} *
           </label>
           <select
             id="priority"
             {...register('priority')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={t('tasks.priority')}
+            aria-required="true"
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="low">{t('tasks.priorities.low')}</option>
+            <option value="medium">{t('tasks.priorities.medium')}</option>
+            <option value="high">{t('tasks.priorities.high')}</option>
           </select>
           {errors.priority && (
-            <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
+            <p className="mt-1 text-sm text-red-600" role="alert">{errors.priority.message}</p>
           )}
         </div>
       </div>
@@ -252,16 +273,17 @@ export function TaskForm({
       {/* Due Date */}
       <div>
         <label htmlFor="due_date" className="block text-sm font-medium text-gray-700 mb-1">
-          Due Date (optional)
+          {t('tasks.due_date')}
         </label>
         <input
           id="due_date"
           type="date"
           {...register('due_date')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label={t('tasks.due_date')}
         />
         {errors.due_date && (
-          <p className="mt-1 text-sm text-red-600">{errors.due_date.message}</p>
+          <p className="mt-1 text-sm text-red-600" role="alert">{errors.due_date.message}</p>
         )}
       </div>
 
@@ -272,30 +294,33 @@ export function TaskForm({
           type="checkbox"
           {...register('recurring')}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+          aria-describedby="recurring-help"
         />
         <label htmlFor="recurring" className="text-sm font-medium text-gray-700">
-          Recurring Task
+          {t('tasks.recurring')}
         </label>
       </div>
+      <p id="recurring-help" className="text-xs text-gray-500 -mt-4 ml-6">{t('tasks.recurring_help')}</p>
 
       {/* Recurring Type (shown if recurring is checked) */}
       {recurring && (
         <div>
           <label htmlFor="recurring_type" className="block text-sm font-medium text-gray-700 mb-1">
-            Recurring Type
+            {t('tasks.recurring')}
           </label>
           <select
             id="recurring_type"
             {...register('recurring_type')}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={t('tasks.recurring')}
           >
-            <option value="">Select frequency...</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
+            <option value="">{t('tasks.recurring_options.none')}</option>
+            <option value="daily">{t('tasks.recurring_options.daily')}</option>
+            <option value="weekly">{t('tasks.recurring_options.weekly')}</option>
+            <option value="monthly">{t('tasks.recurring_options.monthly')}</option>
           </select>
           {errors.recurring_type && (
-            <p className="mt-1 text-sm text-red-600">{errors.recurring_type.message}</p>
+            <p className="mt-1 text-sm text-red-600" role="alert">{errors.recurring_type.message}</p>
           )}
         </div>
       )}
@@ -304,9 +329,10 @@ export function TaskForm({
       {availableChildren.length > 0 && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Assign to Children (optional)
+            {t('tasks.assign_to')}
           </label>
-          <div className="space-y-2">
+          <p className="text-xs text-gray-500 mb-2">{t('tasks.assign_help')}</p>
+          <div className="space-y-2" role="group" aria-label={t('tasks.select_children')}>
             {availableChildren.map(child => (
               <div key={child.id} className="flex items-center gap-2">
                 <input
@@ -338,8 +364,9 @@ export function TaskForm({
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
             }
           `}
+          aria-busy={submitting}
         >
-          {submitting ? 'Saving...' : submitLabel}
+          {submitting ? t('common.saving') : (submitLabel || t('tasks.create_task'))}
         </button>
       </div>
     </form>

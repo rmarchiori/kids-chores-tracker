@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { getThemeClasses } from '@/lib/theme-utils'
 import { ThemeCard } from '@/components/theme/ThemeCard'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface TaskCardProps {
   task: {
@@ -22,17 +23,26 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onClick, showDescription = true }: TaskCardProps) {
+  const { t } = useTranslation()
   const { theme } = useTheme()
   const themeClasses = getThemeClasses(theme)
 
   // Default status to pending if not provided
   const status = task.status || 'pending'
 
+  // Get status label
+  const getStatusLabel = (status: string) => {
+    if (status === 'completed') return t('tasks.status.completed')
+    if (status === 'pending_review') return t('tasks.status.in_progress')
+    return t('tasks.status.pending')
+  }
+
   return (
     <ThemeCard>
       <button
         onClick={onClick}
         className="w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+        aria-label={`${task.title} - ${getStatusLabel(status)}`}
       >
         {/* Image Section - Hybrid Image + Text */}
         <div className="flex items-center gap-4 mb-3">
@@ -104,15 +114,17 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
                   : 'bg-gray-100 text-gray-800'
               }
             `}
+            aria-label={`Status: ${getStatusLabel(status)}`}
           >
-            {status === 'completed' ? '✓ Done' : status === 'pending_review' ? '⏳ Review' : 'To Do'}
+            {status === 'completed' ? '✓ ' : status === 'pending_review' ? '⏳ ' : ''}
+            {getStatusLabel(status)}
           </span>
 
           {theme === 'parent' && (
-            <div className="flex gap-2 text-xs text-gray-500">
-              <span className="capitalize">{task.category}</span>
-              <span>•</span>
-              <span className="capitalize">{task.priority}</span>
+            <div className="flex gap-2 text-xs text-gray-500" aria-label={`${t('tasks.category')}: ${t(`tasks.categories.${task.category}`)}, ${t('tasks.priority')}: ${t(`tasks.priorities.${task.priority}`)}`}>
+              <span>{t(`tasks.categories.${task.category}`)}</span>
+              <span aria-hidden="true">•</span>
+              <span>{t(`tasks.priorities.${task.priority}`)}</span>
             </div>
           )}
         </div>

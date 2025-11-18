@@ -6,9 +6,11 @@ import { createClient } from '@/lib/supabase/client'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/hooks/useTranslation'
 import type { Child } from '@/lib/schemas'
 
 export default function NewTaskPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const supabase = createClient()
   const [familyId, setFamilyId] = useState<string | null>(null)
@@ -58,7 +60,7 @@ export default function NewTaskPage() {
       setChildren(childrenData || [])
     } catch (err) {
       console.error('Error loading family data:', err)
-      alert('Failed to load family data. Please try again.')
+      alert(t('errors.generic'))
       router.push('/tasks')
     } finally {
       setLoading(false)
@@ -77,14 +79,14 @@ export default function NewTaskPage() {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to create task')
+        throw new Error(error.error || t('tasks.messages.error_creating'))
       }
 
       // Navigate back to tasks list
       router.push('/tasks')
     } catch (error) {
       console.error('Error creating task:', error)
-      alert(error instanceof Error ? error.message : 'Failed to create task. Please try again.')
+      alert(error instanceof Error ? error.message : t('tasks.messages.error_creating'))
       throw error
     }
   }
@@ -93,9 +95,9 @@ export default function NewTaskPage() {
     return (
       <DashboardLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading...</p>
+          <div className="text-center" role="status" aria-live="polite">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" aria-hidden="true"></div>
+            <p className="text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -111,13 +113,14 @@ export default function NewTaskPage() {
             <button
               onClick={() => router.push('/tasks')}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+              aria-label={`${t('common.back')} ${t('tasks.title')}`}
             >
-              <ArrowLeftIcon className="w-5 h-5" />
-              Back to Tasks
+              <ArrowLeftIcon className="w-5 h-5" aria-hidden="true" />
+              {t('common.back')}
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">Create New Task</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('tasks.new_task')}</h1>
             <p className="text-gray-600 mt-2">
-              Add a new task and optionally assign it to your children.
+              {t('tasks.assign_help')}
             </p>
           </div>
 
@@ -126,7 +129,7 @@ export default function NewTaskPage() {
             <TaskForm
               familyId={familyId}
               onSubmit={handleSubmit}
-              submitLabel="Create Task"
+              submitLabel={t('tasks.create_task')}
               availableChildren={children.map(child => ({
                 id: child.id,
                 name: child.name

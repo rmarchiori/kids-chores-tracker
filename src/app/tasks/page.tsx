@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
 import { PlusIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/hooks/useTranslation'
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 interface Task {
   id: string
@@ -33,58 +37,36 @@ interface Task {
 }
 
 export default function TasksPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const supabase = createClient()
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [filterPriority, setFilterPriority] = useState<string>('all')
 
-  useEffect(() => {
-    loadTasks()
-  }, [filterCategory, filterPriority])
-
-  async function loadTasks() {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Get current session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-
-      if (sessionError || !session) {
-        router.push('/auth/login')
-        return
-      }
-
-      // Build query params
-      const params = new URLSearchParams()
-      if (filterCategory !== 'all') {
-        params.append('category', filterCategory)
-      }
-      if (filterPriority !== 'all') {
-        params.append('priority', filterPriority)
-      }
-
-      // Fetch tasks
-      const response = await fetch(`/api/tasks?${params.toString()}`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks')
-      }
-
-      const data = await response.json()
-      setTasks(data.tasks || [])
-    } catch (err) {
-      console.error('Error loading tasks:', err)
-      setError('Failed to load tasks. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+  // Build query params for API
+  const params = new URLSearchParams()
+  if (filterCategory !== 'all') {
+    params.append('category', filterCategory)
   }
+  if (filterPriority !== 'all') {
+    params.append('priority', filterPriority)
+  }
+  const apiUrl = `/api/tasks?${params.toString()}`
+
+  // Fetch tasks with SWR caching
+  const { data, error, isLoading: loading, mutate } = useSWR<{ tasks: Task[] }>(
+    apiUrl,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 30000, // Cache for 30 seconds
+    }
+  )
+
+  const tasks = data?.tasks || []
 
   async function handleDelete(taskId: string, taskTitle: string) {
-    if (!confirm(`Are you sure you want to delete "${taskTitle}"?`)) {
+    if (!confirm(t('tasks.delete_confirm'))) {
       return
     }
 
@@ -97,11 +79,11 @@ export default function TasksPage() {
         throw new Error('Failed to delete task')
       }
 
-      // Reload tasks list
-      await loadTasks()
+      // Revalidate cache
+      mutate()
     } catch (err) {
       console.error('Error deleting task:', err)
-      alert('Failed to delete task. Please try again.')
+      alert(t('tasks.messages.error_deleting'))
     }
   }
 
@@ -113,9 +95,9 @@ export default function TasksPage() {
     return (
       <DashboardLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading tasks...</p>
+          <div className="text-center" role="status" aria-live="polite">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" aria-hidden="true"></div>
+            <p className="text-gray-600">{t('common.loading')}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -128,13 +110,14 @@ export default function TasksPage() {
         <div className="max-w-4xl mx-auto px-4">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('tasks.title')}</h1>
             <button
               onClick={() => router.push('/tasks/new')}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              aria-label={t('tasks.new_task')}
             >
-              <PlusIcon className="w-5 h-5" />
-              New Task
+              <PlusIcon className="w-5 h-5" aria-hidden="true" />
+              {t('tasks.new_task')}
             </button>
           </div>
 
@@ -143,58 +126,66 @@ export default function TasksPage() {
             {/* Category Filter */}
             <div>
               <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-1">
-                Category
+                {t('tasks.category')}
               </label>
               <select
                 id="category-filter"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label={t('tasks.category')}
               >
-                <option value="all">All Categories</option>
-                <option value="cleaning">Cleaning</option>
-                <option value="homework">Homework</option>
-                <option value="pets">Pets</option>
-                <option value="other">Other</option>
+                <option value="all">{t('tasks.all_categories')}</option>
+                <option value="cleaning">{t('tasks.categories.cleaning')}</option>
+                <option value="homework">{t('tasks.categories.homework')}</option>
+                <option value="hygiene">{t('tasks.categories.hygiene')}</option>
+                <option value="outdoor">{t('tasks.categories.outdoor')}</option>
+                <option value="helping">{t('tasks.categories.helping')}</option>
+                <option value="meals">{t('tasks.categories.meals')}</option>
+                <option value="pets">{t('tasks.categories.pets')}</option>
+                <option value="bedtime">{t('tasks.categories.bedtime')}</option>
+                <option value="other">{t('tasks.categories.other')}</option>
               </select>
             </div>
 
             {/* Priority Filter */}
             <div>
               <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700 mb-1">
-                Priority
+                {t('tasks.priority')}
               </label>
               <select
                 id="priority-filter"
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label={t('tasks.priority')}
               >
-                <option value="all">All Priorities</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="all">{t('tasks.all_priorities')}</option>
+                <option value="low">{t('tasks.priorities.low')}</option>
+                <option value="medium">{t('tasks.priorities.medium')}</option>
+                <option value="high">{t('tasks.priorities.high')}</option>
               </select>
             </div>
           </div>
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-              {error}
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6" role="alert">
+              {t('tasks.messages.error_loading')}
             </div>
           )}
 
           {/* Empty State */}
-          {tasks.length === 0 ? (
+          {tasks.length === 0 && !error ? (
             <div className="text-center py-12 bg-white rounded-lg shadow">
-              <p className="text-gray-600 mb-4">No tasks found.</p>
+              <p className="text-gray-600 mb-4">{t('tasks.no_tasks')}</p>
               <button
                 onClick={() => router.push('/tasks/new')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                aria-label={t('tasks.add_first_task')}
               >
-                <PlusIcon className="w-5 h-5" />
-                Create Your First Task
+                <PlusIcon className="w-5 h-5" aria-hidden="true" />
+                {t('tasks.add_first_task')}
               </button>
             </div>
           ) : (
@@ -214,14 +205,15 @@ export default function TasksPage() {
                       handleDelete(task.id, task.title)
                     }}
                     className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-700"
+                    aria-label={`${t('tasks.delete_task')} ${task.title}`}
                   >
-                    Delete
+                    {t('common.delete')}
                   </button>
 
                   {/* Assignment Info */}
                   {task.task_assignments && task.task_assignments.length > 0 && (
                     <div className="mt-2 text-xs text-gray-500">
-                      Assigned to: {task.task_assignments.map(a => a.children.name).join(', ')}
+                      {t('tasks.assign_to')}: {task.task_assignments.map(a => a.children.name).join(', ')}
                     </div>
                   )}
                 </div>
