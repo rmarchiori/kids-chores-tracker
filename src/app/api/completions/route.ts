@@ -59,6 +59,10 @@ export async function GET(request: Request) {
         reviewed_by,
         reviewed_at,
         notes,
+        child_rating,
+        child_notes,
+        parent_rating,
+        parent_feedback,
         tasks (
           id,
           title,

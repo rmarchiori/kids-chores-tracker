@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
+import { TaskCompletionModal } from '@/components/TaskCompletionModal'
 
 interface Task {
   id: string
@@ -56,6 +57,8 @@ export default function ChildTasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [showCompletionModal, setShowCompletionModal] = useState(false)
   const [showMessage, setShowMessage] = useState<string | null>(null)
   const supabase = createClient()
 
@@ -142,20 +145,35 @@ export default function ChildTasksPage() {
     }
   }
 
-  async function handleCompleteTask(taskId: string) {
-    try {
-      setCompletingTaskId(taskId)
+  function handleCompleteTask(task: Task) {
+    setSelectedTask(task)
+    setShowCompletionModal(true)
+  }
 
-      const response = await fetch(`/api/tasks/${taskId}/complete`, {
+  async function handleSubmitCompletion(rating: number, notes: string) {
+    if (!selectedTask) return
+
+    try {
+      setCompletingTaskId(selectedTask.id)
+
+      const response = await fetch(`/api/tasks/${selectedTask.id}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ child_id: childId }),
+        body: JSON.stringify({
+          child_id: childId,
+          child_rating: rating,
+          child_notes: notes || undefined,
+        }),
       })
 
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to complete task')
       }
+
+      // Close modal
+      setShowCompletionModal(false)
+      setSelectedTask(null)
 
       // Show positive message
       const messages = child?.age_group === '5-8' ? POSITIVE_MESSAGES_YOUNG : POSITIVE_MESSAGES_OLDER
@@ -169,7 +187,7 @@ export default function ChildTasksPage() {
       await fetchChildAndTasks()
     } catch (error) {
       console.error('Error completing task:', error)
-      alert(error instanceof Error ? error.message : t('errors.generic'))
+      throw error // Re-throw to let modal handle the error
     } finally {
       setCompletingTaskId(null)
     }
@@ -274,7 +292,7 @@ export default function ChildTasksPage() {
 
                 {/* Complete Button */}
                 <button
-                  onClick={() => handleCompleteTask(task.id)}
+                  onClick={() => handleCompleteTask(task)}
                   disabled={completingTaskId === task.id}
                   className={`
                     w-full py-4 rounded-xl font-bold text-xl transition-all
@@ -340,6 +358,20 @@ export default function ChildTasksPage() {
         <div className="max-w-4xl mx-auto text-center py-16">
           <p className="text-2xl text-gray-500">No tasks assigned yet!</p>
         </div>
+      )}
+
+      {/* Task Completion Modal */}
+      {child && selectedTask && (
+        <TaskCompletionModal
+          isOpen={showCompletionModal}
+          onClose={() => {
+            setShowCompletionModal(false)
+            setSelectedTask(null)
+          }}
+          onSubmit={handleSubmitCompletion}
+          taskTitle={selectedTask.title}
+          ageGroup={child.age_group}
+        />
       )}
     </div>
   )

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { StarRating } from '@/components/StarRating'
 
 interface Completion {
   id: string
@@ -14,6 +15,10 @@ interface Completion {
   completed_at: string
   status: string
   notes?: string
+  child_rating?: number
+  child_notes?: string
+  parent_rating?: number
+  parent_feedback?: string
   tasks: {
     id: string
     title: string
@@ -240,11 +245,40 @@ export default function CompletionsPage() {
                       </div>
                     </div>
 
-                    {/* Notes */}
-                    {completion.notes && (
+                    {/* Child Rating & Notes */}
+                    {completion.child_rating && (
                       <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-gray-700">
-                          <span className="font-medium">Note:</span> {completion.notes}
+                        <p className="text-xs font-semibold text-gray-700 mb-2">Child's Rating:</p>
+                        <StarRating
+                          value={completion.child_rating}
+                          readonly
+                          size="sm"
+                          showLabel={false}
+                        />
+                        {completion.child_notes && (
+                          <div className="mt-2 text-sm text-gray-700 italic">
+                            "{completion.child_notes}"
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Parent Review */}
+                    {completion.status === 'completed' && completion.parent_feedback && (
+                      <div className="mt-3 p-4 bg-green-50 rounded-lg border-2 border-green-200">
+                        <div className="flex items-start justify-between mb-2">
+                          <p className="text-xs font-semibold text-green-800">Parent's Review:</p>
+                          {completion.parent_rating && (
+                            <StarRating
+                              value={completion.parent_rating}
+                              readonly
+                              size="sm"
+                              showLabel={false}
+                            />
+                          )}
+                        </div>
+                        <p className="text-sm text-green-900 font-medium">
+                          {completion.parent_feedback}
                         </p>
                       </div>
                     )}

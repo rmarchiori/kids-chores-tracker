@@ -5,7 +5,8 @@ import { z } from 'zod'
 
 const CompleteTaskSchema = z.object({
   child_id: z.string().uuid(),
-  notes: z.string().max(500).optional(),
+  child_rating: z.number().int().min(1).max(5),
+  child_notes: z.string().max(500).optional(),
 })
 
 export async function POST(
@@ -23,7 +24,7 @@ export async function POST(
 
     // Parse and validate request body
     const body = await request.json()
-    const { child_id, notes } = CompleteTaskSchema.parse(body)
+    const { child_id, child_rating, child_notes } = CompleteTaskSchema.parse(body)
 
     // Verify task exists and user has access
     const { data: task, error: taskError } = await supabase
@@ -60,14 +61,15 @@ export async function POST(
       return NextResponse.json({ error: 'Child not found in this family' }, { status: 404 })
     }
 
-    // Create completion record
+    // Create completion record with rating (status: pending_review)
     const { data: completion, error: completionError } = await supabase
       .from('task_completions')
       .insert({
         task_id: params.id,
         child_id,
-        status: 'completed',
-        notes: notes || null,
+        status: 'pending_review',
+        child_rating,
+        child_notes: child_notes || null,
         completed_at: new Date().toISOString()
       })
       .select()
