@@ -1,5 +1,28 @@
 import { z } from 'zod'
 
+// Image URL Validator - Only allow approved sources
+const isValidImageUrl = (url: string | null | undefined): boolean => {
+  if (!url) return true // null/undefined is okay
+
+  // Allow emojis (simple check for non-URL strings)
+  if (url.length <= 10 && !url.startsWith('http') && !url.startsWith('/')) {
+    return true // Likely an emoji
+  }
+
+  // Allow local paths
+  if (url.startsWith('/images/tasks/')) {
+    return true
+  }
+
+  // Allow Supabase storage URLs only
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (supabaseUrl && url.startsWith(supabaseUrl)) {
+    return true
+  }
+
+  return false
+}
+
 // Language Support
 export const SupportedLanguages = ['en-CA', 'pt-BR', 'fr-CA'] as const
 export const LanguageSchema = z.enum(SupportedLanguages)
@@ -66,8 +89,10 @@ export const CreateTaskSchema = z.object({
   due_date: z.string().optional(), // ISO date string
   recurring: z.boolean().default(false),
   recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
-  image_url: z.string().optional().nullable(),
-  image_alt_text: z.string().optional().nullable(),
+  image_url: z.string().optional().nullable().refine(isValidImageUrl, {
+    message: 'Image URL must be from approved sources only'
+  }),
+  image_alt_text: z.string().max(200).optional().nullable(),
   image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
   assigned_children: z.array(z.string().uuid()).optional(),
 })
@@ -81,15 +106,20 @@ export const UpdateTaskSchema = z.object({
   due_date: z.string().optional().nullable(), // ISO date string
   recurring: z.boolean().optional(),
   recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
-  image_url: z.string().optional().nullable(),
-  image_alt_text: z.string().optional().nullable(),
+  image_url: z.string().optional().nullable().refine(isValidImageUrl, {
+    message: 'Image URL must be from approved sources only'
+  }),
+  image_alt_text: z.string().max(200).optional().nullable(),
   image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
+  assigned_children: z.array(z.string().uuid()).optional(),
 })
 
 // Task Image Update Schema
 export const UpdateTaskImageSchema = z.object({
-  image_url: z.string(),
-  image_alt_text: z.string(),
+  image_url: z.string().refine(isValidImageUrl, {
+    message: 'Image URL must be from approved sources only'
+  }),
+  image_alt_text: z.string().min(1).max(200),
   image_source: z.enum(['library', 'custom', 'emoji']),
 })
 

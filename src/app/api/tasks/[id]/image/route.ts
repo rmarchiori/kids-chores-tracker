@@ -13,6 +13,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  // Validate UUID format
+  if (!z.string().uuid().safeParse(id).success) {
+    return NextResponse.json({ error: 'Invalid task ID format' }, { status: 400 })
+  }
+
   try {
     const supabase = await createClient()
 

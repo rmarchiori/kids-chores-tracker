@@ -27,10 +27,10 @@ export function CustomImageUpload({
       const file = event.target.files?.[0]
       if (!file) return
 
-      // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
+      // Validate file type (SVG removed for security - XSS risk)
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
       if (!allowedTypes.includes(file.type)) {
-        setError('Please upload a valid image file (JPEG, PNG, WebP, or SVG)')
+        setError('Please upload a valid image file (JPEG, PNG, or WebP)')
         return
       }
 
@@ -40,9 +40,14 @@ export function CustomImageUpload({
         return
       }
 
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}.${fileExt}`
+      // Generate secure unique filename with proper extension mapping
+      const extensionMap: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp'
+      }
+      const fileExt = extensionMap[file.type] || 'jpg'
+      const fileName = `${crypto.randomUUID()}.${fileExt}`
       const filePath = `custom/${familyId}/${taskId}/${fileName}`
 
       // Upload to Supabase Storage
@@ -86,7 +91,7 @@ export function CustomImageUpload({
             {uploading ? 'Uploading...' : 'Click to upload custom image'}
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            JPEG, PNG, WebP, or SVG • Max 1MB
+            JPEG, PNG, or WebP • Max 1MB
           </p>
           <input
             type="file"

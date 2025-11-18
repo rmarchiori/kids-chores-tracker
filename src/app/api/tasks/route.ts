@@ -3,6 +3,35 @@ import { createClient } from '@/lib/supabase/server'
 import { CreateTaskSchema, TaskSchema } from '@/lib/schemas'
 import { z } from 'zod'
 
+// Type definitions for task with assignments
+interface TaskAssignment {
+  id: string
+  child_id: string
+  children: {
+    id: string
+    name: string
+    age_group: string
+  }
+}
+
+interface TaskWithAssignments {
+  id: string
+  title: string
+  description?: string
+  category: string
+  priority: string
+  due_date?: string
+  recurring: boolean
+  recurring_type?: string
+  image_url?: string
+  image_alt_text?: string
+  image_source?: string
+  family_id: string
+  created_at: string
+  updated_at?: string
+  task_assignments?: TaskAssignment[]
+}
+
 /**
  * GET /api/tasks
  * Get all tasks for the current user's family
@@ -32,18 +61,35 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Family not found' }, { status: 404 })
     }
 
-    // Parse query params
+    // Parse and validate query params
     const { searchParams } = new URL(request.url)
-    const childId = searchParams.get('child_id')
-    const category = searchParams.get('category')
-    const priority = searchParams.get('priority')
+    const QueryParamsSchema = z.object({
+      child_id: z.string().uuid().optional(),
+      category: z.enum(['cleaning', 'homework', 'pets', 'other']).optional(),
+      priority: z.enum(['low', 'medium', 'high']).optional(),
+    })
 
-    // Build query
+    const queryParams = QueryParamsSchema.safeParse({
+      child_id: searchParams.get('child_id') || undefined,
+      category: searchParams.get('category') || undefined,
+      priority: searchParams.get('priority') || undefined,
+    })
+
+    if (!queryParams.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: queryParams.error.errors },
+        { status: 400 }
+      )
+    }
+
+    const { child_id: childId, category, priority } = queryParams.data
+
+    // Build query - optimize child filtering at database level
     let query = supabase
       .from('tasks')
       .select(`
         *,
-        task_assignments(
+        task_assignments!inner(
           id,
           child_id,
           children(id, name, age_group)
@@ -52,12 +98,16 @@ export async function GET(request: Request) {
       .eq('family_id', familyMember.family_id)
       .order('created_at', { ascending: false })
 
-    // Apply filters
+    // Apply filters at database level for better performance
     if (category) {
       query = query.eq('category', category)
     }
     if (priority) {
       query = query.eq('priority', priority)
+    }
+    if (childId) {
+      // Filter by child at database level using the inner join
+      query = query.eq('task_assignments.child_id', childId)
     }
 
     const { data: tasks, error: tasksError } = await query
@@ -67,15 +117,7 @@ export async function GET(request: Request) {
       throw tasksError
     }
 
-    // Filter by child_id if provided (post-query since it's in a relation)
-    let filteredTasks = tasks
-    if (childId) {
-      filteredTasks = tasks.filter(task =>
-        task.task_assignments?.some((assignment: any) => assignment.child_id === childId)
-      )
-    }
-
-    return NextResponse.json({ tasks: filteredTasks })
+    return NextResponse.json({ tasks: tasks as TaskWithAssignments[] })
   } catch (error) {
     console.error('Error in GET /api/tasks:', error)
     return NextResponse.json(
@@ -140,6 +182,22 @@ export async function POST(request: Request) {
 
     // Create task assignments if children are assigned
     if (assigned_children && assigned_children.length > 0) {
+      // Security: Validate that all assigned children belong to the user's family
+      const { data: validChildren, error: childError } = await supabase
+        .from('children')
+        .select('id')
+        .eq('family_id', familyMember.family_id)
+        .in('id', assigned_children)
+
+      if (childError || !validChildren || validChildren.length !== assigned_children.length) {
+        // Delete the task since validation failed
+        await supabase.from('tasks').delete().eq('id', task.id)
+        return NextResponse.json(
+          { error: 'Invalid child assignments: One or more children do not belong to your family' },
+          { status: 400 }
+        )
+      }
+
       const assignments = assigned_children.map(childId => ({
         task_id: task.id,
         child_id: childId,

@@ -12,6 +12,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  // Validate UUID format
+  if (!z.string().uuid().safeParse(id).success) {
+    return NextResponse.json({ error: 'Invalid task ID format' }, { status: 400 })
+  }
+
   try {
     const supabase = await createClient()
 
@@ -70,6 +76,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  // Validate UUID format
+  if (!z.string().uuid().safeParse(id).success) {
+    return NextResponse.json({ error: 'Invalid task ID format' }, { status: 400 })
+  }
+
   try {
     const supabase = await createClient()
 
@@ -100,25 +112,18 @@ export async function PATCH(
 
     // Parse and validate request body
     const body = await request.json()
-    const validatedData = UpdateTaskSchema.parse(body)
+    const { assigned_children, ...taskData } = UpdateTaskSchema.parse(body)
 
     // Update task
     const { data: task, error: updateError } = await supabase
       .from('tasks')
       .update({
-        ...validatedData,
+        ...taskData,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('family_id', familyMember.family_id)
-      .select(`
-        *,
-        task_assignments(
-          id,
-          child_id,
-          children(id, name, age_group)
-        )
-      `)
+      .select()
       .single()
 
     if (updateError || !task) {
@@ -128,7 +133,63 @@ export async function PATCH(
       )
     }
 
-    return NextResponse.json({ task })
+    // Handle assignment updates if provided
+    if (assigned_children !== undefined) {
+      if (assigned_children.length > 0) {
+        // Security: Validate that all assigned children belong to the user's family
+        const { data: validChildren, error: childError } = await supabase
+          .from('children')
+          .select('id')
+          .eq('family_id', familyMember.family_id)
+          .in('id', assigned_children)
+
+        if (childError || !validChildren || validChildren.length !== assigned_children.length) {
+          return NextResponse.json(
+            { error: 'Invalid child assignments: One or more children do not belong to your family' },
+            { status: 400 }
+          )
+        }
+      }
+
+      // Delete existing assignments
+      await supabase
+        .from('task_assignments')
+        .delete()
+        .eq('task_id', id)
+
+      // Create new assignments
+      if (assigned_children.length > 0) {
+        const assignments = assigned_children.map(childId => ({
+          task_id: id,
+          child_id: childId,
+        }))
+
+        await supabase
+          .from('task_assignments')
+          .insert(assignments)
+      }
+    }
+
+    // Fetch task with updated assignments
+    const { data: taskWithAssignments, error: fetchError } = await supabase
+      .from('tasks')
+      .select(`
+        *,
+        task_assignments(
+          id,
+          child_id,
+          children(id, name, age_group)
+        )
+      `)
+      .eq('id', id)
+      .single()
+
+    if (fetchError) {
+      // Return task without assignments if fetch fails
+      return NextResponse.json({ task })
+    }
+
+    return NextResponse.json({ task: taskWithAssignments })
   } catch (error) {
     console.error('Error updating task:', error)
 
@@ -155,6 +216,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
+
+  // Validate UUID format
+  if (!z.string().uuid().safeParse(id).success) {
+    return NextResponse.json({ error: 'Invalid task ID format' }, { status: 400 })
+  }
+
   try {
     const supabase = await createClient()
 
