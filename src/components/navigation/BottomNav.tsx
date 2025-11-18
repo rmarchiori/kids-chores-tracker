@@ -14,7 +14,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 const navigation = [
   { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
-  { name: 'nav.tasks', href: '/dashboard/tasks', icon: ClipboardDocumentListIcon },
+  { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
   { name: 'nav.reports', href: '/dashboard/reports', icon: ChartBarIcon },
   { name: 'nav.settings', href: '/dashboard/settings', icon: CogIcon },
 ]

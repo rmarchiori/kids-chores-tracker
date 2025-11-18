@@ -40,7 +40,57 @@ export const TaskSchema = z.object({
   family_id: z.string().uuid(),
   recurring: z.boolean().default(false),
   recurring_type: z.enum(['daily']).optional(),
+  image_url: z.string().optional().nullable(),
+  image_alt_text: z.string().optional().nullable(),
+  image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
   created_at: z.string().datetime().optional(),
+})
+
+// Task Image Library Schema
+export const TaskImageSchema = z.object({
+  id: z.string().uuid(),
+  category: z.enum(['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime']),
+  name: z.string().min(1).max(100),
+  file_path: z.string(),
+  alt_text: z.string(),
+  keywords: z.array(z.string()),
+  created_at: z.string().datetime(),
+})
+
+// Task Creation Schema (for POST requests)
+export const CreateTaskSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(255),
+  description: z.string().max(1000).optional(),
+  category: z.enum(['cleaning', 'homework', 'pets', 'other']),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+  due_date: z.string().optional(), // ISO date string
+  recurring: z.boolean().default(false),
+  recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
+  image_url: z.string().optional().nullable(),
+  image_alt_text: z.string().optional().nullable(),
+  image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
+  assigned_children: z.array(z.string().uuid()).optional(),
+})
+
+// Task Update Schema (for PATCH requests)
+export const UpdateTaskSchema = z.object({
+  title: z.string().min(1).max(255).optional(),
+  description: z.string().max(1000).optional().nullable(),
+  category: z.enum(['cleaning', 'homework', 'pets', 'other']).optional(),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  due_date: z.string().optional().nullable(), // ISO date string
+  recurring: z.boolean().optional(),
+  recurring_type: z.enum(['daily', 'weekly', 'monthly']).optional().nullable(),
+  image_url: z.string().optional().nullable(),
+  image_alt_text: z.string().optional().nullable(),
+  image_source: z.enum(['library', 'custom', 'emoji']).optional().nullable(),
+})
+
+// Task Image Update Schema
+export const UpdateTaskImageSchema = z.object({
+  image_url: z.string(),
+  image_alt_text: z.string(),
+  image_source: z.enum(['library', 'custom', 'emoji']),
 })
 
 export const TaskAssignmentSchema = z.object({
@@ -90,6 +140,10 @@ export type Family = z.infer<typeof FamilySchema>
 export type Parent = z.infer<typeof ParentSchema>
 export type Child = z.infer<typeof ChildSchema>
 export type Task = z.infer<typeof TaskSchema>
+export type TaskImage = z.infer<typeof TaskImageSchema>
+export type CreateTask = z.infer<typeof CreateTaskSchema>
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>
+export type UpdateTaskImage = z.infer<typeof UpdateTaskImageSchema>
 export type TaskAssignment = z.infer<typeof TaskAssignmentSchema>
 export type TaskCompletion = z.infer<typeof TaskCompletionSchema>
 export type Rating = z.infer<typeof RatingSchema>
