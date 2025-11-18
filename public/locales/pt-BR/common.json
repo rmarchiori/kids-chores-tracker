@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "Tarefas para Crianças",
+    "tagline": "Tornando as tarefas divertidas e recompensadoras"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "home": "Início",
+    "family": "Família",
+    "children": "Crianças",
+    "tasks": "Tarefas",
+    "reports": "Relatórios",
+    "progress": "Progresso",
+    "settings": "Configurações",
+    "logout": "Sair"
+  },
+  "auth": {
+    "login": "Entrar",
+    "register": "Cadastrar",
+    "logout": "Sair",
+    "email": "E-mail",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "fullName": "Nome Completo",
+    "forgotPassword": "Esqueceu a senha?",
+    "noAccount": "Não tem uma conta?",
+    "hasAccount": "Já tem uma conta?",
+    "resetPassword": "Redefinir Senha",
+    "updatePassword": "Atualizar Senha",
+    "newPassword": "Nova Senha",
+    "sendResetLink": "Enviar Link de Redefinição"
+  },
+  "dashboard": {
+    "welcome": "Bem-vindo(a), {{name}}!",
+    "family": "Família",
+    "familyName": "{{familyName}}",
+    "comingSoon": "Mais funcionalidades em breve!",
+    "loading": "Carregando...",
+    "error": "Falha ao carregar perfil",
+    "backToLogin": "Voltar ao Login"
+  },
+  "family": {
+    "settings": "Configurações da Família",
+    "members": "Membros da Família",
+    "invitations": "Convites Pendentes",
+    "inviteMember": "Convidar Membro da Família",
+    "email": "Endereço de E-mail",
+    "role": "Função",
+    "selectRole": "Selecione uma função",
+    "sendInvitation": "Enviar Convite",
+    "remove": "Remover",
+    "cancel": "Cancelar",
+    "admin": "Administrador",
+    "parent": "Pai/Mãe",
+    "teen": "Adolescente",
+    "invitedBy": "Convidado por",
+    "expiresAt": "Expira em",
+    "status": "Status",
+    "pending": "Pendente",
+    "accepted": "Aceito",
+    "rejected": "Rejeitado",
+    "expired": "Expirado"
+  },
+  "invitation": {
+    "title": "Convite da Família",
+    "youAreInvited": "Você foi convidado(a) para se juntar à",
+    "invitedAs": "Você foi convidado(a) como",
+    "invitedBy": "Convidado por",
+    "expires": "Expira em",
+    "accept": "Aceitar Convite",
+    "decline": "Recusar",
+    "notFound": "Convite não encontrado",
+    "expired": "Este convite expirou",
+    "alreadyUsed": "Este convite já foi {{status}}",
+    "emailMismatch": "Este convite foi enviado para {{email}}. Por favor, faça login com esse e-mail.",
+    "pleaseLogin": "Por favor, faça login para aceitar este convite",
+    "loading": "Carregando convite..."
+  },
+  "cards": {
+    "family": {
+      "title": "Família",
+      "description": "Convide membros da família e gerencie funções"
+    },
+    "tasks": {
+      "title": "Tarefas",
+      "description": "Crie e gerencie tarefas (em breve)"
+    },
+    "children": {
+      "title": "Crianças",
+      "description": "Adicione e gerencie crianças (em breve)"
+    },
+    "progress": {
+      "title": "Progresso",
+      "description": "Acompanhe conclusões e avaliações (em breve)"
+    }
+  },
+  "gettingStarted": {
+    "title": "Primeiros Passos",
+    "step1": "Convide membros da família",
+    "step2": "Adicione perfis de suas crianças (em breve)",
+    "step3": "Crie tarefas domésticas (em breve)",
+    "step4": "Atribua tarefas às suas crianças (em breve)",
+    "step5": "Revise e avalie o trabalho delas (em breve)",
+    "step6": "Acompanhe o progresso ao longo do tempo (em breve)",
+    "availableNow": "Disponível agora"
+  },
+  "common": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "warning": "Aviso",
+    "info": "Informação",
+    "back": "Voltar",
+    "saving": "Salvando..."
+  },
+  "children": {
+    "title": "Crianças",
+    "add_child": "Adicionar Criança",
+    "edit_child": "Editar Criança",
+    "no_children": "Ainda Não Há Crianças",
+    "add_first_child": "Adicione sua primeira criança para começar o acompanhamento de tarefas!",
+    "name": "Nome da Criança",
+    "name_placeholder": "Digite o nome da criança",
+    "name_required": "Nome é obrigatório",
+    "age_group": "Faixa Etária",
+    "years": "anos",
+    "younger_kids": "Crianças mais novas",
+    "older_kids": "Crianças mais velhas",
+    "theme": "Tema",
+    "theme_help": "Escolha como a interface desta criança será exibida",
+    "profile_photo": "Foto de Perfil",
+    "delete_confirm": "Tem certeza de que deseja excluir {{name}}? Esta ação não pode ser desfeita.",
+    "add_child_description": "Adicione uma nova criança à sua família para acompanhamento de tarefas",
+    "edit_child_description": "Atualize as informações da sua criança"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro. Por favor, tente novamente.",
+    "network": "Erro de rede. Por favor, verifique sua conexão.",
+    "unauthorized": "Você não está autorizado a realizar esta ação.",
+    "notFound": "O recurso solicitado não foi encontrado.",
+    "validation": "Por favor, verifique sua entrada e tente novamente."
+  },
+  "theme": {
+    "auto": "Automático",
+    "age_based": "Baseado na idade",
+    "bright": "Brilhante",
+    "young_style": "Estilo 5-8",
+    "cool": "Legal",
+    "older_style": "Estilo 9-12"
+  },
+  "settings": {
+    "theme_preference": "Preferência de Tema"
+  }
+}

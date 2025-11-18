@@ -2,42 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * CSS Variables for Dynamic Theming
+ * These are injected by ThemeProvider based on active theme
+ */
+:root {
+  /* Color variables - defaults (parent theme) */
+  --color-primary: #0770D0;
+  --color-primary-hover: #0660B8;
+  --color-success: #00756C;
+  --color-success-hover: #006B63;
+  --color-pending: #D4A60A;
+  --color-pending-hover: #BD9409;
+  --color-warning: #D4A60A;
+  --color-warning-hover: #BD9409;
+  --color-urgent: #C41E3A;
+  --color-urgent-hover: #A8192F;
+  --color-bg: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-text: #2D3748;
+  --color-text-secondary: #718096;
+  --color-border: #E2E8F0;
+
+  /* Typography variables */
+  --font-size-base: 14px;
+  --font-weight-base: 400;
+  --line-height-base: 1.5;
+
+  /* Spacing variables */
+  --border-radius: 8px;
+  --card-padding: 16px;
+  --icon-size: 24px;
+
+  /* Accessibility variables */
+  --touch-target-min: 44px;
+  --focus-ring-color: #0770D0;
+  --focus-ring-width: 2px;
+}
+
 @layer base {
   body {
-    @apply bg-white text-gray-900;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
   }
 
   h1 {
     @apply text-3xl font-bold;
+    color: var(--color-text);
   }
 
   h2 {
     @apply text-2xl font-bold;
+    color: var(--color-text);
   }
 
   h3 {
     @apply text-xl font-semibold;
+    color: var(--color-text);
   }
 
   button {
-    @apply rounded transition-colors;
+    border-radius: var(--border-radius);
+    @apply transition-colors;
+  }
+
+  /* Focus styles for accessibility */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 }
 
 @layer components {
+  /* Theme-aware button styles using CSS variables */
   .btn-primary {
-    @apply px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium;
+    background-color: var(--color-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    min-height: var(--touch-target-min);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .btn-success {
+    background-color: var(--color-success);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    min-height: var(--touch-target-min);
+  }
+
+  .btn-success:hover {
+    background-color: var(--color-success-hover);
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-gray-200 text-gray-900 hover:bg-gray-300 rounded-lg font-medium;
+    @apply px-4 py-2 bg-gray-200 text-gray-900 hover:bg-gray-300 font-medium;
+    border-radius: var(--border-radius);
+    min-height: var(--touch-target-min);
   }
 
+  /* Theme-aware card using CSS variables */
   .card {
-    @apply rounded-lg border border-gray-200 bg-white p-4 shadow-sm;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--card-padding);
+    @apply shadow-sm;
   }
 
-  /* Age group specific styling */
+  /* Theme-aware text colors */
+  .text-themed {
+    color: var(--color-text);
+  }
+
+  .text-themed-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  /* Age group specific styling (legacy support) */
   .age-5-8 {
     @apply text-lg font-semibold;
   }
@@ -47,9 +141,31 @@
   }
 }
 
-/* Ensure touch targets are at least 48px */
+/* Ensure touch targets are at least minimum size */
 @layer utilities {
   .touch-target {
-    @apply min-h-12 min-w-12;
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Utility classes for CSS variables */
+  .bg-themed-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-themed-success {
+    background-color: var(--color-success);
+  }
+
+  .bg-themed-surface {
+    background-color: var(--color-surface);
+  }
+
+  .text-themed {
+    color: var(--color-text);
+  }
+
+  .border-themed {
+    border-color: var(--color-border);
   }
 }

@@ -1,8 +1,8 @@
 # Requirements - Kids Chores Tracker MVP 1.0
 
-**Version**: 1.0 \
-**Status**: Ready for Development \
-**Effort**: 116 hours (8 weeks @ 15-20 hrs/week)
+**Version**: 1.1 \
+**Status**: Updated with i18n & TV Display \
+**Effort**: 136 hours (9 weeks @ 15-20 hrs/week)
 
 ---
 
@@ -158,6 +158,32 @@ A family chore management app where:
 
 ---
 
+## Included in MVP 1.0 (Added Requirements)
+
+### M5: Multi-Language Support
+- Support for 3 languages: Portuguese Brazilian (pt-BR), English Canadian (en-CA), French Canadian (fr-CA)
+- Language selector in user settings
+- All UI strings internationalized
+- Age-appropriate messages translated per language
+- Date/time localization per language
+
+**Technologies**: next-i18next, react-i18next
+**Effort**: 10-12 hours
+
+### M6: TV Display Mode
+- Large-screen optimized layout for family TVs
+- `/display` route with auto-refresh (30 seconds)
+- QR code for child quick-login from mobile device
+- High-contrast, large fonts for visibility across room
+- Works on any browser without casting protocol (MVP)
+
+**Technologies**: qrcode.react, CSS media queries for large screens
+**Effort**: 8-10 hours
+
+**Note**: Chromecast and AirPlay support planned for Phase 2+
+
+---
+
 ## Out of Scope for MVP 1.0
 
 - Photo uploads/verification
@@ -166,7 +192,7 @@ A family chore management app where:
 - Leaderboards or streaks
 - Points/reward system
 - Achievements or badges
-- Multi-language support
+- Chromecast/AirPlay casting protocols
 - Granular permission control
 - Offline mode
 - Native mobile apps

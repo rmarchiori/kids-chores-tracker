@@ -155,27 +155,56 @@ Phase 2+ features planned after MVP 1.0 launch. These add analytics, media, gami
 
 ---
 
-## Phase 4: Internationalization (v1.3)
+## Phase 4: Advanced Display & Casting (v1.3)
 
-### Feature: Multi-Language Support
-**Description**: Support English, Spanish, French, German, Mandarin (Phase 2)
-**Why Deferred**: Not MVP priority; adds UI complexity
-**Effort**: 12-14 hours
-**Dependencies**: All existing features
-**Technologies**: next-i18next, lingui, react-i18next
+### Feature: Chromecast Integration
+**Description**: Cast family dashboard to TV via Chromecast
+**Why Deferred**: Web display mode (MVP) covers basic TV use case
+**Effort**: 10-12 hours
+**Dependencies**: Sprint 0.6 (TV Display Mode)
+**Technologies**: Google Cast SDK, React
 **Sprint**: P4.1
-**Languages**:
-- English (default)
-- Spanish (es)
-- French (fr)
-- German (de)
-- Mandarin (zh) - Phase 2+
+**Features**:
+- Cast sender app from parent's phone
+- Stream live dashboard to Chromecast device
+- Remote control from phone (pause, refresh)
+- Auto-reconnect on network changes
+
+---
+
+### Feature: AirPlay Support
+**Description**: Mirror family dashboard to Apple TV via AirPlay
+**Why Deferred**: Safari AirPlay mirroring works already (MVP)
+**Effort**: 6-8 hours
+**Dependencies**: Sprint 0.6 (TV Display Mode)
+**Technologies**: Safari AirPlay API
+**Sprint**: P4.2
+**Features**:
+- AirPlay button in TV display mode
+- Optimized for Apple TV resolution
+- Picture-in-picture support
+- Automatic orientation handling
+
+---
+
+### Feature: Additional Language Support
+**Description**: Expand from 3 MVP languages (pt-BR, en-CA, fr-CA) to 8+ languages
+**Why Moved to Phase 2**: MVP already has core i18n; adding more languages is incremental
+**Effort**: 8-10 hours
+**Dependencies**: Sprint 0.5 (Multi-Language MVP)
+**Technologies**: Existing next-i18next setup
+**Sprint**: P4.3
+**New Languages**:
+- Spanish (es-MX, es-ES)
+- German (de-DE)
+- Mandarin (zh-CN)
+- Italian (it-IT)
+- Dutch (nl-NL)
 
 **Implementation**:
-- All UI strings in i18n JSON files
-- Date/time localization
-- Number formatting (currency, decimals)
-- Messaging age-group specific per language
+- Translate existing JSON files to new languages
+- Community translation contributions
+- Professional translation review for key strings
 
 ---
 
@@ -205,9 +234,13 @@ Phase 2+ features planned after MVP 1.0 launch. These add analytics, media, gami
 - **Benefits**: Small (13 kB), modern API
 - **Install**: `npm install date-fns`
 
-### react-i18next (Internationalization)
-- **When**: Phase 4.1 (multi-language support)
-- **Install**: `npm install react-i18next i18next`
+### Google Cast SDK (Chromecast)
+- **When**: Phase 4.1 (Chromecast integration)
+- **Install**: `npm install @types/chromecast-caf-sender`
+
+### Additional i18n Languages
+- **When**: Phase 4.3 (expand from MVP's 3 languages to 8+)
+- **Note**: Core i18next already installed in Sprint 0.5
 
 ### Vitest + Playwright (Testing Framework)
 - **When**: Phase 2.1+ (comprehensive test coverage)
@@ -250,7 +283,9 @@ Phase 2+ features planned after MVP 1.0 launch. These add analytics, media, gami
 | 3 | Points & rewards | 14-16h | P3.2 |
 | 3 | Achievements & streaks | 10-12h | P3.3 |
 | 3 | Leaderboard (opt) | 8-10h | P3.4 |
-| 4 | Multi-language | 12-14h | P4.1 |
+| 4 | Chromecast integration | 10-12h | P4.1 |
+| 4 | AirPlay support | 6-8h | P4.2 |
+| 4 | Additional languages | 8-10h | P4.3 |
 | - | **Testing frameworks** | **8-10h** | **P2.1** |
 | **Total** | - | **100-120h** | - |
 

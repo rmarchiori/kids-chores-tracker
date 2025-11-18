@@ -1,0 +1,160 @@
+{
+  "app": {
+    "title": "Kids Chores Tracker",
+    "tagline": "Making chores fun and rewarding"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "family": "Family",
+    "children": "Children",
+    "tasks": "Tasks",
+    "reports": "Reports",
+    "progress": "Progress",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "resetPassword": "Reset Password",
+    "updatePassword": "Update Password",
+    "newPassword": "New Password",
+    "sendResetLink": "Send Reset Link"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "family": "Family",
+    "familyName": "{{familyName}}",
+    "comingSoon": "More features coming soon!",
+    "loading": "Loading...",
+    "error": "Failed to load profile",
+    "backToLogin": "Back to Login"
+  },
+  "family": {
+    "settings": "Family Settings",
+    "members": "Family Members",
+    "invitations": "Pending Invitations",
+    "inviteMember": "Invite Family Member",
+    "email": "Email Address",
+    "role": "Role",
+    "selectRole": "Select a role",
+    "sendInvitation": "Send Invitation",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "admin": "Admin",
+    "parent": "Parent",
+    "teen": "Teen",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
+    "status": "Status",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "expired": "Expired"
+  },
+  "invitation": {
+    "title": "Family Invitation",
+    "youAreInvited": "You've been invited to join",
+    "invitedAs": "You've been invited as a",
+    "invitedBy": "Invited by",
+    "expires": "Expires",
+    "accept": "Accept Invitation",
+    "decline": "Decline",
+    "notFound": "Invitation not found",
+    "expired": "This invitation has expired",
+    "alreadyUsed": "This invitation has already been {{status}}",
+    "emailMismatch": "This invitation was sent to {{email}}. Please log in with that email address.",
+    "pleaseLogin": "Please log in to accept this invitation",
+    "loading": "Loading invitation..."
+  },
+  "cards": {
+    "family": {
+      "title": "Family",
+      "description": "Invite family members and manage roles"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Create and manage chores (coming soon)"
+    },
+    "children": {
+      "title": "Children",
+      "description": "Add and manage children (coming soon)"
+    },
+    "progress": {
+      "title": "Progress",
+      "description": "Track completion and ratings (coming soon)"
+    }
+  },
+  "gettingStarted": {
+    "title": "Getting Started",
+    "step1": "Invite family members",
+    "step2": "Add your children's profiles (coming soon)",
+    "step3": "Create chores and tasks (coming soon)",
+    "step4": "Assign tasks to your children (coming soon)",
+    "step5": "Review and rate their work (coming soon)",
+    "step6": "Track progress over time (coming soon)",
+    "availableNow": "Available now"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "back": "Back",
+    "saving": "Saving..."
+  },
+  "children": {
+    "title": "Children",
+    "add_child": "Add Child",
+    "edit_child": "Edit Child",
+    "no_children": "No Children Yet",
+    "add_first_child": "Add your first child to get started with chore tracking!",
+    "name": "Child's Name",
+    "name_placeholder": "Enter child's name",
+    "name_required": "Name is required",
+    "age_group": "Age Group",
+    "years": "years",
+    "younger_kids": "Younger kids",
+    "older_kids": "Older kids",
+    "theme": "Theme",
+    "theme_help": "Choose how this child's interface will look",
+    "profile_photo": "Profile Photo",
+    "delete_confirm": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "add_child_description": "Add a new child to your family for chore tracking",
+    "edit_child_description": "Update your child's information"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "The requested resource was not found.",
+    "validation": "Please check your input and try again."
+  },
+  "theme": {
+    "auto": "Auto",
+    "age_based": "Age-based",
+    "bright": "Bright",
+    "young_style": "5-8 style",
+    "cool": "Cool",
+    "older_style": "9-12 style"
+  },
+  "settings": {
+    "theme_preference": "Theme Preference"
+  }
+}

@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+// Language Support
+export const SupportedLanguages = ['en-CA', 'pt-BR', 'fr-CA'] as const
+export const LanguageSchema = z.enum(SupportedLanguages)
+export type Language = z.infer<typeof LanguageSchema>
+
 // User & Family Schemas
 export const FamilySchema = z.object({
   id: z.string().uuid(),
@@ -18,8 +23,10 @@ export const ChildSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255),
   age_group: z.enum(['5-8', '9-12']),
+  theme_preference: z.enum(['age-default', 'young', 'older']).default('age-default'),
+  profile_photo_url: z.union([z.string().url(), z.null()]).optional(),
   family_id: z.string().uuid(),
-  created_at: z.string().datetime(),
+  created_at: z.string(),
 })
 
 // Task Schemas
@@ -48,10 +55,10 @@ export const TaskCompletionSchema = z.object({
   id: z.string().uuid().optional(),
   task_id: z.string().uuid(),
   child_id: z.string().uuid(),
-  completed_at: z.coerce.date(),
+  completed_at: z.coerce.date().optional(),
   rating: z.number().min(1).max(5).nullable().optional(),
   notes: z.string().max(500).optional(),
-  status: z.enum(['completed', 'pending_review', 'reviewed']).default('completed'),
+  status: z.enum(['pending', 'pending_review', 'completed', 'rejected']).default('pending'),
   reviewed_by: z.string().uuid().nullable().optional(),
   feedback: z.string().max(500).optional(),
   created_at: z.string().datetime().optional(),

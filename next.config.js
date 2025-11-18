@@ -6,6 +6,7 @@ const nextConfig = {
   },
   // Next.js automatically looks for app/ in src/ directory
   // No additional configuration needed
+  // Note: i18n config not supported in App Router - using cookies/headers instead
 }
 
 module.exports = nextConfig

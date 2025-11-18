@@ -1,27 +1,27 @@
 # Implementation Plan - MVP 1.0
 
-**Version**: 1.0
-**Total Effort**: 116 hours
-**Duration**: 8 weeks @ 15-20 hours/week
-**Target Release**: 6-8 weeks
+**Version**: 1.2
+**Total Effort**: 128 hours (revised)
+**Duration**: 8-9 weeks @ 15-20 hours/week
+**Target Release**: 8-9 weeks
 
 ---
 
 ## Overview
 
-4 phases, 7 sprints, delivering M1-M4 core features.
+3 phases, 10 sprints, delivering M1-M5 core features with enhanced UX (TV display moved to post-MVP).
 
 | Phase | Sprints | Duration | Effort | Outcome |
 |-------|---------|----------|--------|---------|
-| 0: Setup | 0.1-0.2 | 1 week | 22h | Ready to code |
-| 1: Core | 1.1-1.3 | 3 weeks | 44h | All tasks working |
+| 0: Setup | 0.1-0.5 | 2 weeks | 42h | Ready to code + i18n |
+| 1: Core | 1.1-1.3 | 3 weeks | 54h | All tasks + theming + images |
 | 2: Quality | 2.1-2.3 | 2 weeks | 30h | Rating & review system |
 | 3: Launch | 3.1-3.2 | 2 weeks | 22h | Production ready |
-| **Total** | **7** | **8 weeks** | **116h** | **Live MVP** |
+| **Total** | **10** | **8-9 weeks** | **128h** | **Live MVP** |
 
 ---
 
-## Phase 0: Setup & Infrastructure (Week 1, 22 hours)
+## Phase 0: Setup & Infrastructure (Weeks 1-2, 42 hours)
 
 ### Sprint 0.1: Project Scaffolding (10 hours)
 
@@ -47,65 +47,223 @@
 
 ### Sprint 0.2: Database & Authentication (12 hours)
 
+**Status**: ✅ COMPLETED
+
 **Tasks**:
-- Create Supabase project
-- Design and create database schema (8 tables: families, parents, children, tasks, task_assignments, task_completions, recurring_task_instances, subtasks)
-- Enable Row-Level Security on all tables
-- Create auth pages (login, register, password reset)
-- Setup protected routes middleware
+- ✅ Create Supabase project
+- ✅ Design and create database schema (9 tables: families, family_members, family_invitations, children, tasks, task_assignments, task_completions, recurring_task_instances, subtasks)
+- ✅ Enable Row-Level Security on all tables
+- ✅ Create auth pages (login, register, password reset, update password)
+- ✅ Setup protected routes middleware
+- ✅ Fix password reset flow (Supabase redirect handling)
 
 **Best Practices**:
-- RLS policies for family-level isolation
+- RLS policies for family-level isolation (simplified to avoid recursion)
 - SCRAM-SHA-256 authentication (Supabase default)
 - JSONB columns for flexible metadata
+- Two-phase registration to avoid RLS conflicts
 
 **Deliverables**:
 - ✅ Supabase project created with all tables
-- ✅ RLS policies enforced (test with different users)
+- ✅ RLS policies enforced (simplified for onboarding)
 - ✅ Email/password auth working
 - ✅ Protected routes middleware functional
+- ✅ Password reset flow working correctly
+- ✅ family_members junction table (replaces parents)
+- ✅ family_invitations table for multi-parent support
 
 ---
 
-## Phase 1: Core Features (Weeks 2-4, 44 hours)
+### Sprint 0.3: Registration Fix & Onboarding (8 hours)
 
-### Sprint 1.1: Family & Children Management (16 hours)
+**Status**: ✅ COMPLETED
 
 **Tasks**:
-- Parent dashboard layout (responsive grid)
+- ✅ Remove family creation from registration flow
+- ✅ Create `/onboarding` page for post-login family setup
+- ✅ Update login redirect logic (check for family membership)
+- ✅ Replace `parents` table with `family_members` junction table
+- ✅ Add `family_invitations` table for future multi-parent support
+- ✅ Update dashboard to use `family_members`
+- ✅ Add trigger to prevent last admin removal
+
+**Best Practices**:
+- Two-phase registration: Auth → Onboarding
+- Avoid RLS recursion with simple INSERT policies
+- Support multi-family per user architecture
+- Database-level protection for critical business rules
+
+**Deliverables**:
+- ✅ Registration creates auth.users only (no RLS errors)
+- ✅ Onboarding creates family + family_member (user as admin)
+- ✅ Login redirects to /onboarding or /dashboard based on family
+- ✅ Dashboard loads profile from family_members table
+- ✅ Foundation for Sprint 0.4 (invitations)
+- ✅ Cannot remove last admin from family (DB trigger)
+
+---
+
+### Sprint 0.4: Family Invitation System (10 hours)
+
+**Status**: ⏳ NOT STARTED
+
+**Tasks**:
+- Admin invite flow: `/dashboard/family/settings` with invite form
+- Invitation email with magic link token
+- `/invite/accept/[token]` acceptance page
+- Role-based permissions (admin, parent, teen)
+- Family management UI (list members, pending invites, remove members)
+- Edge case: Prevent last admin removal
+
+**Best Practices**:
+- Token expiration (7 days)
+- Email validation
+- Transaction-safe invitation acceptance
+- RLS policies for family_invitations table
+
+**Deliverables**:
+- ✅ Admins can invite users via email
+- ✅ Invitees can accept invitations
+- ✅ Multi-parent families working
+- ✅ Role management (admin vs parent)
+- ✅ Last admin cannot leave family
+
+---
+
+### Sprint 0.5: Multi-Language Support (10 hours)
+
+**Status**: ⏳ NOT STARTED
+
+**Tasks**:
+- Install and configure next-i18next
+- Create translation files for 3 languages:
+  - Portuguese Brazilian (pt-BR)
+  - English Canadian (en-CA)
+  - French Canadian (fr-CA)
+- Language selector component in header/settings
+- Translate all existing UI strings
+- Date/time localization using date-fns-tz
+- Store language preference in user profile
+
+**Best Practices**:
+- Namespace translations by page (common, auth, dashboard, tasks)
+- Use ICU MessageFormat for complex strings
+- Lazy-load translations per route
+- Test with missing translation keys
+
+**Deliverables**:
+- ✅ Language selector working in UI
+- ✅ All strings translated for 3 languages
+- ✅ User preference saved and persisted
+- ✅ Age-appropriate messages per language
+- ✅ Date/time formatted per locale
+
+---
+
+## Phase 1: Core Features (Weeks 3-5, 54 hours)
+
+### Sprint 1.1: Family & Children Management + Theming System (22 hours)
+
+**Status**: ⏳ NOT STARTED
+
+**Tasks**:
+- Parent dashboard layout (responsive navigation)
+  - **Desktop/Tablet**: Left sidebar navigation (collapsible)
+  - **Mobile**: Bottom navigation bar with icons
 - Add/edit/delete children functionality
+- Child profile photos (upload + default avatars)
 - Children list with age groups (5-8, 9-12)
 - Multi-parent access verification
+- **NEW**: Age-specific theme system
+  - Theme switcher component (5-8 bright, 9-12 mature)
+  - Color palette definitions per age group
+  - Theme persistence in database (child.theme_preference)
 
 **Best Practices**:
 - React Server Components for data fetching
 - Mobile-first responsive design
-- Cascade layers for CSS organization
+- CSS custom properties for theme switching
+- Tailwind CSS theme extension for age-specific colors
+- WCAG AA contrast compliance (4.5:1) on all themes
+
+**Color Psychology Applied**:
+- **5-8 Theme**: Very bright, playful, high contrast
+  - Primary: Vibrant coral (#FF6B6B)
+  - Success: Bright teal (#4ECDC4)
+  - Pending: Sunny yellow (#FFE66D)
+  - Background: Light purple (#F7F7FF)
+- **9-12 Theme**: Colorful but more mature
+  - Primary: Cool purple (#6C5CE7)
+  - Success: Rich green (#00B894)
+  - Pending: Warm yellow (#FDCB6E)
+  - Background: Light blue-gray (#DFE6E9)
+- **Parent Theme**: Calming, professional
+  - Primary: Trustworthy blue (#0984E3)
+  - Success: Forest green (#00B894)
+  - Urgent: Soft red (#D63031)
+  - Background: Clean white (#FFFFFF)
 
 **Deliverables**:
-- ✅ Parent dashboard showing children
+- ✅ Parent dashboard with responsive navigation (left sidebar + bottom nav)
 - ✅ Children CRUD operations working
+- ✅ Child profile photo upload + default avatars
 - ✅ Age group selection functioning
+- ✅ Theme switching system working per child
+- ✅ Age-specific color palettes applied
 - ✅ Mobile-responsive layout
 
 ---
 
-### Sprint 1.2: Task Management with Recurrence (18 hours)
+### Sprint 1.2: Task Management + Image Library (22 hours)
+
+**Status**: ⏳ NOT STARTED
 
 **Tasks**:
 - Task creation form (title, category, priority, description, assigned children)
 - Daily recurring task logic (auto-generate daily instances)
 - Task list views (parent and child views)
 - Task edit/delete functionality
+- **NEW**: Task image library system
+  - Curated image library with 40-50 common tasks
+  - Categories: Cleaning, Homework, Hygiene, Outdoor, Helping, Meals, Pets, Bedtime
+  - Image picker UI (searchable, filterable by category)
+  - Parent can upload custom images (Supabase Storage)
+  - Emoji fallback for tasks without images
+  - Images adapt to theme colors (5-8 vs 9-12)
+
+**Image Library Contents** (hand-drawn/cute illustration style):
+- **Cleaning**: Make bed, clean room, vacuum, dust, take out trash, organize toys
+- **Homework**: Math, reading, writing, study, projects
+- **Hygiene**: Brush teeth, shower, wash hands, comb hair, clip nails
+- **Outdoor**: Water plants, feed pets, rake leaves, shovel snow
+- **Helping**: Set table, clear dishes, help sibling, fold laundry
+- **Meals**: Breakfast, lunch, dinner, snack, drink water
+- **Pets**: Feed dog/cat, walk dog, clean litter box, groom pet
+- **Bedtime**: Pajamas, story time, lights out, morning routine
 
 **Best Practices**:
-- Granular API routes (`/api/tasks`, `/api/tasks/[id]`)
+- Granular API routes (`/api/tasks`, `/api/tasks/[id]`, `/api/task-images`)
 - Zod input validation on all forms and APIs
 - React Hook Form for form state management
+- Supabase Storage for custom image uploads
+- Image optimization (WebP format, lazy loading)
+- Alt text for all images (accessibility)
+
+**Database Schema Changes**:
+```sql
+ALTER TABLE tasks ADD COLUMN image_url TEXT;
+ALTER TABLE tasks ADD COLUMN image_alt_text TEXT;
+ALTER TABLE tasks ADD COLUMN image_source TEXT; -- 'library' | 'custom' | 'emoji'
+```
 
 **Deliverables**:
 - ✅ Task creation working with daily recurrence
 - ✅ Multiple child assignment per task
+- ✅ Task image library with 40-50 illustrations
+- ✅ Image picker UI (category filtering)
+- ✅ Custom image upload working
+- ✅ Hybrid display: Image + text on all tasks
+- ✅ Emoji fallback system
 - ✅ Task lists filtered and sorted correctly
 - ✅ API routes with validation
 
@@ -249,8 +407,9 @@
 - [ ] Daily recurring tasks with skip dates work
 - [ ] Children self-rate quality 1-5 stars
 - [ ] Parents review and adjust ratings
-- [ ] Age-appropriate UI messaging (5-8 vs 9-12)
-- [ ] Works on desktop and mobile
+- [ ] Age-appropriate UI (theming + messaging for 5-8 vs 9-12)
+- [ ] Task image library with 40+ common tasks
+- [ ] Works on desktop and mobile (responsive navigation)
 
 ### Performance
 - [ ] Response time <200ms average
