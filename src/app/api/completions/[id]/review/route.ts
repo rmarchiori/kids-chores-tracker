@@ -2,6 +2,8 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { updateStreak } from '@/lib/utils/streak-tracker'
+import { unlockAchievements } from '@/lib/utils/achievement-checker'
 
 const ReviewSchema = z.object({
   parent_rating: z.number().int().min(1).max(5),
@@ -156,7 +158,21 @@ export async function POST(
       console.error('Error awarding points:', pointsError)
     }
 
-    return NextResponse.json(updatedCompletion, { status: 200 })
+    // Update streak and check achievements
+    try {
+      await updateStreak(updatedCompletion.child_id)
+      const newlyUnlocked = await unlockAchievements(updatedCompletion.child_id)
+
+      // Return unlocked achievements in response
+      return NextResponse.json({
+        ...updatedCompletion,
+        newly_unlocked_achievements: newlyUnlocked
+      }, { status: 200 })
+    } catch (streakError) {
+      // Log error but don't fail the review
+      console.error('Error updating streak/achievements:', streakError)
+      return NextResponse.json(updatedCompletion, { status: 200 })
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 })
