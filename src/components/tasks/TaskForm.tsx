@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ImagePicker } from './ImagePicker'
 import { CustomImageUpload } from './CustomImageUpload'
+import { RecurrencePatternPicker } from './RecurrencePatternPicker'
 import { CreateTaskSchema } from '@/lib/schemas'
 import { useTranslation } from '@/hooks/useTranslation'
 
@@ -60,6 +61,8 @@ export function TaskForm({
       due_date: initialData?.due_date || '',
       recurring: initialData?.recurring || false,
       recurring_type: initialData?.recurring_type || null,
+      rrule: (initialData as any)?.rrule || null,
+      recurrence_pattern_description: (initialData as any)?.recurrence_pattern_description || null,
       image_url: initialData?.image_url || null,
       image_alt_text: initialData?.image_alt_text || null,
       image_source: initialData?.image_source || null,
@@ -304,28 +307,15 @@ export function TaskForm({
       </div>
       <p id="recurring-help" className="text-xs text-gray-500 -mt-4 ml-6">{t('tasks.recurring_help')}</p>
 
-      {/* Recurring Type (shown if recurring is checked) */}
+      {/* Recurring Pattern Picker (shown if recurring is checked) */}
       {recurring && (
-        <div>
-          <label htmlFor="recurring_type" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('tasks.recurring')}
-          </label>
-          <select
-            id="recurring_type"
-            {...register('recurring_type')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label={t('tasks.recurring')}
-          >
-            <option value="">{t('tasks.recurring_options.none')}</option>
-            <option value="daily">{t('tasks.recurring_options.daily')}</option>
-            <option value="weekly">{t('tasks.recurring_options.weekly')}</option>
-            <option value="monthly">{t('tasks.recurring_options.monthly')}</option>
-            <option value="business_days">{t('tasks.recurring_options.business_days')}</option>
-          </select>
-          {errors.recurring_type && (
-            <p className="mt-1 text-sm text-red-600" role="alert">{errors.recurring_type.message}</p>
-          )}
-        </div>
+        <RecurrencePatternPicker
+          value={watch('rrule') || undefined}
+          onChange={(rrule, description) => {
+            setValue('rrule', rrule)
+            setValue('recurrence_pattern_description', description)
+          }}
+        />
       )}
 
       {/* Assign to Children */}

@@ -89,6 +89,8 @@ export const CreateTaskSchema = z.object({
   due_date: z.string().min(1).optional().or(z.literal('').transform(() => undefined)), // ISO date string, empty string -> undefined
   recurring: z.boolean().default(false),
   recurring_type: z.enum(['daily', 'weekly', 'monthly', 'business_days']).optional().nullable(),
+  rrule: z.string().optional().nullable(), // RFC 5545 recurrence rule string
+  recurrence_pattern_description: z.string().optional().nullable(), // Human-readable description
   image_url: z.string().optional().nullable().refine(isValidImageUrl, {
     message: 'Image URL must be from approved sources only'
   }),
@@ -115,6 +117,8 @@ export const UpdateTaskSchema = z.object({
   due_date: z.string().min(1).optional().nullable().or(z.literal('').transform(() => null)), // ISO date string, empty string -> null
   recurring: z.boolean().optional(),
   recurring_type: z.enum(['daily', 'weekly', 'monthly', 'business_days']).optional().nullable(),
+  rrule: z.string().optional().nullable(), // RFC 5545 recurrence rule string
+  recurrence_pattern_description: z.string().optional().nullable(), // Human-readable description
   image_url: z.string().optional().nullable().refine(isValidImageUrl, {
     message: 'Image URL must be from approved sources only'
   }),
