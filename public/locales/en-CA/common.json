@@ -659,6 +659,53 @@
         "register": "Start Free for Everyone! 🎉",
         "login": "Login"
       }
+    },
+    "hybrid": {
+      "views": {
+        "both": "Both Views",
+        "parent": "For Parents",
+        "kid": "For Kids"
+      },
+      "parent": {
+        "title": "For Parents",
+        "subtitle": "Organize, track, and guide your family's daily routines",
+        "cta": "Start Managing Now",
+        "hoverHint": "Click to explore parent features →",
+        "features": {
+          "dashboard": "Family Dashboard",
+          "tracking": "Progress Tracking",
+          "review": "Review & Approve",
+          "rewards": "Reward System"
+        },
+        "featuresDesc": {
+          "dashboard": "Manage everyone",
+          "tracking": "See completion stats",
+          "review": "Quality control",
+          "rewards": "Set incentives"
+        }
+      },
+      "kid": {
+        "title": "For Kids",
+        "subtitle": "Complete tasks, earn rewards, and have fun!",
+        "cta": "Start Your Adventure! 🚀",
+        "hoverHint": "← Click to explore kid features",
+        "features": {
+          "tasks": "My Tasks",
+          "complete": "Complete & Earn",
+          "stars": "Collect Stars",
+          "levelup": "Level Up"
+        },
+        "featuresDesc": {
+          "tasks": "See what to do",
+          "complete": "Check off chores",
+          "stars": "Build your streak",
+          "levelup": "Unlock achievements"
+        }
+      },
+      "bottomCta": {
+        "start": "Start Free for Everyone! 🎉",
+        "login": "Login"
+      }
     }
   }
 }
