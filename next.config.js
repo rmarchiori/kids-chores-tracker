@@ -56,10 +56,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // Removed 'unsafe-eval' and 'unsafe-inline' from script-src for security
-              // Using nonce or hash would be ideal, but for Next.js we allow 'unsafe-inline' for styles only
-              // Production apps should use nonce-based CSP with Next.js middleware
-              "script-src 'self'",
+              // Allow unsafe-eval in development, self-only in production
+              // Next.js requires unsafe-eval for Fast Refresh in dev mode
+              process.env.NODE_ENV === 'development'
+                ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
+                : "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'", // Required for styled-jsx and inline styles
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",

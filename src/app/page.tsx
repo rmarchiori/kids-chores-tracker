@@ -1,24 +1,78 @@
-import Link from 'next/link'
+'use client'
+
+import { useState } from 'react'
+import PlayfulHero from '@/components/landing/PlayfulHero'
+import SplitScreenHero from '@/components/landing/SplitScreenHero'
+import { motion, AnimatePresence } from 'framer-motion'
+
+type LandingVersion = 'playful' | 'split'
 
 export default function Home() {
+  const [version, setVersion] = useState<LandingVersion>('split')
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Kids Chores Tracker</h1>
-        <p className="mb-8 text-xl text-gray-600">
-          A family chore management app for parents and children
-        </p>
-        <div className="flex flex-col gap-4 justify-center">
-          <div className="flex gap-4 justify-center">
-            <Link href="/auth/login" className="btn-primary">
-              Login
-            </Link>
-            <Link href="/auth/register" className="btn-secondary">
-              Create Account
-            </Link>
-          </div>
+    <>
+      {/* Version Switcher - Fixed Bottom Right */}
+      <motion.div
+        className="fixed bottom-6 right-6 z-50 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 border border-gray-200"
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <div className="text-xs font-semibold text-gray-500 mb-2 text-center">
+          Preview Versions
         </div>
-      </div>
-    </main>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setVersion('split')}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+              version === 'split'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Split-Screen
+          </button>
+          <button
+            onClick={() => setVersion('playful')}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+              version === 'playful'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg scale-105'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Playful 3D
+          </button>
+        </div>
+        <div className="text-xs text-gray-400 mt-2 text-center">
+          {version === 'split' ? 'Approach 5' : 'Approach 2'}
+        </div>
+      </motion.div>
+
+      {/* Landing Page Content */}
+      <AnimatePresence mode="wait">
+        {version === 'playful' ? (
+          <motion.div
+            key="playful"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.5 }}
+          >
+            <PlayfulHero />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="split"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SplitScreenHero />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
