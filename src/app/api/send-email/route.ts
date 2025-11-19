@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 
 const emailSchema = z.object({
@@ -9,6 +10,31 @@ const emailSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Verify authentication
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - authentication required' },
+        { status: 401 }
+      )
+    }
+
+    // Verify user is a family member (has permission to send emails)
+    const { data: familyMember, error: familyError } = await supabase
+      .from('family_members')
+      .select('family_id, role')
+      .eq('user_id', user.id)
+      .single()
+
+    if (familyError || !familyMember) {
+      return NextResponse.json(
+        { error: 'Forbidden - user must be a family member' },
+        { status: 403 }
+      )
+    }
+
     // Parse and validate request body
     const body = await request.json()
     const { to, subject, html } = emailSchema.parse(body)
@@ -20,12 +46,14 @@ export async function POST(request: Request) {
     // - AWS SES
     // - Mailgun
 
-    // For now, log the email (for development/testing)
-    console.log('📧 Email to send:', {
-      to,
-      subject,
-      preview: html.substring(0, 100) + '...'
-    })
+    // Log only in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📧 Email to send:', {
+        to,
+        subject,
+        preview: html.substring(0, 100) + '...'
+      })
+    }
 
     // TODO: Implement actual email sending with your preferred service
     // Example with Resend:

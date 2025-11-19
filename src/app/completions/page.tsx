@@ -8,35 +8,6 @@ import { StarRating } from '@/components/StarRating'
 import { useCompletions } from '@/lib/hooks/useData'
 import { createClient } from '@/lib/supabase/client'
 
-interface Completion {
-  id: string
-  task_id: string
-  child_id: string
-  completed_at: string
-  status: string
-  notes?: string
-  child_rating?: number
-  child_notes?: string
-  parent_rating?: number
-  parent_feedback?: string
-  tasks: {
-    id: string
-    title: string
-    description?: string
-    category: string
-    priority: string
-    image_url?: string
-    image_alt_text?: string
-    image_source?: 'library' | 'custom' | 'emoji'
-  }
-  children: {
-    id: string
-    name: string
-    age_group: '5-8' | '9-12'
-    profile_photo_url?: string
-  }
-}
-
 export default function CompletionsPage() {
   const { t } = useTranslation()
   const [filterChild, setFilterChild] = useState<string>('all')
@@ -45,7 +16,7 @@ export default function CompletionsPage() {
   const supabase = createClient()
 
   // Use SWR hook for completions with filter
-  const { data: completions = [], error, isLoading: completionsLoading } = useCompletions(
+  const { data: completions = [], isLoading: completionsLoading } = useCompletions(
     filterChild !== 'all' ? filterChild : undefined,
     undefined,
     100
@@ -153,7 +124,7 @@ export default function CompletionsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {completions.map(completion => (
+            {completions.map((completion: any) => (
               <div
                 key={completion.id}
                 className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200"

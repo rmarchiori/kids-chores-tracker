@@ -16,7 +16,7 @@ interface CompletionWithTask {
   tasks: {
     id: string
     family_id: string
-  }
+  }[]
 }
 
 export async function POST(
@@ -57,11 +57,14 @@ export async function POST(
       return NextResponse.json({ error: 'Resource not found or access denied' }, { status: 404 })
     }
 
+    // Type assertion for completion with tasks relation
+    const typedCompletion = completion as CompletionWithTask
+
     // Verify user is member of this family with admin or parent role
     const { data: membership } = await supabase
       .from('family_members')
       .select('role')
-      .eq('family_id', completion.tasks.family_id)
+      .eq('family_id', typedCompletion.tasks[0]?.family_id)
       .eq('user_id', session.user.id)
       .single()
 
@@ -70,7 +73,7 @@ export async function POST(
     }
 
     // Verify completion is pending review
-    if (completion.status !== 'pending_review') {
+    if (typedCompletion.status !== 'pending_review') {
       return NextResponse.json(
         { error: 'This task has already been reviewed' },
         { status: 409 }
