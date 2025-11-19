@@ -7,6 +7,7 @@ import LanguageSelector from '@/components/LanguageSelector'
 import { getClientLocale } from '@/lib/i18n'
 import { useTranslation } from '@/hooks/useTranslation'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { motion } from 'framer-motion'
 
 interface UserProfile {
   name: string
@@ -134,112 +135,185 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Welcome Card */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+        <motion.div
+          className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-8 mb-8 text-white"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <h2 className="text-4xl font-black mb-2">
             {t('dashboard.welcome', { name: user?.name || '' })}
           </h2>
-          <p className="text-lg text-gray-600 mb-6">
-            {t('dashboard.family')}: <span className="font-semibold">{user?.familyName}</span>
+          <p className="text-xl mb-6 text-white/90">
+            {t('dashboard.family')}: <span className="font-bold">{user?.familyName}</span>
           </p>
-          <p className="text-gray-600">
+          <p className="text-white/80">
             {t('dashboard.comingSoon')}
           </p>
-        </div>
+        </motion.div>
 
         {/* Feature Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Family Settings Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/dashboard/family/settings')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-blue-400 to-cyan-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">👨‍👩‍👧‍👦</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.family.title')}</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              👨‍👩‍👧‍👦
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">{t('cards.family.title')}</h3>
+            <p className="text-white/90 text-sm">
               {t('cards.family.description')}
             </p>
-          </button>
+          </motion.button>
 
           {/* Children Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/children')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-purple-400 to-pink-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">👥</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.children.title')}</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.2 }}
+            >
+              👥
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">{t('cards.children.title')}</h3>
+            <p className="text-white/90 text-sm">
               Add and manage children profiles
             </p>
-          </button>
+          </motion.button>
 
           {/* Today's Tasks Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/daily')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-indigo-400 to-blue-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Today's Tasks</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.4 }}
+            >
+              📋
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">Today's Tasks</h3>
+            <p className="text-white/90 text-sm">
               View and manage today's tasks for all children
             </p>
-          </button>
+          </motion.button>
 
           {/* Tasks Management Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/tasks')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-pink-400 to-rose-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">✅</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.tasks.title')}</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.6 }}
+            >
+              ✅
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">{t('cards.tasks.title')}</h3>
+            <p className="text-white/90 text-sm">
               Create and manage all tasks
             </p>
-          </button>
+          </motion.button>
 
           {/* Reviews Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/reviews')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-yellow-400 to-orange-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">⭐</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Reviews</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.8 }}
+            >
+              ⭐
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">Reviews</h3>
+            <p className="text-white/90 text-sm">
               Review and approve completed tasks
             </p>
-          </button>
+          </motion.button>
 
           {/* Completions History Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/completions')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-cyan-400 to-teal-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Completions</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 1.0 }}
+            >
+              📊
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">Completions</h3>
+            <p className="text-white/90 text-sm">
               View task completion history
             </p>
-          </button>
+          </motion.button>
 
           {/* Progress Card */}
-          <div className="bg-white rounded-lg shadow p-6 opacity-75">
-            <div className="text-4xl mb-4">📈</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.progress.title')}</h3>
-            <p className="text-gray-600 text-sm">
+          <motion.div
+            className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-3xl shadow-2xl p-6 text-white opacity-75"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          >
+            <div className="text-5xl mb-4">📈</div>
+            <h3 className="text-xl font-bold mb-2">{t('cards.progress.title')}</h3>
+            <p className="text-white/90 text-sm">
               {t('cards.progress.description')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Settings Card */}
-          <button
+          <motion.button
             onClick={() => router.push('/dashboard/settings')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+            className="bg-gradient-to-br from-purple-400 to-indigo-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-4xl mb-4">⚙️</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Settings</h3>
-            <p className="text-gray-600 text-sm">
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 1.2 }}
+            >
+              ⚙️
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2">Settings</h3>
+            <p className="text-white/90 text-sm">
               Manage account and preferences
             </p>
-          </button>
+          </motion.button>
         </div>
 
         {/* Getting Started Section */}
