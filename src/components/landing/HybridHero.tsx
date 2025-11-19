@@ -161,10 +161,10 @@ export default function HybridHero() {
                     className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl will-change-transform`}
                     initial={false}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
                     whileHover={{
                       scale: 1.05,
                       y: -5,
+                      transition: { type: 'spring', stiffness: 400, damping: 25 }
                     }}
                   >
                     <motion.div
@@ -291,10 +291,10 @@ export default function HybridHero() {
                     className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl will-change-transform`}
                     initial={false}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
                     whileHover={{
                       scale: 1.05,
                       y: -5,
+                      transition: { type: 'spring', stiffness: 400, damping: 25 }
                     }}
                   >
                     <motion.div
