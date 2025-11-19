@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
+import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 
 interface Reward {
   id: string
@@ -94,7 +95,8 @@ export default function RewardsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">{t('rewards.title')}</h1>
         {isParent && (
@@ -196,6 +198,7 @@ export default function RewardsPage() {
           {isParent && <p className="mt-2">{t('rewards.create_prompt')}</p>}
         </div>
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }

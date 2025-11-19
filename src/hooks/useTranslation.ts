@@ -81,23 +81,30 @@ export function useTranslation() {
     const keys = key.split('.')
     let value: any = translations
 
+    // Debug: Log translation attempt
+    if (key.startsWith('landing.hybrid')) {
+      console.log('🔍 Translation attempt:', { key, translations: translations?.landing?.hybrid, isLoading })
+    }
+
     // Navigate through nested object
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
+        console.warn('❌ Translation key not found:', key, 'at segment:', k)
         return key // Return key if translation not found
       }
     }
 
     // If final value is not a string, return the key
     if (typeof value !== 'string') {
+      console.warn('⚠️ Translation value is not a string:', key, typeof value)
       return key
     }
 
-    // Replace parameters in the string
+    // Replace parameters in the string (supports both {{param}} and {param} syntax)
     if (params) {
-      return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+      return value.replace(/\{\{?(\w+)\}?\}/g, (match, paramKey) => {
         return params[paramKey]?.toString() || match
       })
     }

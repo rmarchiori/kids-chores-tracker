@@ -387,7 +387,16 @@
     "older_style": "9-12 style"
   },
   "settings": {
-    "theme_preference": "Theme Preference"
+    "title": "Settings",
+    "theme_preference": "Theme Preference",
+    "cast": {
+      "title": "Chromecast Display",
+      "description": "Configure family dashboard on TV"
+    },
+    "family": {
+      "title": "Family Settings",
+      "description": "Manage family members and preferences"
+    }
   },
   "calendar": {
     "title": "Calendar",
@@ -396,7 +405,10 @@
     "view_monthly": "Monthly",
     "loading": "Loading...",
     "no_family": "No family found",
-    "daily_redirect": "Daily view is available at Daily Tasks page."
+    "daily_redirect": "Daily view is available at Daily Tasks page.",
+    "daily_view_title": "Daily Tasks View",
+    "daily_view_description": "View and manage today's tasks for all family members. Track progress, review completions, and stay on top of daily chores.",
+    "go_to_daily_tasks": "Go to Daily Tasks"
   },
   "analytics": {
     "title": "Analytics Dashboard",
@@ -511,11 +523,25 @@
   },
   "cast": {
     "title": "Chromecast Settings",
+    "subtitle": "Configure your Chromecast TV dashboard display",
     "description": "Configure your Chromecast TV dashboard display",
+    "settingsSaved": "Settings saved successfully!",
+    "backToSettings": "Back to Settings",
     "back_to_settings": "Back to Settings",
     "connect": {
       "title": "Connect to Chromecast",
       "description": "Click the button below to cast your family dashboard to a TV."
+    },
+    "displaySettings": {
+      "title": "Display Settings",
+      "rotationInterval": "Child Rotation Interval",
+      "rotationDescription": "How long to display each child's dashboard before rotating",
+      "seconds": "seconds",
+      "showAchievements": "Show Today's Achievements",
+      "showAchievementsDescription": "Display completed tasks from today on the TV dashboard",
+      "autoStart": "Auto-start on Connect",
+      "autoStartDescription": "Automatically begin rotation when connecting to Chromecast",
+      "saveSettings": "Save Settings"
     },
     "display_settings": {
       "title": "Display Settings",
@@ -533,9 +559,19 @@
       "title": "Setup Instructions",
       "prerequisites": {
         "title": "1. Prerequisites",
+        "item1": "A Chromecast device connected to your TV",
+        "item2": "TV and computer/phone on the same WiFi network",
+        "item3": "Google Chrome browser (recommended)",
         "chromecast": "A Chromecast device connected to your TV",
         "network": "TV and computer/phone on the same WiFi network",
         "browser": "Google Chrome browser (recommended)"
+      },
+      "firstTime": {
+        "title": "2. First Time Setup",
+        "item1": "Ensure your Chromecast is set up and connected to WiFi",
+        "item2": "Open this page in Google Chrome",
+        "item3": "Click the \"Cast\" button above",
+        "item4": "Select your Chromecast device from the list"
       },
       "first_time": {
         "title": "2. First Time Setup",
@@ -543,6 +579,13 @@
         "step2": "Open this page in Google Chrome",
         "step3": "Click the \"Cast\" button above",
         "step4": "Select your Chromecast device from the list"
+      },
+      "using": {
+        "title": "3. Using the TV Dashboard",
+        "item1": "The dashboard will automatically rotate between children every {interval} seconds",
+        "item2": "Each child's screen shows their pending tasks and today's achievements",
+        "item3": "Updates happen in real-time when tasks are completed",
+        "item4": "Click \"Cast\" again to disconnect"
       },
       "usage": {
         "title": "3. Using the TV Dashboard",
@@ -553,6 +596,14 @@
       },
       "troubleshooting": {
         "title": "4. Troubleshooting",
+        "q1": "Can't see Cast button?",
+        "a1": "Make sure you're using Google Chrome browser",
+        "q2": "No devices found?",
+        "a2": "Ensure your Chromecast and computer are on the same WiFi network",
+        "q3": "Connection fails?",
+        "a3": "Try restarting your Chromecast device",
+        "q4": "Display issues?",
+        "a4": "Check your TV's HDMI input and Chromecast connection",
         "no_button": "Can't see Cast button? Make sure you're using Google Chrome browser",
         "no_devices": "No devices found? Ensure your Chromecast and computer are on the same WiFi network",
         "connection_fails": "Connection fails? Try restarting your Chromecast device",
@@ -561,11 +612,11 @@
     },
     "features": {
       "title": "📺 TV Dashboard Features",
-      "auto_rotation": {
+      "autoRotation": {
         "title": "✨ Auto-Rotation",
         "description": "Cycles through each child's dashboard automatically"
       },
-      "todays_tasks": {
+      "todayTasks": {
         "title": "📋 Today's Tasks",
         "description": "Shows all pending tasks with images and point values"
       },
@@ -576,6 +627,22 @@
       "realtime": {
         "title": "🔄 Real-time Updates",
         "description": "Automatically refreshes when tasks are completed"
+      },
+      "tvOptimized": {
+        "title": "🎨 TV-Optimized",
+        "description": "Large text and high contrast for easy viewing from distance"
+      },
+      "profileDisplay": {
+        "title": "👤 Profile Display",
+        "description": "Shows each child's name, photo, and age group"
+      },
+      "auto_rotation": {
+        "title": "✨ Auto-Rotation",
+        "description": "Cycles through each child's dashboard automatically"
+      },
+      "todays_tasks": {
+        "title": "📋 Today's Tasks",
+        "description": "Shows all pending tasks with images and point values"
       },
       "optimized": {
         "title": "🎨 TV-Optimized",

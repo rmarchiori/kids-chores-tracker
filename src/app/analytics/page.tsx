@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { format, subDays } from 'date-fns'
 import { ChartSkeleton } from '@/components/ui/LoadingSkeletons'
 import { useTranslation } from '@/hooks/useTranslation'
+import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 
 // Dynamic imports for Recharts components (reduces initial bundle size by ~350KB gzipped)
 const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
@@ -124,13 +125,14 @@ export default function AnalyticsPage() {
       const daysAgo = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90
       const startDate = format(subDays(new Date(), daysAgo), 'yyyy-MM-dd')
 
-      // Fetch completions
+      // Fetch completions with rating columns
       const { data: completions, error: completionsError } = await supabase
         .from('task_completions')
         .select(`
           id,
           completed_at,
-          rating,
+          child_rating,
+          parent_rating,
           tasks!inner(id, family_id, category),
           children(id, name)
         `)
@@ -211,7 +213,8 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <DashboardLayout>
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
       <h1 className="text-3xl font-bold mb-8">{t('analytics.title')}</h1>
 
       {/* Date Range Filter */}
@@ -319,6 +322,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }
