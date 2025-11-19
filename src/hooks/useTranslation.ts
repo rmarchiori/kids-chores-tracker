@@ -81,24 +81,19 @@ export function useTranslation() {
     const keys = key.split('.')
     let value: any = translations
 
-    // Debug: Log translation attempt
-    if (key.startsWith('landing.hybrid')) {
-      console.log('🔍 Translation attempt:', { key, translations: translations?.landing?.hybrid, isLoading })
-    }
-
     // Navigate through nested object
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
-        console.warn('❌ Translation key not found:', key, 'at segment:', k)
-        return key // Return key if translation not found
+        // Silently return key if translation not found (to avoid build noise)
+        // Translations load client-side, so this is expected during SSR/build
+        return key
       }
     }
 
     // If final value is not a string, return the key
     if (typeof value !== 'string') {
-      console.warn('⚠️ Translation value is not a string:', key, typeof value)
       return key
     }
 
