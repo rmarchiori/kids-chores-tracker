@@ -74,6 +74,7 @@ export default function HybridHero() {
         <AnimatePresence mode="wait">
           {/* Parent Side */}
           <motion.div
+            key="parent-side"
             className={`relative flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden ${
               viewMode === 'kid' ? 'hidden' : ''
             }`}
@@ -186,6 +187,7 @@ export default function HybridHero() {
 
           {/* Kid Side */}
           <motion.div
+            key="kid-side"
             className={`relative flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white overflow-hidden ${
               viewMode === 'parent' ? 'hidden' : ''
             }`}
