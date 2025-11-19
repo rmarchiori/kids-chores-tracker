@@ -160,15 +160,6 @@ export default function DashboardPage() {
             </p>
           </button>
 
-          {/* Tasks Card */}
-          <div className="bg-white rounded-lg shadow p-6 opacity-75">
-            <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.tasks.title')}</h3>
-            <p className="text-gray-600 text-sm">
-              {t('cards.tasks.description')}
-            </p>
-          </div>
-
           {/* Children Card */}
           <button
             onClick={() => router.push('/children')}
@@ -181,14 +172,74 @@ export default function DashboardPage() {
             </p>
           </button>
 
+          {/* Today's Tasks Card */}
+          <button
+            onClick={() => router.push('/daily')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+          >
+            <div className="text-4xl mb-4">📋</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Today's Tasks</h3>
+            <p className="text-gray-600 text-sm">
+              View and manage today's tasks for all children
+            </p>
+          </button>
+
+          {/* Tasks Management Card */}
+          <button
+            onClick={() => router.push('/tasks')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+          >
+            <div className="text-4xl mb-4">✅</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.tasks.title')}</h3>
+            <p className="text-gray-600 text-sm">
+              Create and manage all tasks
+            </p>
+          </button>
+
+          {/* Reviews Card */}
+          <button
+            onClick={() => router.push('/reviews')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+          >
+            <div className="text-4xl mb-4">⭐</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Reviews</h3>
+            <p className="text-gray-600 text-sm">
+              Review and approve completed tasks
+            </p>
+          </button>
+
+          {/* Completions History Card */}
+          <button
+            onClick={() => router.push('/completions')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+          >
+            <div className="text-4xl mb-4">📊</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Completions</h3>
+            <p className="text-gray-600 text-sm">
+              View task completion history
+            </p>
+          </button>
+
           {/* Progress Card */}
           <div className="bg-white rounded-lg shadow p-6 opacity-75">
-            <div className="text-4xl mb-4">📊</div>
+            <div className="text-4xl mb-4">📈</div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.progress.title')}</h3>
             <p className="text-gray-600 text-sm">
               {t('cards.progress.description')}
             </p>
           </div>
+
+          {/* Settings Card */}
+          <button
+            onClick={() => router.push('/dashboard/settings')}
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
+          >
+            <div className="text-4xl mb-4">⚙️</div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Settings</h3>
+            <p className="text-gray-600 text-sm">
+              Manage account and preferences
+            </p>
+          </button>
         </div>
 
         {/* Getting Started Section */}

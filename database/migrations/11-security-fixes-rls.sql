@@ -65,10 +65,18 @@ CREATE TRIGGER increment_completion_version_trigger
   FOR EACH ROW
   EXECUTE FUNCTION increment_completion_version();
 
+-- Create IMMUTABLE function to extract date from timestamp
+-- This is required for use in index expressions
+CREATE OR REPLACE FUNCTION timestamp_to_date_immutable(ts timestamptz)
+RETURNS date AS $$
+  SELECT ts::date;
+$$ LANGUAGE SQL IMMUTABLE;
+
 -- Add constraint to prevent duplicate daily completions
 -- A child can only complete the same task once per day
+-- Using IMMUTABLE function for index compatibility
 CREATE UNIQUE INDEX IF NOT EXISTS unique_daily_completion
-  ON task_completions (task_id, child_id, DATE(completed_at));
+  ON task_completions (task_id, child_id, timestamp_to_date_immutable(completed_at));
 
 -- Comments for documentation
 COMMENT ON POLICY "Admin and parents can create completions for children" ON task_completions

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { TaskCompletionModal } from '@/components/TaskCompletionModal'
+import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 
 interface Task {
   id: string
@@ -262,7 +263,8 @@ export default function ChildTasksPage() {
   const completedTasks = tasks.filter(t => t.completed_today)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
+    <DashboardLayout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
       {/* Positive Message Overlay */}
       {showMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 animate-fadeIn">
@@ -422,6 +424,7 @@ export default function ChildTasksPage() {
           ageGroup={child.age_group}
         />
       )}
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }

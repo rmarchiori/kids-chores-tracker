@@ -3,6 +3,14 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: false,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
   },
   // Next.js automatically looks for app/ in src/ directory
   // No additional configuration needed
