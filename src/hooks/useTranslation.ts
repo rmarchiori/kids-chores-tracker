@@ -49,17 +49,23 @@ export function useTranslation() {
       setIsLoading(true)
       loadingPromise = (async () => {
         try {
-          // Load translation file for current locale
-          const translationModule = await import(`../../public/locales/${currentLocale}/common.json`)
-          const loadedTranslations = translationModule.default || translationModule
+          // Fetch translation file from public folder
+          const response = await fetch(`/locales/${currentLocale}/common.json`)
+          if (!response.ok) {
+            throw new Error(`Failed to load translations: ${response.status}`)
+          }
+          const loadedTranslations = await response.json()
           translationCache.set(currentLocale, loadedTranslations)
           setTranslations(loadedTranslations)
         } catch (error) {
           console.error('Failed to load translations:', error)
           // Fallback to English
           try {
-            const fallbackModule = await import(`../../public/locales/en-CA/common.json`)
-            const fallbackTranslations = fallbackModule.default || fallbackModule
+            const response = await fetch('/locales/en-CA/common.json')
+            if (!response.ok) {
+              throw new Error(`Failed to load fallback translations: ${response.status}`)
+            }
+            const fallbackTranslations = await response.json()
             translationCache.set(currentLocale, fallbackTranslations)
             setTranslations(fallbackTranslations)
           } catch (fallbackError) {
