@@ -62,9 +62,6 @@ function WeeklyCalendarViewComponent({ familyId, initialDate = new Date() }: Wee
 
   if (!weekData) return null
 
-  const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 })
-  const isCurrentWeek = format(weekStart, 'yyyy-MM-dd') === format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd')
-
   return (
     <div className="space-y-6">
       {/* Header */}

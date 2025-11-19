@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
@@ -35,9 +34,8 @@ interface PendingReview {
 }
 
 export default function ReviewsPage() {
-  const router = useRouter()
   const { t } = useTranslation()
-  const { data: pendingReviews = [], error, isLoading: loading, mutate } = usePendingReviews()
+  const { data: pendingReviews = [], isLoading: loading, mutate } = usePendingReviews()
   const [selectedReview, setSelectedReview] = useState<PendingReview | null>(null)
   const [showReviewDialog, setShowReviewDialog] = useState(false)
 
@@ -120,7 +118,7 @@ export default function ReviewsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {pendingReviews.map(review => (
+            {pendingReviews.map((review: PendingReview) => (
               <div
                 key={review.id}
                 className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200"

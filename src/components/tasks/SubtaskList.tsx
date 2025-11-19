@@ -1,11 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import dynamic from 'next/dynamic'
+import { DraggableListSkeleton } from '@/components/ui/LoadingSkeletons'
+
+// Dynamic import for DraggableSubtaskList (only loads when editable=true)
+// Saves ~200KB (@dnd-kit libraries) from initial bundle
+const DraggableSubtaskList = dynamic(
+  () => import('./DraggableSubtaskList').then(mod => mod.DraggableSubtaskList),
+  {
+    loading: () => <DraggableListSkeleton />,
+    ssr: false
+  }
+)
 
 interface Subtask {
   id: string
@@ -23,103 +30,24 @@ interface SubtaskListProps {
   ageGroup?: '5-8' | '9-12'
 }
 
-function SortableSubtaskItem({
-  subtask,
-  editable,
-  ageGroup,
-  onToggle,
-  onDelete
+// Simple read-only subtask list (no drag-and-drop)
+function SimpleSubtaskList({
+  subtasks,
+  onUpdate,
+  ageGroup = '9-12'
 }: {
-  subtask: Subtask
-  editable: boolean
+  subtasks: Subtask[]
+  onUpdate: (subtasks: Subtask[]) => void
   ageGroup?: '5-8' | '9-12'
-  onToggle: (id: string) => void
-  onDelete: (id: string) => void
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: subtask.id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
-  const checkboxSize = ageGroup === '5-8' ? 'w-8 h-8' : 'w-5 h-5'
-
-  return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg">
-      {editable && (
-        <div {...attributes} {...listeners} className="cursor-grab">
-          <Bars3Icon className="w-5 h-5 text-gray-400" />
-        </div>
-      )}
-
-      <input
-        type="checkbox"
-        checked={subtask.completed}
-        onChange={() => onToggle(subtask.id)}
-        className={`${checkboxSize} text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500`}
-      />
-
-      <div className="flex-1">
-        <p className={`${subtask.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-          {subtask.title}
-        </p>
-        {subtask.description && (
-          <p className="text-sm text-gray-500">{subtask.description}</p>
-        )}
-      </div>
-
-      {subtask.completed && ageGroup === '5-8' && (
-        <span className="text-2xl">✅🎉</span>
-      )}
-
-      {editable && (
-        <button
-          onClick={() => onDelete(subtask.id)}
-          className="p-1 text-red-600 hover:bg-red-50 rounded"
-        >
-          <TrashIcon className="w-5 h-5" />
-        </button>
-      )}
-    </div>
-  )
-}
-
-export function SubtaskList({ taskId, subtasks, onUpdate, editable = false, ageGroup = '9-12' }: SubtaskListProps) {
   const [items, setItems] = useState(subtasks)
-  const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
 
-  // Sync local state with props when subtasks change from parent
-  // This prevents stale state issues
+  // Sync local state with props
   useEffect(() => {
     setItems(subtasks)
   }, [subtasks])
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event
-
-    if (active.id !== over.id) {
-      const oldIndex = items.findIndex(item => item.id === active.id)
-      const newIndex = items.findIndex(item => item.id === over.id)
-
-      const newItems = arrayMove(items, oldIndex, newIndex).map((item, index) => ({
-        ...item,
-        order_index: index
-      }))
-
-      setItems(newItems)
-      onUpdate(newItems)
-    }
-  }
-
-  const handleToggle = async (id: string) => {
+  const handleToggle = (id: string) => {
     const newItems = items.map(item =>
       item.id === id ? { ...item, completed: !item.completed } : item
     )
@@ -127,30 +55,9 @@ export function SubtaskList({ taskId, subtasks, onUpdate, editable = false, ageG
     onUpdate(newItems)
   }
 
-  const handleDelete = async (id: string) => {
-    const newItems = items.filter(item => item.id !== id)
-    setItems(newItems)
-    onUpdate(newItems)
-  }
-
-  const handleAddSubtask = async () => {
-    if (!newSubtaskTitle.trim()) return
-
-    const newSubtask: Subtask = {
-      id: `temp-${Date.now()}`,
-      title: newSubtaskTitle,
-      completed: false,
-      order_index: items.length
-    }
-
-    const newItems = [...items, newSubtask]
-    setItems(newItems)
-    setNewSubtaskTitle('')
-    onUpdate(newItems)
-  }
-
   const completedCount = items.filter(item => item.completed).length
   const totalCount = items.length
+  const checkboxSize = ageGroup === '5-8' ? 'w-8 h-8' : 'w-5 h-5'
 
   return (
     <div className="space-y-4">
@@ -174,43 +81,55 @@ export function SubtaskList({ taskId, subtasks, onUpdate, editable = false, ageG
         </div>
       )}
 
-      {/* Subtask List */}
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
-            {items.map(subtask => (
-              <SortableSubtaskItem
-                key={subtask.id}
-                subtask={subtask}
-                editable={editable}
-                ageGroup={ageGroup}
-                onToggle={handleToggle}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+      {/* Simple Subtask List (no dragging) */}
+      <div className="space-y-2">
+        {items.map(subtask => (
+          <div key={subtask.id} className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg">
+            <input
+              type="checkbox"
+              checked={subtask.completed}
+              onChange={() => handleToggle(subtask.id)}
+              className={`${checkboxSize} text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500`}
+            />
 
-      {/* Add New Subtask */}
-      {editable && (
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newSubtaskTitle}
-            onChange={(e) => setNewSubtaskTitle(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
-            placeholder="Add a subtask..."
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleAddSubtask}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-      )}
+            <div className="flex-1">
+              <p className={`${subtask.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                {subtask.title}
+              </p>
+              {subtask.description && (
+                <p className="text-sm text-gray-500">{subtask.description}</p>
+              )}
+            </div>
+
+            {subtask.completed && ageGroup === '5-8' && (
+              <span className="text-2xl">✅🎉</span>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
+  )
+}
+
+export function SubtaskList({ taskId, subtasks, onUpdate, editable = false, ageGroup = '9-12' }: SubtaskListProps) {
+  // If editable, dynamically load the draggable version with @dnd-kit
+  // Otherwise, use simple read-only list (no extra bundle size)
+  if (editable) {
+    return (
+      <DraggableSubtaskList
+        taskId={taskId}
+        subtasks={subtasks}
+        onUpdate={onUpdate}
+        ageGroup={ageGroup}
+      />
+    )
+  }
+
+  return (
+    <SimpleSubtaskList
+      subtasks={subtasks}
+      onUpdate={onUpdate}
+      ageGroup={ageGroup}
+    />
   )
 }

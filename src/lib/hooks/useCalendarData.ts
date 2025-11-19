@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from 'date-fns'
+import { startOfWeek, format } from 'date-fns'
 
 export interface DayData {
   date: string // ISO date string
@@ -38,7 +38,6 @@ export interface MonthData {
  */
 export function useWeeklyCalendarData(date: Date, familyId: string) {
   const weekStart = startOfWeek(date, { weekStartsOn: 0 }) // Sunday
-  const weekEnd = endOfWeek(date, { weekStartsOn: 0 })
 
   return useQuery<WeekData>({
     queryKey: ['calendar', 'weekly', format(weekStart, 'yyyy-MM-dd'), familyId],

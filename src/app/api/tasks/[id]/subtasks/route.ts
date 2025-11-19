@@ -13,7 +13,7 @@ const SubtaskCreateSchema = z.object({
  * Get all subtasks for a task
  */
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -126,7 +126,7 @@ export async function POST(
         .order('order_index', { ascending: false })
         .limit(1)
 
-      if (existingSubtasks && existingSubtasks.length > 0) {
+      if (existingSubtasks && existingSubtasks.length > 0 && existingSubtasks[0]) {
         orderIndex = (existingSubtasks[0].order_index || 0) + 1
       }
     }

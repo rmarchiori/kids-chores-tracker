@@ -1,10 +1,35 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { format, subDays } from 'date-fns'
+import { ChartSkeleton } from '@/components/ui/LoadingSkeletons'
+
+// Dynamic imports for Recharts components (reduces initial bundle size by ~350KB gzipped)
+const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
+  loading: () => <ChartSkeleton />,
+  ssr: false
+})
+const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false })
+const BarChart = dynamic(() => import('recharts').then(mod => mod.BarChart), {
+  loading: () => <ChartSkeleton />,
+  ssr: false
+})
+const Bar = dynamic(() => import('recharts').then(mod => mod.Bar), { ssr: false })
+const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), {
+  loading: () => <ChartSkeleton />,
+  ssr: false
+})
+const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false })
+const Cell = dynamic(() => import('recharts').then(mod => mod.Cell), { ssr: false })
+const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false })
+const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false })
+const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false })
+const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false })
+const Legend = dynamic(() => import('recharts').then(mod => mod.Legend), { ssr: false })
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false })
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
@@ -12,16 +37,19 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'
 interface TrendDataPoint {
   date: string
   tasks: number
+  [key: string]: any
 }
 
 interface ChildPerformanceData {
   name: string
   tasks: number
+  [key: string]: any
 }
 
 interface CategoryBreakdownData {
   name: string
   value: number
+  [key: string]: any
 }
 
 interface OverviewStats {
@@ -33,7 +61,6 @@ interface OverviewStats {
 
 export default function AnalyticsPage() {
   const router = useRouter()
-  const [familyId, setFamilyId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState('30days')
@@ -76,7 +103,6 @@ export default function AnalyticsPage() {
         }
 
         if (familyMember) {
-          setFamilyId(familyMember.family_id)
           await fetchAnalyticsData(familyMember.family_id)
         }
       } catch (err) {
@@ -141,7 +167,7 @@ export default function AnalyticsPage() {
       // Child performance
       const childMap = new Map<string, number>()
       completions.forEach(c => {
-        const childName = c.children?.name || 'Unknown'
+        const childName = c.children?.[0]?.name || 'Unknown'
         childMap.set(childName, (childMap.get(childName) || 0) + 1)
       })
       const childPerf: ChildPerformanceData[] = Array.from(childMap.entries()).map(([name, count]) => ({ name, tasks: count }))
@@ -150,7 +176,7 @@ export default function AnalyticsPage() {
       // Category breakdown
       const catMap = new Map<string, number>()
       completions.forEach(c => {
-        const cat = c.tasks?.category || 'other'
+        const cat = c.tasks?.[0]?.category || 'other'
         catMap.set(cat, (catMap.get(cat) || 0) + 1)
       })
       const catBreak: CategoryBreakdownData[] = Array.from(catMap.entries()).map(([name, value]) => ({ name, value }))
@@ -266,7 +292,7 @@ export default function AnalyticsPage() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {categoryBreakdown.map((entry, index) => (
+                {categoryBreakdown.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

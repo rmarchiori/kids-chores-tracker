@@ -1,5 +1,5 @@
-import { RRule, Frequency, Weekday, rrulestr } from 'rrule'
-import { format, addDays } from 'date-fns'
+import { RRule, Frequency, rrulestr } from 'rrule'
+import { format } from 'date-fns'
 
 export type RecurrencePattern = {
   type: 'daily' | 'weekly' | 'monthly' | 'custom'

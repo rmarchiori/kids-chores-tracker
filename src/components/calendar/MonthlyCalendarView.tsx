@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback, useMemo, memo } from 'react'
-import { format, addMonths, subMonths, startOfMonth, getDay, getDaysInMonth } from 'date-fns'
+import { useState, useCallback, memo } from 'react'
+import { format, addMonths, subMonths, startOfMonth, getDay } from 'date-fns'
 import { useMonthlyCalendarData, getHeatmapColor } from '@/lib/hooks/useCalendarData'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
@@ -39,10 +39,6 @@ function MonthlyCalendarViewComponent({ familyId, initialDate = new Date() }: Mo
     router.push(`/daily?date=${date}`)
   }, [router])
 
-  const handleWeekClick = useCallback((weekStart: string) => {
-    router.push(`/calendar?view=weekly&date=${weekStart}`)
-  }, [router])
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -64,7 +60,6 @@ function MonthlyCalendarViewComponent({ familyId, initialDate = new Date() }: Mo
   // Build calendar grid
   const monthStart = startOfMonth(currentDate)
   const startDayOfWeek = getDay(monthStart)
-  const daysInMonth = getDaysInMonth(currentDate)
   const isCurrentMonth = format(currentDate, 'yyyy-MM') === format(new Date(), 'yyyy-MM')
 
   // Create array of days including leading empty cells

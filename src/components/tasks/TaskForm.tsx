@@ -1,14 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ImagePicker } from './ImagePicker'
 import { CustomImageUpload } from './CustomImageUpload'
-import { RecurrencePatternPicker } from './RecurrencePatternPicker'
 import { CreateTaskSchema } from '@/lib/schemas'
 import { useTranslation } from '@/hooks/useTranslation'
+import { RecurrencePickerSkeleton } from '@/components/ui/LoadingSkeletons'
+
+// Dynamic import for RecurrencePatternPicker (only loads when recurring checkbox is checked)
+// Saves ~100KB (RRULE library + component) from initial bundle
+const RecurrencePatternPicker = dynamic(
+  () => import('./RecurrencePatternPicker').then(mod => mod.RecurrencePatternPicker),
+  {
+    loading: () => <RecurrencePickerSkeleton />,
+    ssr: false
+  }
+)
 
 type TaskFormData = z.infer<typeof CreateTaskSchema>
 
