@@ -3,32 +3,34 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type ViewMode = 'split' | 'parent' | 'kid'
 
 export default function HybridHero() {
+  const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<ViewMode>('split')
   const [hoveredSide, setHoveredSide] = useState<'parent' | 'kid' | null>(null)
 
   const parentFeatures = [
-    { icon: '👨‍👩‍👧‍👦', title: 'Family Dashboard', desc: 'Manage everyone', gradient: 'from-blue-400 to-cyan-400' },
-    { icon: '📊', title: 'Progress Tracking', desc: 'See completion stats', gradient: 'from-indigo-400 to-blue-400' },
-    { icon: '⭐', title: 'Review & Approve', desc: 'Quality control', gradient: 'from-purple-400 to-indigo-400' },
-    { icon: '🎁', title: 'Reward System', desc: 'Set incentives', gradient: 'from-cyan-400 to-teal-400' },
+    { icon: '👨‍👩‍👧‍👦', titleKey: 'landing.hybrid.parent.features.dashboard', descKey: 'landing.hybrid.parent.featuresDesc.dashboard', gradient: 'from-blue-400 to-cyan-400' },
+    { icon: '📊', titleKey: 'landing.hybrid.parent.features.tracking', descKey: 'landing.hybrid.parent.featuresDesc.tracking', gradient: 'from-indigo-400 to-blue-400' },
+    { icon: '⭐', titleKey: 'landing.hybrid.parent.features.review', descKey: 'landing.hybrid.parent.featuresDesc.review', gradient: 'from-purple-400 to-indigo-400' },
+    { icon: '🎁', titleKey: 'landing.hybrid.parent.features.rewards', descKey: 'landing.hybrid.parent.featuresDesc.rewards', gradient: 'from-cyan-400 to-teal-400' },
   ]
 
   const kidFeatures = [
-    { icon: '🎯', title: 'My Tasks', desc: 'See what to do', gradient: 'from-pink-400 to-rose-400' },
-    { icon: '✅', title: 'Complete & Earn', desc: 'Check off chores', gradient: 'from-orange-400 to-pink-400' },
-    { icon: '🌟', title: 'Collect Stars', desc: 'Build your streak', gradient: 'from-yellow-400 to-orange-400' },
-    { icon: '🏆', title: 'Level Up', desc: 'Unlock achievements', gradient: 'from-purple-400 to-pink-400' },
+    { icon: '🎯', titleKey: 'landing.hybrid.kid.features.tasks', descKey: 'landing.hybrid.kid.featuresDesc.tasks', gradient: 'from-pink-400 to-rose-400' },
+    { icon: '✅', titleKey: 'landing.hybrid.kid.features.complete', descKey: 'landing.hybrid.kid.featuresDesc.complete', gradient: 'from-orange-400 to-pink-400' },
+    { icon: '🌟', titleKey: 'landing.hybrid.kid.features.stars', descKey: 'landing.hybrid.kid.featuresDesc.stars', gradient: 'from-yellow-400 to-orange-400' },
+    { icon: '🏆', titleKey: 'landing.hybrid.kid.features.levelup', descKey: 'landing.hybrid.kid.featuresDesc.levelup', gradient: 'from-purple-400 to-pink-400' },
   ]
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Mode Selector Pills - Centered at top */}
       <motion.div
-        className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
+        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -41,7 +43,7 @@ export default function HybridHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          Both Views
+          {t('landing.hybrid.views.both')}
         </button>
         <button
           onClick={() => setViewMode('parent')}
@@ -51,7 +53,7 @@ export default function HybridHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          For Parents
+          {t('landing.hybrid.views.parent')}
         </button>
         <button
           onClick={() => setViewMode('kid')}
@@ -61,7 +63,7 @@ export default function HybridHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          For Kids
+          {t('landing.hybrid.views.kid')}
         </button>
       </motion.div>
 
@@ -102,10 +104,10 @@ export default function HybridHero() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-6xl md:text-7xl font-black mb-6">
-                  For Parents
+                  {t('landing.hybrid.parent.title')}
                 </h2>
                 <p className="text-2xl mb-12 text-blue-100">
-                  Organize, track, and guide your family's daily routines
+                  {t('landing.hybrid.parent.subtitle')}
                 </p>
               </motion.div>
 
@@ -136,8 +138,8 @@ export default function HybridHero() {
                     >
                       {feature.icon}
                     </motion.div>
-                    <h3 className="font-bold text-lg mb-1 text-white">{feature.title}</h3>
-                    <p className="text-sm text-white/90">{feature.desc}</p>
+                    <h3 className="font-bold text-lg mb-1 text-white">{t(feature.titleKey)}</h3>
+                    <p className="text-sm text-white/90">{t(feature.descKey)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -152,7 +154,7 @@ export default function HybridHero() {
                     href="/auth/register"
                     className="inline-flex items-center justify-center px-12 py-5 text-xl font-bold bg-white text-blue-600 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all"
                   >
-                    Start Managing Now
+                    {t('landing.hybrid.parent.cta')}
                   </Link>
                 </motion.div>
               )}
@@ -165,7 +167,7 @@ export default function HybridHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                Click to explore parent features →
+                {t('landing.hybrid.parent.hoverHint')}
               </motion.div>
             )}
           </motion.div>
@@ -232,10 +234,10 @@ export default function HybridHero() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-6xl md:text-7xl font-black mb-6">
-                  For Kids
+                  {t('landing.hybrid.kid.title')}
                 </h2>
                 <p className="text-2xl mb-12 text-purple-100">
-                  Complete tasks, earn rewards, and have fun!
+                  {t('landing.hybrid.kid.subtitle')}
                 </p>
               </motion.div>
 
@@ -266,8 +268,8 @@ export default function HybridHero() {
                     >
                       {feature.icon}
                     </motion.div>
-                    <h3 className="font-bold text-lg mb-1 text-white">{feature.title}</h3>
-                    <p className="text-sm text-white/90">{feature.desc}</p>
+                    <h3 className="font-bold text-lg mb-1 text-white">{t(feature.titleKey)}</h3>
+                    <p className="text-sm text-white/90">{t(feature.descKey)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -282,7 +284,7 @@ export default function HybridHero() {
                     href="/auth/register"
                     className="inline-flex items-center justify-center px-12 py-5 text-xl font-bold bg-white text-purple-600 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all"
                   >
-                    Start Your Adventure! 🚀
+                    {t('landing.hybrid.kid.cta')}
                   </Link>
                 </motion.div>
               )}
@@ -295,17 +297,17 @@ export default function HybridHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                ← Click to explore kid features
+                {t('landing.hybrid.kid.hoverHint')}
               </motion.div>
             )}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Bottom CTA (only in split mode) */}
+      {/* Bottom CTA (only in split mode) - Centered */}
       {viewMode === 'split' && (
         <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-6"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-6 justify-center"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.8 }}
@@ -315,7 +317,7 @@ export default function HybridHero() {
               href="/auth/register"
               className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-3xl"
             >
-              Start Free for Everyone! 🎉
+              {t('landing.hybrid.bottomCta.start')}
             </Link>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -323,7 +325,7 @@ export default function HybridHero() {
               href="/auth/login"
               className="px-10 py-5 text-xl font-bold text-gray-700 bg-white rounded-full shadow-2xl hover:shadow-3xl"
             >
-              Login
+              {t('landing.hybrid.bottomCta.login')}
             </Link>
           </motion.div>
         </motion.div>

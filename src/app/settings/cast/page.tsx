@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { CastButton } from '@/components/cast/CastButton'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/hooks/useTranslation'
 
 /**
  * Cast Settings Page
@@ -18,6 +19,7 @@ import { useRouter } from 'next/navigation'
  */
 
 export default function CastSettingsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [rotationInterval, setRotationInterval] = useState(10)
   const [showCompletedTasks, setShowCompletedTasks] = useState(true)
@@ -30,7 +32,7 @@ export default function CastSettingsPage() {
       showCompletedTasks,
       autoStart
     }))
-    alert('Settings saved successfully!')
+    alert(t('cast.settingsSaved'))
   }
 
   return (
@@ -44,31 +46,31 @@ export default function CastSettingsPage() {
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
             >
               <ArrowLeftIcon className="w-5 h-5" />
-              Back to Settings
+              {t('cast.backToSettings')}
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">Chromecast Settings</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('cast.title')}</h1>
             <p className="text-gray-600 mt-2">
-              Configure your Chromecast TV dashboard display
+              {t('cast.subtitle')}
             </p>
           </div>
 
           {/* Cast Connection Test */}
           <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Connect to Chromecast</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('cast.connect.title')}</h2>
             <p className="text-gray-600 mb-4">
-              Click the button below to cast your family dashboard to a TV.
+              {t('cast.connect.description')}
             </p>
             <CastButton showStatus={true} />
           </div>
 
           {/* Display Settings */}
           <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Display Settings</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('cast.displaySettings.title')}</h2>
 
             {/* Rotation Interval */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Child Rotation Interval
+                {t('cast.displaySettings.rotationInterval')}
               </label>
               <div className="flex items-center gap-4">
                 <input
@@ -85,7 +87,7 @@ export default function CastSettingsPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                How long to display each child's dashboard before rotating
+                {t('cast.displaySettings.rotationDescription')}
               </p>
             </div>
 
@@ -100,10 +102,10 @@ export default function CastSettingsPage() {
                 />
                 <div>
                   <span className="text-sm font-medium text-gray-700">
-                    Show Today's Achievements
+                    {t('cast.displaySettings.showAchievements')}
                   </span>
                   <p className="text-sm text-gray-500">
-                    Display completed tasks from today on the TV dashboard
+                    {t('cast.displaySettings.showAchievementsDescription')}
                   </p>
                 </div>
               </label>
@@ -120,10 +122,10 @@ export default function CastSettingsPage() {
                 />
                 <div>
                   <span className="text-sm font-medium text-gray-700">
-                    Auto-start on Connect
+                    {t('cast.displaySettings.autoStart')}
                   </span>
                   <p className="text-sm text-gray-500">
-                    Automatically begin rotation when connecting to Chromecast
+                    {t('cast.displaySettings.autoStartDescription')}
                   </p>
                 </div>
               </label>
@@ -133,59 +135,59 @@ export default function CastSettingsPage() {
               onClick={handleSaveSettings}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
             >
-              Save Settings
+              {t('cast.displaySettings.saveSettings')}
             </button>
           </div>
 
           {/* Setup Instructions */}
           <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Setup Instructions</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('cast.setup.title')}</h2>
 
             <div className="space-y-4">
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  1. Prerequisites
+                  {t('cast.setup.prerequisites.title')}
                 </h3>
                 <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
-                  <li>A Chromecast device connected to your TV</li>
-                  <li>TV and computer/phone on the same WiFi network</li>
-                  <li>Google Chrome browser (recommended)</li>
+                  <li>{t('cast.setup.prerequisites.item1')}</li>
+                  <li>{t('cast.setup.prerequisites.item2')}</li>
+                  <li>{t('cast.setup.prerequisites.item3')}</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  2. First Time Setup
+                  {t('cast.setup.firstTime.title')}
                 </h3>
                 <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
-                  <li>Ensure your Chromecast is set up and connected to WiFi</li>
-                  <li>Open this page in Google Chrome</li>
-                  <li>Click the "Cast" button above</li>
-                  <li>Select your Chromecast device from the list</li>
+                  <li>{t('cast.setup.firstTime.item1')}</li>
+                  <li>{t('cast.setup.firstTime.item2')}</li>
+                  <li>{t('cast.setup.firstTime.item3')}</li>
+                  <li>{t('cast.setup.firstTime.item4')}</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  3. Using the TV Dashboard
+                  {t('cast.setup.using.title')}
                 </h3>
                 <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
-                  <li>The dashboard will automatically rotate between children every {rotationInterval} seconds</li>
-                  <li>Each child's screen shows their pending tasks and today's achievements</li>
-                  <li>Updates happen in real-time when tasks are completed</li>
-                  <li>Click "Cast" again to disconnect</li>
+                  <li>{t('cast.setup.using.item1', { interval: rotationInterval })}</li>
+                  <li>{t('cast.setup.using.item2')}</li>
+                  <li>{t('cast.setup.using.item3')}</li>
+                  <li>{t('cast.setup.using.item4')}</li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  4. Troubleshooting
+                  {t('cast.setup.troubleshooting.title')}
                 </h3>
                 <ul className="list-disc list-inside text-gray-600 space-y-1 ml-4">
-                  <li><strong>Can't see Cast button?</strong> Make sure you're using Google Chrome browser</li>
-                  <li><strong>No devices found?</strong> Ensure your Chromecast and computer are on the same WiFi network</li>
-                  <li><strong>Connection fails?</strong> Try restarting your Chromecast device</li>
-                  <li><strong>Display issues?</strong> Check your TV's HDMI input and Chromecast connection</li>
+                  <li><strong>{t('cast.setup.troubleshooting.q1')}</strong> {t('cast.setup.troubleshooting.a1')}</li>
+                  <li><strong>{t('cast.setup.troubleshooting.q2')}</strong> {t('cast.setup.troubleshooting.a2')}</li>
+                  <li><strong>{t('cast.setup.troubleshooting.q3')}</strong> {t('cast.setup.troubleshooting.a3')}</li>
+                  <li><strong>{t('cast.setup.troubleshooting.q4')}</strong> {t('cast.setup.troubleshooting.a4')}</li>
                 </ul>
               </div>
             </div>
@@ -194,43 +196,43 @@ export default function CastSettingsPage() {
           {/* Features Overview */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h2 className="text-xl font-semibold text-blue-900 mb-4">
-              📺 TV Dashboard Features
+              {t('cast.features.title')}
             </h2>
             <div className="grid md:grid-cols-2 gap-4 text-blue-800">
               <div>
-                <h3 className="font-semibold mb-1">✨ Auto-Rotation</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.autoRotation.title')}</h3>
                 <p className="text-sm">
-                  Cycles through each child's dashboard automatically
+                  {t('cast.features.autoRotation.description')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">📋 Today's Tasks</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.todayTasks.title')}</h3>
                 <p className="text-sm">
-                  Shows all pending tasks with images and point values
+                  {t('cast.features.todayTasks.description')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">🎯 Achievements</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.achievements.title')}</h3>
                 <p className="text-sm">
-                  Displays completed tasks with ratings and timestamps
+                  {t('cast.features.achievements.description')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">🔄 Real-time Updates</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.realtime.title')}</h3>
                 <p className="text-sm">
-                  Automatically refreshes when tasks are completed
+                  {t('cast.features.realtime.description')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">🎨 TV-Optimized</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.tvOptimized.title')}</h3>
                 <p className="text-sm">
-                  Large text and high contrast for easy viewing from distance
+                  {t('cast.features.tvOptimized.description')}
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-1">👤 Profile Display</h3>
+                <h3 className="font-semibold mb-1">{t('cast.features.profileDisplay.title')}</h3>
                 <p className="text-sm">
-                  Shows each child's name, photo, and age group
+                  {t('cast.features.profileDisplay.description')}
                 </p>
               </div>
             </div>

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { format, subDays } from 'date-fns'
 import { ChartSkeleton } from '@/components/ui/LoadingSkeletons'
+import { useTranslation } from '@/hooks/useTranslation'
 
 // Dynamic imports for Recharts components (reduces initial bundle size by ~350KB gzipped)
 const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
@@ -60,6 +61,7 @@ interface OverviewStats {
 }
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -188,20 +190,20 @@ export default function AnalyticsPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading analytics...</div>
+    return <div className="flex items-center justify-center min-h-screen">{t('analytics.loading')}</div>
   }
 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Analytics</h2>
+          <h2 className="text-xl font-semibold text-red-900 mb-2">{t('analytics.error')}</h2>
           <p className="text-red-700 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
-            Retry
+            {t('analytics.retry')}
           </button>
         </div>
       </div>
@@ -210,7 +212,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <h1 className="text-3xl font-bold mb-8">Analytics Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">{t('analytics.title')}</h1>
 
       {/* Date Range Filter */}
       <div className="mb-6">
@@ -219,29 +221,29 @@ export default function AnalyticsPage() {
           onChange={(e) => setDateRange(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg"
         >
-          <option value="7days">Last 7 days</option>
-          <option value="30days">Last 30 days</option>
-          <option value="90days">Last 90 days</option>
+          <option value="7days">{t('analytics.dateRange.last7days')}</option>
+          <option value="30days">{t('analytics.dateRange.last30days')}</option>
+          <option value="90days">{t('analytics.dateRange.last90days')}</option>
         </select>
       </div>
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">Total Completions</p>
+          <p className="text-sm text-gray-600">{t('analytics.stats.total_completions')}</p>
           <p className="text-3xl font-bold text-blue-600">{overviewStats.total_completions}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">This Month</p>
+          <p className="text-sm text-gray-600">{t('analytics.stats.monthly_completions')}</p>
           <p className="text-3xl font-bold text-green-600">{overviewStats.monthly_completions}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">Avg Per Day</p>
+          <p className="text-sm text-gray-600">{t('analytics.stats.avg_per_day')}</p>
           <p className="text-3xl font-bold text-purple-600">{overviewStats.average_completion_rate}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">Current Streak</p>
-          <p className="text-3xl font-bold text-orange-600">{overviewStats.current_streak} days</p>
+          <p className="text-sm text-gray-600">{t('analytics.stats.current_streak')}</p>
+          <p className="text-3xl font-bold text-orange-600">{overviewStats.current_streak} {t('analytics.stats.days')}</p>
         </div>
       </div>
 
@@ -249,7 +251,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Completion Trend */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Completion Trend</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.completion_trend')}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -264,7 +266,7 @@ export default function AnalyticsPage() {
 
         {/* Child Performance */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Child Performance</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.child_performance')}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={childPerformance}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -279,7 +281,7 @@ export default function AnalyticsPage() {
 
         {/* Category Breakdown */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Category Breakdown</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.category_breakdown')}</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -303,7 +305,7 @@ export default function AnalyticsPage() {
 
         {/* Top Performers */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Top Performers</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.top_performers')}</h2>
           <div className="space-y-4">
             {childPerformance.slice(0, 3).map((child, index) => (
               <div key={child.name} className="flex items-center justify-between">
@@ -311,7 +313,7 @@ export default function AnalyticsPage() {
                   <span className="text-2xl">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</span>
                   <span className="font-medium">{child.name}</span>
                 </div>
-                <span className="text-gray-600">{child.tasks} tasks</span>
+                <span className="text-gray-600">{child.tasks} {t('analytics.tasks')}</span>
               </div>
             ))}
           </div>

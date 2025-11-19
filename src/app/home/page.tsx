@@ -168,7 +168,7 @@ export default function DashboardPage() {
             <div className="text-4xl mb-4">👥</div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.children.title')}</h3>
             <p className="text-gray-600 text-sm">
-              Add and manage children profiles
+              {t('cards.children.description')}
             </p>
           </button>
 
@@ -178,9 +178,9 @@ export default function DashboardPage() {
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Today's Tasks</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.todayTasks.title')}</h3>
             <p className="text-gray-600 text-sm">
-              View and manage today's tasks for all children
+              {t('cards.todayTasks.description')}
             </p>
           </button>
 
@@ -192,7 +192,7 @@ export default function DashboardPage() {
             <div className="text-4xl mb-4">✅</div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.tasks.title')}</h3>
             <p className="text-gray-600 text-sm">
-              Create and manage all tasks
+              {t('cards.tasks.description')}
             </p>
           </button>
 
@@ -202,9 +202,9 @@ export default function DashboardPage() {
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-4xl mb-4">⭐</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Reviews</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.reviews.title')}</h3>
             <p className="text-gray-600 text-sm">
-              Review and approve completed tasks
+              {t('cards.reviews.description')}
             </p>
           </button>
 
@@ -214,9 +214,9 @@ export default function DashboardPage() {
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Completions</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.completions.title')}</h3>
             <p className="text-gray-600 text-sm">
-              View task completion history
+              {t('cards.completions.description')}
             </p>
           </button>
 
@@ -235,9 +235,9 @@ export default function DashboardPage() {
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow text-left"
           >
             <div className="text-4xl mb-4">⚙️</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Settings</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('cards.settings.title')}</h3>
             <p className="text-gray-600 text-sm">
-              Manage account and preferences
+              {t('cards.settings.description')}
             </p>
           </button>
         </div>
@@ -253,7 +253,7 @@ export default function DashboardPage() {
               </span>
             </li>
             <li>
-              <span className="font-medium text-gray-900">Add your children's profiles</span>
+              <span className="font-medium text-gray-900">{t('gettingStarted.step2')}</span>
               <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                 ✓ {t('gettingStarted.availableNow')}
               </span>

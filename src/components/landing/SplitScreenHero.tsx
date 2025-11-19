@@ -3,25 +3,27 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type ViewMode = 'split' | 'parent' | 'kid'
 
 export default function SplitScreenHero() {
+  const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<ViewMode>('split')
   const [hoveredSide, setHoveredSide] = useState<'parent' | 'kid' | null>(null)
 
   const parentFeatures = [
-    { icon: '👨‍👩‍👧‍👦', title: 'Family Dashboard', desc: 'Manage all family members' },
-    { icon: '📊', title: 'Progress Tracking', desc: 'See completion stats' },
-    { icon: '⭐', title: 'Review & Approve', desc: 'Quality control tasks' },
-    { icon: '🎁', title: 'Reward System', desc: 'Set up incentives' },
+    { icon: '👨‍👩‍👧‍👦', titleKey: 'landing.split.parent.features.dashboard', descKey: 'landing.split.parent.featuresDesc.dashboard' },
+    { icon: '📊', titleKey: 'landing.split.parent.features.tracking', descKey: 'landing.split.parent.featuresDesc.tracking' },
+    { icon: '⭐', titleKey: 'landing.split.parent.features.review', descKey: 'landing.split.parent.featuresDesc.review' },
+    { icon: '🎁', titleKey: 'landing.split.parent.features.rewards', descKey: 'landing.split.parent.featuresDesc.rewards' },
   ]
 
   const kidFeatures = [
-    { icon: '🎯', title: 'My Tasks', desc: 'See what to do today' },
-    { icon: '✅', title: 'Complete & Earn', desc: 'Check off chores' },
-    { icon: '🌟', title: 'Collect Stars', desc: 'Build your streak' },
-    { icon: '🏆', title: 'Level Up', desc: 'Unlock achievements' },
+    { icon: '🎯', titleKey: 'landing.split.kid.features.tasks', descKey: 'landing.split.kid.featuresDesc.tasks' },
+    { icon: '✅', titleKey: 'landing.split.kid.features.complete', descKey: 'landing.split.kid.featuresDesc.complete' },
+    { icon: '🌟', titleKey: 'landing.split.kid.features.stars', descKey: 'landing.split.kid.featuresDesc.stars' },
+    { icon: '🏆', titleKey: 'landing.split.kid.features.levelup', descKey: 'landing.split.kid.featuresDesc.levelup' },
   ]
 
   return (
@@ -41,7 +43,7 @@ export default function SplitScreenHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          Both Views
+          {t('landing.split.views.both')}
         </button>
         <button
           onClick={() => setViewMode('parent')}
@@ -51,7 +53,7 @@ export default function SplitScreenHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          For Parents
+          {t('landing.split.views.parent')}
         </button>
         <button
           onClick={() => setViewMode('kid')}
@@ -61,7 +63,7 @@ export default function SplitScreenHero() {
               : 'text-gray-600 hover:bg-gray-100'
           }`}
         >
-          For Kids
+          {t('landing.split.views.kid')}
         </button>
       </motion.div>
 
@@ -102,10 +104,10 @@ export default function SplitScreenHero() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-6xl md:text-7xl font-black mb-6">
-                  For Parents
+                  {t('landing.split.parent.title')}
                 </h2>
                 <p className="text-2xl mb-12 text-blue-100">
-                  Organize, track, and guide your family's daily routines
+                  {t('landing.split.parent.subtitle')}
                 </p>
               </motion.div>
 
@@ -121,8 +123,8 @@ export default function SplitScreenHero() {
                     whileHover={{ scale: 1.05, y: -5 }}
                   >
                     <div className="text-4xl mb-3">{feature.icon}</div>
-                    <h3 className="font-bold text-lg mb-1">{feature.title}</h3>
-                    <p className="text-sm text-blue-200">{feature.desc}</p>
+                    <h3 className="font-bold text-lg mb-1">{t(feature.titleKey)}</h3>
+                    <p className="text-sm text-blue-200">{t(feature.descKey)}</p>
                   </motion.div>
                 ))}
               </div>
@@ -137,7 +139,7 @@ export default function SplitScreenHero() {
                     href="/auth/register"
                     className="inline-flex items-center justify-center px-12 py-5 text-xl font-bold bg-white text-blue-600 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all"
                   >
-                    Start Managing Now
+                    {t('landing.split.parent.cta')}
                   </Link>
                 </motion.div>
               )}
@@ -150,7 +152,7 @@ export default function SplitScreenHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                Click to explore parent features →
+                {t('landing.split.parent.hoverHint')}
               </motion.div>
             )}
           </motion.div>
@@ -216,10 +218,10 @@ export default function SplitScreenHero() {
                 transition={{ delay: 0.2 }}
               >
                 <h2 className="text-6xl md:text-7xl font-black mb-6">
-                  For Kids
+                  {t('landing.split.kid.title')}
                 </h2>
                 <p className="text-2xl mb-12 text-purple-100">
-                  Complete tasks, earn rewards, and have fun!
+                  {t('landing.split.kid.subtitle')}
                 </p>
               </motion.div>
 
@@ -251,7 +253,7 @@ export default function SplitScreenHero() {
                     href="/auth/register"
                     className="inline-flex items-center justify-center px-12 py-5 text-xl font-bold bg-white text-purple-600 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all"
                   >
-                    Start Your Adventure! 🚀
+                    {t('landing.split.kid.cta')}
                   </Link>
                 </motion.div>
               )}
@@ -264,7 +266,7 @@ export default function SplitScreenHero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                ← Click to explore kid features
+                {t('landing.split.kid.hoverHint')}
               </motion.div>
             )}
           </motion.div>
@@ -284,7 +286,7 @@ export default function SplitScreenHero() {
               href="/auth/register"
               className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-3xl"
             >
-              Start Free for Everyone! 🎉
+              {t('landing.split.bottomCta.start')}
             </Link>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -292,7 +294,7 @@ export default function SplitScreenHero() {
               href="/auth/login"
               className="px-10 py-5 text-xl font-bold text-gray-700 bg-white rounded-full shadow-2xl hover:shadow-3xl"
             >
-              Login
+              {t('landing.split.bottomCta.login')}
             </Link>
           </motion.div>
         </motion.div>

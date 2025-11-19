@@ -3,8 +3,10 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export default function PlayfulHero() {
+  const { t } = useTranslation()
   const [hoveredCoin, setHoveredCoin] = useState<number | null>(null)
 
   const coins = [
@@ -16,10 +18,10 @@ export default function PlayfulHero() {
   ]
 
   const features = [
-    { icon: '🎯', title: 'Daily Tasks', color: 'from-purple-400 to-pink-400' },
-    { icon: '🌟', title: 'Earn Stars', color: 'from-yellow-400 to-orange-400' },
-    { icon: '🎁', title: 'Get Rewards', color: 'from-green-400 to-teal-400' },
-    { icon: '📊', title: 'Track Progress', color: 'from-blue-400 to-cyan-400' },
+    { icon: '🎯', titleKey: 'landing.playful.features.dailyTasks', color: 'from-purple-400 to-pink-400' },
+    { icon: '🌟', titleKey: 'landing.playful.features.earnStars', color: 'from-yellow-400 to-orange-400' },
+    { icon: '🎁', titleKey: 'landing.playful.features.getRewards', color: 'from-green-400 to-teal-400' },
+    { icon: '📊', titleKey: 'landing.playful.features.trackProgress', color: 'from-blue-400 to-cyan-400' },
   ]
 
   return (
@@ -77,9 +79,7 @@ export default function PlayfulHero() {
             }}
             transition={{ duration: 5, repeat: Infinity }}
           >
-            Kids Chores
-            <br />
-            Made Fun! 🎉
+            {t('landing.playful.title')}
           </motion.h1>
           <motion.p
             className="text-2xl md:text-3xl text-gray-700 font-bold"
@@ -87,7 +87,7 @@ export default function PlayfulHero() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Turn chores into adventures for the whole family
+            {t('landing.playful.subtitle')}
           </motion.p>
         </motion.div>
 
@@ -123,7 +123,7 @@ export default function PlayfulHero() {
               >
                 {feature.icon}
               </motion.div>
-              <p className="text-white font-bold text-lg">{feature.title}</p>
+              <p className="text-white font-bold text-lg">{t(feature.titleKey)}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -147,7 +147,7 @@ export default function PlayfulHero() {
                 transition={{ duration: 0.3 }}
               />
               <span className="relative flex items-center gap-2">
-                Start Free! 🚀
+                {t('landing.playful.cta.start')}
               </span>
             </Link>
           </motion.div>
@@ -157,7 +157,7 @@ export default function PlayfulHero() {
               href="/auth/login"
               className="inline-flex items-center justify-center px-10 py-5 text-2xl font-bold text-purple-600 bg-white rounded-full shadow-xl hover:shadow-2xl border-4 border-purple-200"
             >
-              Login 👋
+              {t('landing.playful.cta.login')}
             </Link>
           </motion.div>
         </motion.div>
@@ -168,7 +168,7 @@ export default function PlayfulHero() {
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          ✨ Hover over the coins! ✨
+          {t('landing.playful.hint')}
         </motion.div>
       </div>
 
