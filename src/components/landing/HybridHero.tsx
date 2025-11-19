@@ -306,29 +306,31 @@ export default function HybridHero() {
 
       {/* Bottom CTA (only in split mode) - Centered */}
       {viewMode === 'split' && (
-        <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-6 justify-center"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8 }}
-        >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              href="/auth/register"
-              className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-3xl"
-            >
-              {t('landing.hybrid.bottomCta.start')}
-            </Link>
+        <div className="fixed bottom-8 left-0 right-0 z-50 flex justify-center">
+          <motion.div
+            className="flex gap-6"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/auth/register"
+                className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-3xl"
+              >
+                {t('landing.hybrid.bottomCta.start')}
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/auth/login"
+                className="px-10 py-5 text-xl font-bold text-gray-700 bg-white rounded-full shadow-2xl hover:shadow-3xl"
+              >
+                {t('landing.hybrid.bottomCta.login')}
+              </Link>
+            </motion.div>
           </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              href="/auth/login"
-              className="px-10 py-5 text-xl font-bold text-gray-700 bg-white rounded-full shadow-2xl hover:shadow-3xl"
-            >
-              {t('landing.hybrid.bottomCta.login')}
-            </Link>
-          </motion.div>
-        </motion.div>
+        </div>
       )}
     </div>
   )
