@@ -68,7 +68,7 @@ export default function NewTaskPage() {
     }
   }
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: any, subtasks: any[]) {
     try {
       const response = await fetch('/api/tasks', {
         method: 'POST',
@@ -91,6 +91,26 @@ export default function NewTaskPage() {
           errorMessage = `${t('errors.validation')}\n${fieldErrors}`
         }
         throw new Error(errorMessage)
+      }
+
+      const result = await response.json()
+      const taskId = result.task?.id
+
+      // Save subtasks if any
+      if (taskId && subtasks.length > 0) {
+        for (const subtask of subtasks) {
+          await fetch(`/api/tasks/${taskId}/subtasks`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: subtask.title,
+              description: subtask.description,
+              order_index: subtask.order_index
+            }),
+          })
+        }
       }
 
       // Navigate back to tasks list

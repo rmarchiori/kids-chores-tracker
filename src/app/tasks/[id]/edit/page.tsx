@@ -110,7 +110,7 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
     }
   }
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: any, subtasks: any[]) {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
@@ -133,6 +133,38 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
           errorMessage = `${t('errors.validation')}\n${fieldErrors}`
         }
         throw new Error(errorMessage)
+      }
+
+      // Update subtasks: delete all existing and create new ones
+      // First get existing subtasks
+      if (taskId) {
+        const existingResponse = await fetch(`/api/tasks/${taskId}/subtasks`)
+        if (existingResponse.ok) {
+          const existingData = await existingResponse.json()
+          // Delete all existing subtasks
+          if (existingData.subtasks && Array.isArray(existingData.subtasks)) {
+            for (const subtask of existingData.subtasks) {
+              await fetch(`/api/tasks/${taskId}/subtasks/${subtask.id}`, {
+                method: 'DELETE',
+              })
+            }
+          }
+        }
+
+        // Create new subtasks
+        for (const subtask of subtasks) {
+          await fetch(`/api/tasks/${taskId}/subtasks`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: subtask.title,
+              description: subtask.description,
+              order_index: subtask.order_index
+            }),
+          })
+        }
       }
 
       // Navigate back to tasks list

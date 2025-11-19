@@ -140,7 +140,9 @@
     "warning": "Warning",
     "info": "Info",
     "back": "Back",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "add": "Add",
+    "remove": "Remove"
   },
   "children": {
     "title": "Children",
@@ -187,6 +189,12 @@
     "assign_to": "Assign To",
     "assign_help": "Select which children should do this task",
     "select_children": "Select children",
+    "subtasks": "Subtasks",
+    "subtask": "subtask",
+    "subtasks_count": "subtasks",
+    "subtasks_help": "Break down this task into smaller steps (optional)",
+    "subtask_placeholder": "Enter subtask title...",
+    "add_subtask": "Add Subtask",
     "task_image": "Task Image",
     "image_help": "Choose an image to help identify this task",
     "choose_image": "Choose Image",
