@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { motion } from 'framer-motion'
 
 // Validation schema for reset request
 const resetRequestSchema = z.object({
@@ -57,18 +58,40 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-blue-700 to-cyan-800 px-4 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      <motion.div
+        className="w-full max-w-md relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h1 className="text-5xl font-black text-white mb-2">
             Kids Chores Tracker
           </h1>
-          <p className="text-lg text-gray-600">Reset Password</p>
-        </div>
+          <p className="text-xl text-blue-100">Reset Password</p>
+        </motion.div>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+          whileHover={{ scale: 1.01, y: -2 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        >
           {/* Request Step */}
           {step === 'request' && (
             <>
@@ -107,13 +130,16 @@ export default function ResetPasswordPage() {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <motion.button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 disabled:bg-gray-400 text-white font-bold rounded-xl shadow-lg transition-colors duration-200"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
                   {isLoading ? 'Sending Email...' : 'Send Reset Link'}
-                </button>
+                </motion.button>
               </form>
 
               {/* Divider */}
@@ -127,12 +153,18 @@ export default function ResetPasswordPage() {
               </div>
 
               {/* Links */}
-              <Link
-                href="/auth/login"
-                className="block w-full text-center py-3 px-4 border border-gray-300 hover:border-blue-600 text-blue-600 font-medium rounded-lg transition-colors duration-200"
+              <motion.div
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                Back to Login
-              </Link>
+                <Link
+                  href="/auth/login"
+                  className="block w-full text-center py-3 px-4 border-2 border-indigo-600 hover:border-cyan-600 text-indigo-600 hover:text-cyan-600 font-bold rounded-xl transition-colors duration-200"
+                >
+                  Back to Login
+                </Link>
+              </motion.div>
             </>
           )}
 
@@ -151,7 +183,12 @@ export default function ResetPasswordPage() {
 
               {/* Steps */}
               <div className="space-y-4">
-                <div className="flex items-start">
+                <motion.div
+                  className="flex items-start"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
                   <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-600 text-sm font-semibold mr-4 flex-shrink-0">
                     ✓
                   </div>
@@ -159,9 +196,14 @@ export default function ResetPasswordPage() {
                     <p className="text-sm font-medium text-gray-900">Email sent to {email}</p>
                     <p className="text-xs text-gray-500">Check your inbox and spam folder</p>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start">
+                <motion.div
+                  className="flex items-start"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
                   <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600 text-sm font-semibold mr-4 flex-shrink-0">
                     2
                   </div>
@@ -169,9 +211,14 @@ export default function ResetPasswordPage() {
                     <p className="text-sm font-medium text-gray-900">Click the reset link</p>
                     <p className="text-xs text-gray-500">Link expires in 24 hours</p>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex items-start">
+                <motion.div
+                  className="flex items-start"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <div className="flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600 text-sm font-semibold mr-4 flex-shrink-0">
                     3
                   </div>
@@ -179,24 +226,33 @@ export default function ResetPasswordPage() {
                     <p className="text-sm font-medium text-gray-900">Create a new password</p>
                     <p className="text-xs text-gray-500">Make it secure and memorable</p>
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* Buttons */}
               <div className="mt-8 space-y-3">
-                <button
+                <motion.button
                   onClick={() => setStep('request')}
-                  className="w-full py-3 px-4 border border-gray-300 hover:border-blue-600 text-blue-600 font-medium rounded-lg transition-colors duration-200"
+                  className="w-full py-3 px-4 border-2 border-indigo-600 hover:border-cyan-600 text-indigo-600 hover:text-cyan-600 font-bold rounded-xl transition-colors duration-200"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
                   Try Another Email
-                </button>
+                </motion.button>
 
-                <Link
-                  href="/auth/login"
-                  className="block w-full text-center py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
-                  Back to Login
-                </Link>
+                  <Link
+                    href="/auth/login"
+                    className="block w-full text-center py-3 px-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white font-bold rounded-xl transition-colors duration-200"
+                  >
+                    Back to Login
+                  </Link>
+                </motion.div>
               </div>
 
               {/* FAQ */}
@@ -211,18 +267,18 @@ export default function ResetPasswordPage() {
               </div>
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-blue-100">
             Need help?{' '}
-            <a href="mailto:support@example.com" className="text-blue-600 hover:underline">
+            <a href="mailto:support@example.com" className="text-white hover:underline font-medium">
               Contact Support
             </a>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
