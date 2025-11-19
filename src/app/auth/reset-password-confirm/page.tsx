@@ -284,7 +284,7 @@ function ResetPasswordConfirmForm() {
               </div>
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-8 text-center">

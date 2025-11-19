@@ -17,41 +17,6 @@ import { useEffect, useState, useRef } from 'react'
  * @see https://developers.google.com/cast/docs/web_sender
  */
 
-// Chromecast types (augmenting window object)
-declare global {
-  interface Window {
-    __onGCastApiAvailable: (isAvailable: boolean) => void
-    chrome: {
-      cast: {
-        initialize: (
-          apiConfig: any,
-          successCallback: () => void,
-          errorCallback: (error: any) => void
-        ) => void
-        SessionRequest: new (appId: string) => any
-        ApiConfig: new (
-          sessionRequest: any,
-          sessionListener: (session: any) => void,
-          receiverListener: (availability: string) => void,
-          autoJoinPolicy: string,
-          defaultActionPolicy: string
-        ) => any
-        AutoJoinPolicy: {
-          ORIGIN_SCOPED: string
-        }
-        DefaultActionPolicy: {
-          CREATE_SESSION: string
-        }
-        requestSession: (
-          successCallback: (session: any) => void,
-          errorCallback: (error: any) => void
-        ) => void
-        isAvailable: boolean
-      }
-    }
-  }
-}
-
 interface CastButtonProps {
   /** URL to load on the receiver (TV) */
   receiverUrl?: string

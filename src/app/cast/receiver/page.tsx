@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { format, parseISO } from 'date-fns'
-import { StarRating } from '@/components/StarRating'
 
 /**
  * Cast Receiver Page
@@ -233,6 +232,10 @@ export default function CastReceiverPage() {
   }
 
   const currentChild = children[currentChildIndex]
+
+  if (!currentChild) {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-12">
