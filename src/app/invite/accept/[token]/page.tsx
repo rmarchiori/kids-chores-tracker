@@ -126,7 +126,7 @@ export default function AcceptInvitationPage() {
       }
 
       // Redirect to dashboard
-      router.push('/home')
+      router.push('/dashboard')
 
     } catch (err) {
       console.error('Failed to accept invitation:', err)

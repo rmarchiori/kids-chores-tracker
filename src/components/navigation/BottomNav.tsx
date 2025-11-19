@@ -12,7 +12,7 @@ import {
 import { useTranslation } from '@/hooks/useTranslation'
 
 const navigation = [
-  { name: 'nav.home', href: '/home', icon: HomeIcon },
+  { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
   { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
   { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },

@@ -53,7 +53,7 @@ export default function OnboardingPage() {
 
       if (familyMember) {
         // User already has a family, redirect to dashboard
-        router.push('/home')
+        router.push('/dashboard')
       }
     }
 
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
       }
 
       // Success! Redirect to dashboard
-      router.push('/home')
+      router.push('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

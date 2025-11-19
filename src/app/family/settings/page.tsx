@@ -261,7 +261,7 @@ export default function FamilySettingsPage() {
             Only family admins can manage family settings.
           </p>
           <button
-            onClick={() => router.push('/home')}
+            onClick={() => router.push('/dashboard')}
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
             Back to Home

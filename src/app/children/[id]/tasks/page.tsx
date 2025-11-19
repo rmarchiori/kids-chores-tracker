@@ -126,7 +126,7 @@ export default function ChildTasksPage() {
 
       if (membershipError || !membership) {
         console.error('Unauthorized access attempt to child tasks page')
-        router.push('/home')
+        router.push('/dashboard')
         return
       }
 

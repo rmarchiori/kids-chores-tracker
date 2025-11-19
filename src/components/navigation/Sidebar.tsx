@@ -20,7 +20,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useSidebar } from '@/contexts/SidebarContext'
 
 const navigation = [
-  { name: 'nav.home', href: '/home', icon: HomeIcon },
+  { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
   { name: 'nav.family', href: '/family/settings', icon: UsersIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
   { name: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
