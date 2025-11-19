@@ -320,7 +320,7 @@ export default function HybridHero() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/auth/register"
-                className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full shadow-2xl hover:shadow-3xl"
+                className="px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-full shadow-2xl hover:shadow-3xl"
               >
                 {t('landing.hybrid.bottomCta.start')}
               </Link>
