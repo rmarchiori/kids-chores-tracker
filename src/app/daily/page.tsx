@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { motion } from 'framer-motion'
 
 interface TaskAssignment {
   task_id: string
@@ -235,11 +236,11 @@ export default function DailyTasksPage() {
   function getStatusBadge(status: TaskAssignment['completion_status']) {
     switch (status) {
       case 'completed':
-        return <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Completed</span>
+        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 shadow-lg">✓ Completed</span>
       case 'pending_review':
-        return <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">⏳ Pending Review</span>
+        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 shadow-lg">⏳ Pending Review</span>
       case 'not_started':
-        return <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">○ Not Started</span>
+        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 shadow-lg">○ Not Started</span>
     }
   }
 
@@ -259,106 +260,159 @@ export default function DailyTasksPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-6 min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Today's Tasks</h1>
-          <p className="text-gray-600">
+        <motion.div
+          className="mb-8 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-8 text-white"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <motion.h1
+            className="text-4xl font-black mb-2"
+            animate={{ rotate: [-1, 1] }}
+            transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+          >
+            Today's Tasks
+          </motion.h1>
+          <p className="text-xl text-white/90">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
-        </div>
+        </motion.div>
 
         {/* Progress Overview */}
         {childrenProgress.length > 0 && (
           <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {childrenProgress.map(child => (
-              <div
+            {childrenProgress.map((child, index) => (
+              <motion.div
                 key={child.id}
-                className="bg-white rounded-xl p-4 shadow-md border border-gray-200"
+                className="bg-white rounded-3xl p-6 shadow-2xl border border-gray-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
               >
                 <div className="flex items-center gap-3 mb-3">
                   {child.profile_photo_url ? (
-                    <Image
-                      src={child.profile_photo_url}
-                      alt={child.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
+                    <motion.div
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Image
+                        src={child.profile_photo_url}
+                        alt={child.name}
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    </motion.div>
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                      <span className="text-lg font-bold text-blue-600">
+                    <motion.div
+                      className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <span className="text-lg font-black text-white">
                         {child.name.charAt(0)}
                       </span>
-                    </div>
+                    </motion.div>
                   )}
-                  <p className="font-semibold text-gray-900">{child.name}</p>
+                  <p className="font-black text-gray-900">{child.name}</p>
                 </div>
 
                 {/* Progress Bar */}
                 <div className="mb-2">
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Progress</span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="text-gray-600 font-medium">Progress</span>
+                    <span className="font-black text-gray-900">
                       {child.completed_tasks}/{child.total_tasks}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all"
-                      style={{ width: `${(child.completed_tasks / child.total_tasks) * 100}%` }}
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <motion.div
+                      className="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(child.completed_tasks / child.total_tasks) * 100}%` }}
+                      transition={{ duration: 1, delay: index * 0.2 }}
                     />
                   </div>
                 </div>
 
                 {/* Status Counts */}
-                <div className="flex gap-2 text-xs">
+                <div className="flex gap-3 text-sm font-medium">
                   <span className="text-green-700">✓ {child.completed_tasks}</span>
                   <span className="text-yellow-700">⏳ {child.pending_review_tasks}</span>
                   <span className="text-gray-600">○ {child.not_started_tasks}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
 
         {/* Filter */}
-        <div className="mb-6 flex gap-4 items-center">
-          <label htmlFor="filter-child" className="text-sm font-medium text-gray-700">
+        <motion.div
+          className="mb-6 flex gap-4 items-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <label htmlFor="filter-child" className="text-sm font-black text-gray-700">
             Show tasks for:
           </label>
           <select
             id="filter-child"
             value={selectedChild}
             onChange={(e) => setSelectedChild(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-3xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">All Children</option>
             {childrenProgress.map(child => (
               <option key={child.id} value={child.id}>{child.name}</option>
             ))}
           </select>
-        </div>
+        </motion.div>
 
         {/* Task List */}
         {filteredAssignments.length === 0 ? (
-          <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <p className="text-xl text-gray-500">No tasks for today</p>
+          <motion.div
+            className="text-center py-16 bg-white rounded-3xl shadow-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.p
+              className="text-2xl text-gray-500 font-black"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              No tasks for today
+            </motion.p>
             <p className="text-gray-400 mt-2">Create some tasks to get started</p>
-          </div>
+          </motion.div>
         ) : (
           <div className="space-y-4">
-            {filteredAssignments.map(assignment => (
-              <div
+            {filteredAssignments.map((assignment, index) => (
+              <motion.div
                 key={`${assignment.task_id}-${assignment.child_id}`}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+                className="bg-white rounded-3xl p-6 shadow-2xl hover:shadow-xl transition-shadow border border-gray-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-start gap-4">
                   {/* Task Image */}
                   {assignment.task.image_url && (
                     <div className="flex-shrink-0">
                       {assignment.task.image_source === 'emoji' ? (
-                        <span className="text-4xl">{assignment.task.image_url}</span>
+                        <motion.span
+                          className="text-5xl inline-block"
+                          animate={{ rotate: [-5, 5] }}
+                          transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+                        >
+                          {assignment.task.image_url}
+                        </motion.span>
                       ) : (
                         <Image
                           src={assignment.task.image_url}
@@ -375,30 +429,30 @@ export default function DailyTasksPage() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold text-lg text-gray-900">{assignment.task.title}</h3>
-                        <p className="text-sm text-gray-600">Assigned to: {assignment.child.name}</p>
+                        <h3 className="font-black text-xl text-gray-900">{assignment.task.title}</h3>
+                        <p className="text-sm text-gray-600 font-medium">Assigned to: {assignment.child.name}</p>
                       </div>
                       {getStatusBadge(assignment.completion_status)}
                     </div>
 
                     {/* Task Details */}
                     <div className="flex gap-2 mt-2">
-                      <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
+                      <span className="text-xs px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-gray-600 font-medium">
                         {assignment.task.category}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                         assignment.task.priority === 'high'
-                          ? 'bg-red-100 text-red-700'
+                          ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-700'
                           : assignment.task.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-gray-100 text-gray-700'
+                          ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-700'
+                          : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700'
                       }`}>
                         {assignment.task.priority} priority
                       </span>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

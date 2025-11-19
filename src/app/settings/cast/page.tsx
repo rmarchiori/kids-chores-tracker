@@ -6,6 +6,7 @@ import { CastButton } from '@/components/cast/CastButton'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
+import { motion } from 'framer-motion'
 
 /**
  * Cast Settings Page
@@ -37,35 +38,72 @@ export default function CastSettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-700 py-8 px-4 relative overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '50px 50px',
+          }} />
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10">
           {/* Header */}
-          <div className="mb-6">
-            <button
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.button
               onClick={() => router.push('/settings')}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+              className="flex items-center gap-2 text-white/90 hover:text-white mb-6 font-medium"
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <ArrowLeftIcon className="w-5 h-5" />
               {t('cast.backToSettings')}
-            </button>
-            <h1 className="text-3xl font-bold text-gray-900">{t('cast.title')}</h1>
-            <p className="text-gray-600 mt-2">
-              {t('cast.subtitle')}
-            </p>
-          </div>
+            </motion.button>
+            <div className="text-center">
+              <motion.div
+                className="text-7xl mb-4"
+                animate={{ rotate: [-5, 5] }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+              >
+                📺
+              </motion.div>
+              <h1 className="text-5xl font-black text-white mb-3">{t('cast.title')}</h1>
+              <p className="text-xl text-white/90">
+                {t('cast.subtitle')}
+              </p>
+            </div>
+          </motion.div>
 
           {/* Cast Connection Test */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('cast.connect.title')}</h2>
-            <p className="text-gray-600 mb-4">
+          <motion.div
+            className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('cast.connect.title')}</h2>
+            <p className="text-gray-700 mb-6 font-medium">
               {t('cast.connect.description')}
             </p>
             <CastButton showStatus={true} />
-          </div>
+          </motion.div>
 
           {/* Display Settings */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('cast.displaySettings.title')}</h2>
+          <motion.div
+            className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('cast.displaySettings.title')}</h2>
 
             {/* Rotation Interval */}
             <div className="mb-6">
@@ -131,17 +169,26 @@ export default function CastSettingsPage() {
               </label>
             </div>
 
-            <button
+            <motion.button
               onClick={handleSaveSettings}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('cast.displaySettings.saveSettings')}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* Setup Instructions */}
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('cast.setup.title')}</h2>
+          <motion.div
+            className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('cast.setup.title')}</h2>
 
             <div className="space-y-4">
               <div>
@@ -191,52 +238,82 @@ export default function CastSettingsPage() {
                 </ul>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Features Overview */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-blue-900 mb-4">
+          <motion.div
+            className="bg-gradient-to-br from-blue-400 to-cyan-400 rounded-3xl shadow-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <h2 className="text-3xl font-bold text-white mb-6">
               {t('cast.features.title')}
             </h2>
-            <div className="grid md:grid-cols-2 gap-4 text-blue-800">
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.autoRotation.title')}</h3>
-                <p className="text-sm">
+            <div className="grid md:grid-cols-2 gap-6 text-white">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.autoRotation.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.autoRotation.description')}
                 </p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.todayTasks.title')}</h3>
-                <p className="text-sm">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.todayTasks.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.todayTasks.description')}
                 </p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.achievements.title')}</h3>
-                <p className="text-sm">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.achievements.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.achievements.description')}
                 </p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.realtime.title')}</h3>
-                <p className="text-sm">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.realtime.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.realtime.description')}
                 </p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.tvOptimized.title')}</h3>
-                <p className="text-sm">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.tvOptimized.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.tvOptimized.description')}
                 </p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1">{t('cast.features.profileDisplay.title')}</h3>
-                <p className="text-sm">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+              >
+                <h3 className="font-bold mb-2 text-lg">{t('cast.features.profileDisplay.title')}</h3>
+                <p className="text-white/90">
                   {t('cast.features.profileDisplay.description')}
                 </p>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>

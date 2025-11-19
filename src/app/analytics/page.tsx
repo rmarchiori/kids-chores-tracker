@@ -8,6 +8,7 @@ import { format, subDays } from 'date-fns'
 import { ChartSkeleton } from '@/components/ui/LoadingSkeletons'
 import { useTranslation } from '@/hooks/useTranslation'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { motion } from 'framer-motion'
 
 // Dynamic imports for Recharts components (reduces initial bundle size by ~350KB gzipped)
 const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), {
@@ -192,136 +193,246 @@ export default function AnalyticsPage() {
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">{t('analytics.loading')}</div>
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-cyan-400 to-teal-400">
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
+            <p className="text-white font-bold text-lg">{t('analytics.loading')}</p>
+          </motion.div>
+        </div>
+      </DashboardLayout>
+    )
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-2">{t('analytics.error')}</h2>
-          <p className="text-red-700 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-cyan-400 to-teal-400">
+          <motion.div
+            className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            {t('analytics.retry')}
-          </button>
+            <h2 className="text-2xl font-black text-red-900 mb-2">{t('analytics.error')}</h2>
+            <p className="text-red-700 mb-6">{error}</p>
+            <motion.button
+              onClick={() => window.location.reload()}
+              className="w-full px-4 py-3 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-xl font-bold shadow-lg"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
+              {t('analytics.retry')}
+            </motion.button>
+          </motion.div>
         </div>
-      </div>
+      </DashboardLayout>
     )
   }
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <h1 className="text-3xl font-bold mb-8">{t('analytics.title')}</h1>
-
-      {/* Date Range Filter */}
-      <div className="mb-6">
-        <select
-          value={dateRange}
-          onChange={(e) => setDateRange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg"
-        >
-          <option value="7days">{t('analytics.dateRange.last7days')}</option>
-          <option value="30days">{t('analytics.dateRange.last30days')}</option>
-          <option value="90days">{t('analytics.dateRange.last90days')}</option>
-        </select>
-      </div>
-
-      {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">{t('analytics.stats.total_completions')}</p>
-          <p className="text-3xl font-bold text-blue-600">{overviewStats.total_completions}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">{t('analytics.stats.monthly_completions')}</p>
-          <p className="text-3xl font-bold text-green-600">{overviewStats.monthly_completions}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">{t('analytics.stats.avg_per_day')}</p>
-          <p className="text-3xl font-bold text-purple-600">{overviewStats.average_completion_rate}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-sm text-gray-600">{t('analytics.stats.current_streak')}</p>
-          <p className="text-3xl font-bold text-orange-600">{overviewStats.current_streak} {t('analytics.stats.days')}</p>
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Completion Trend */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.completion_trend')}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trendData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="tasks" stroke="#3b82f6" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Child Performance */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.child_performance')}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={childPerformance}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="tasks" fill="#10b981" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Category Breakdown */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.category_breakdown')}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={categoryBreakdown}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={(entry) => entry.name}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
+      <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-cyan-100">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Page Header */}
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <motion.div
+                className="text-6xl"
+                animate={{ rotate: [-5, 5] }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
               >
-                {categoryBreakdown.map((_entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+                📊
+              </motion.div>
+              <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-teal-600">
+                {t('analytics.title')}
+              </h1>
+            </div>
 
-        {/* Top Performers */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">{t('analytics.charts.top_performers')}</h2>
-          <div className="space-y-4">
-            {childPerformance.slice(0, 3).map((child, index) => (
-              <div key={child.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</span>
-                  <span className="font-medium">{child.name}</span>
-                </div>
-                <span className="text-gray-600">{child.tasks} {t('analytics.tasks')}</span>
+            {/* Date Range Filter */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <select
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className="px-6 py-3 bg-white border-2 border-cyan-200 rounded-xl font-bold text-gray-700 shadow-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              >
+                <option value="7days">{t('analytics.dateRange.last7days')}</option>
+                <option value="30days">{t('analytics.dateRange.last30days')}</option>
+                <option value="90days">{t('analytics.dateRange.last90days')}</option>
+              </select>
+            </motion.div>
+          </motion.div>
+
+          {/* Overview Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <motion.div
+              className="bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-3xl shadow-2xl p-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <p className="text-sm text-white/80 font-bold mb-2">{t('analytics.stats.total_completions')}</p>
+              <p className="text-4xl font-black">{overviewStats.total_completions}</p>
+            </motion.div>
+            <motion.div
+              className="bg-gradient-to-br from-teal-400 to-teal-600 rounded-3xl shadow-2xl p-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <p className="text-sm text-white/80 font-bold mb-2">{t('analytics.stats.monthly_completions')}</p>
+              <p className="text-4xl font-black">{overviewStats.monthly_completions}</p>
+            </motion.div>
+            <motion.div
+              className="bg-gradient-to-br from-cyan-500 to-teal-500 rounded-3xl shadow-2xl p-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <p className="text-sm text-white/80 font-bold mb-2">{t('analytics.stats.avg_per_day')}</p>
+              <p className="text-4xl font-black">{overviewStats.average_completion_rate}</p>
+            </motion.div>
+            <motion.div
+              className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-3xl shadow-2xl p-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+            >
+              <p className="text-sm text-white/80 font-bold mb-2">{t('analytics.stats.current_streak')}</p>
+              <p className="text-4xl font-black">{overviewStats.current_streak} {t('analytics.stats.days')}</p>
+            </motion.div>
+          </div>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Completion Trend */}
+            <motion.div
+              className="bg-white rounded-3xl shadow-2xl p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+            >
+              <h2 className="text-2xl font-black text-cyan-600 mb-4">{t('analytics.charts.completion_trend')}</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={trendData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="tasks" stroke="#0891b2" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
+            </motion.div>
+
+            {/* Child Performance */}
+            <motion.div
+              className="bg-white rounded-3xl shadow-2xl p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+            >
+              <h2 className="text-2xl font-black text-teal-600 mb-4">{t('analytics.charts.child_performance')}</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={childPerformance}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="tasks" fill="#14b8a6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </motion.div>
+
+            {/* Category Breakdown */}
+            <motion.div
+              className="bg-white rounded-3xl shadow-2xl p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+            >
+              <h2 className="text-2xl font-black text-cyan-600 mb-4">{t('analytics.charts.category_breakdown')}</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={categoryBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={(entry) => entry.name}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {categoryBreakdown.map((_entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </motion.div>
+
+            {/* Top Performers */}
+            <motion.div
+              className="bg-gradient-to-br from-cyan-400 to-teal-400 rounded-3xl shadow-2xl p-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.9 }}
+              whileHover={{ scale: 1.02, y: -3 }}
+            >
+              <h2 className="text-2xl font-black mb-6">{t('analytics.charts.top_performers')}</h2>
+              <div className="space-y-4">
+                {childPerformance.slice(0, 3).map((child, index) => (
+                  <motion.div
+                    key={child.name}
+                    className="flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-2xl p-4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 1.0 + index * 0.1 }}
+                    whileHover={{ scale: 1.05, x: 5 }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <motion.span
+                        className="text-3xl"
+                        animate={{ rotate: [-5, 5] }}
+                        transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: index * 0.3 }}
+                      >
+                        {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                      </motion.span>
+                      <span className="font-black text-lg">{child.name}</span>
+                    </div>
+                    <span className="font-bold text-lg">{child.tasks} {t('analytics.tasks')}</span>
+                  </motion.div>
+                ))}
               </div>
-            ))}
+            </motion.div>
           </div>
         </div>
-      </div>
       </div>
     </DashboardLayout>
   )

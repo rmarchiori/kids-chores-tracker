@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { TaskCompletionModal } from '@/components/TaskCompletionModal'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { motion } from 'framer-motion'
 
 interface Task {
   id: string
@@ -264,7 +265,7 @@ export default function ChildTasksPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4 md:p-8">
       {/* Positive Message Overlay */}
       {showMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 animate-fadeIn">
@@ -277,47 +278,85 @@ export default function ChildTasksPage() {
       )}
 
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-8">
-        <button
+      <motion.div
+        className="max-w-4xl mx-auto mb-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.button
           onClick={() => router.back()}
-          className="mb-4 text-blue-600 hover:text-blue-700 flex items-center gap-2"
+          className="mb-4 text-purple-600 hover:text-purple-700 font-bold flex items-center gap-2"
+          whileHover={{ x: -5 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
         >
           ← {t('common.back')}
-        </button>
+        </motion.button>
 
-        <div className="bg-white rounded-2xl p-6 shadow-lg flex items-center gap-4">
+        <motion.div
+          className="bg-gradient-to-br from-purple-400 to-pink-400 rounded-3xl p-6 shadow-2xl flex items-center gap-4 text-white"
+          whileHover={{ scale: 1.02, y: -2 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        >
           {child.profile_photo_url && (
-            <Image
-              src={child.profile_photo_url}
-              alt={child.name}
-              width={80}
-              height={80}
-              className="rounded-full"
-            />
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
+              <Image
+                src={child.profile_photo_url}
+                alt={child.name}
+                width={80}
+                height={80}
+                className="rounded-full border-4 border-white shadow-lg"
+              />
+            </motion.div>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{child.name}'s Tasks</h1>
-            <p className="text-lg text-gray-600">
-              {completedTasks.length} of {tasks.length} tasks completed today! 🎯
+            <h1 className="text-3xl font-black">{child.name}'s Tasks</h1>
+            <p className="text-lg text-white/90 flex items-center gap-2">
+              {completedTasks.length} of {tasks.length} tasks completed today!
+              <motion.span
+                className="text-2xl"
+                animate={{ rotate: [-10, 10] }}
+                transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
+              >
+                🎯
+              </motion.span>
             </p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Tasks to Do */}
       {pendingTasks.length > 0 && (
         <div className="max-w-4xl mx-auto mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Tasks To Do</h2>
+          <motion.h2
+            className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Tasks To Do
+          </motion.h2>
           <div className="grid gap-4">
-            {pendingTasks.map(task => (
-              <div
+            {pendingTasks.map((task, index) => (
+              <motion.div
                 key={task.id}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
+                className="bg-white rounded-3xl p-6 shadow-2xl hover:shadow-xl transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-center gap-4 mb-4">
                   {/* Task Image */}
                   {task.image_url && (
-                    <div className="flex-shrink-0">
+                    <motion.div
+                      className="flex-shrink-0"
+                      animate={{ rotate: [-5, 5] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: index * 0.2 }}
+                    >
                       {task.image_source === 'emoji' ? (
                         <span className="text-5xl">{task.image_url}</span>
                       ) : (
@@ -329,12 +368,12 @@ export default function ChildTasksPage() {
                           className="object-contain"
                         />
                       )}
-                    </div>
+                    </motion.div>
                   )}
 
                   {/* Task Info */}
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-gray-900">{task.title}</h3>
+                    <h3 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{task.title}</h3>
                     {task.description && child.age_group === '9-12' && (
                       <p className="text-gray-600 mt-1">{task.description}</p>
                     )}
@@ -342,26 +381,29 @@ export default function ChildTasksPage() {
                 </div>
 
                 {/* Complete Button */}
-                <button
+                <motion.button
                   onClick={() => handleCompleteTask(task)}
                   disabled={completingTaskId === task.id}
                   className={`
-                    w-full py-4 rounded-xl font-bold text-xl transition-all
+                    w-full py-4 rounded-3xl font-black text-xl transition-all shadow-2xl
                     ${child.age_group === '5-8'
                       ? 'bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500'
-                      : 'bg-blue-600 hover:bg-blue-700'
+                      : 'bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500'
                     }
-                    text-white shadow-lg hover:shadow-xl transform hover:scale-105
-                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                    text-white
+                    disabled:opacity-50 disabled:cursor-not-allowed
                   `}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
                   {completingTaskId === task.id ? (
                     <span>{t('common.saving')}</span>
                   ) : (
                     <span>✓ {child.age_group === '5-8' ? 'I Did This!' : 'Mark Complete'}</span>
                   )}
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -370,16 +412,37 @@ export default function ChildTasksPage() {
       {/* Completed Tasks */}
       {completedTasks.length > 0 && (
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-green-700 mb-4">✓ Completed Today!</h2>
+          <motion.h2
+            className="text-2xl font-black text-green-700 mb-4 flex items-center gap-2"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <motion.span
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              ✓
+            </motion.span>
+            Completed Today!
+          </motion.h2>
           <div className="grid gap-4">
-            {completedTasks.map(task => (
-              <div
+            {completedTasks.map((task, index) => (
+              <motion.div
                 key={task.id}
-                className="bg-green-50 rounded-xl p-6 border-2 border-green-200"
+                className="bg-gradient-to-br from-green-400 to-emerald-400 rounded-3xl p-6 border-2 border-green-300 shadow-2xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-center gap-4">
                   {task.image_url && (
-                    <div className="flex-shrink-0 opacity-70">
+                    <motion.div
+                      className="flex-shrink-0"
+                      animate={{ rotate: [-5, 5] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: index * 0.2 }}
+                    >
                       {task.image_source === 'emoji' ? (
                         <span className="text-4xl">{task.image_url}</span>
                       ) : (
@@ -391,14 +454,22 @@ export default function ChildTasksPage() {
                           className="object-contain"
                         />
                       )}
-                    </div>
+                    </motion.div>
                   )}
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-green-800">{task.title}</h3>
-                    <p className="text-green-600">Great job! ✓</p>
+                    <h3 className="text-xl font-black text-white">{task.title}</h3>
+                    <p className="text-white/90 flex items-center gap-1">
+                      Great job!
+                      <motion.span
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        ✓
+                      </motion.span>
+                    </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -406,9 +477,26 @@ export default function ChildTasksPage() {
 
       {/* No Tasks */}
       {tasks.length === 0 && (
-        <div className="max-w-4xl mx-auto text-center py-16">
-          <p className="text-2xl text-gray-500">No tasks assigned yet!</p>
-        </div>
+        <motion.div
+          className="max-w-4xl mx-auto text-center py-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <motion.div
+            className="bg-gradient-to-br from-purple-400 to-pink-400 rounded-3xl shadow-2xl p-12 text-white"
+            whileHover={{ scale: 1.02 }}
+          >
+            <motion.div
+              className="text-6xl mb-4"
+              animate={{ rotate: [-10, 10] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              📋
+            </motion.div>
+            <p className="text-2xl font-black">No tasks assigned yet!</p>
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Task Completion Modal */}

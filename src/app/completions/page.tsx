@@ -7,6 +7,7 @@ import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { StarRating } from '@/components/StarRating'
 import { useCompletions } from '@/lib/hooks/useData'
 import { createClient } from '@/lib/supabase/client'
+import { motion } from 'framer-motion'
 
 export default function CompletionsPage() {
   const { t } = useTranslation()
@@ -93,41 +94,76 @@ export default function CompletionsPage() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Completion History</h1>
-          <p className="text-gray-600">View all completed tasks by your children</p>
-        </div>
+        <motion.div
+          className="mb-8 bg-gradient-to-br from-cyan-400 to-teal-400 rounded-3xl shadow-2xl p-8 text-white"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <motion.div
+            className="text-6xl mb-4 inline-block"
+            animate={{ rotate: [-5, 5] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          >
+            📊
+          </motion.div>
+          <h1 className="text-4xl font-black mb-2">Completion History</h1>
+          <p className="text-white/90 text-lg">View all completed tasks by your children</p>
+        </motion.div>
 
         {/* Filters */}
-        <div className="mb-6 flex gap-4 items-center">
-          <label htmlFor="filter-child" className="text-sm font-medium text-gray-700">
+        <motion.div
+          className="mb-6 flex gap-4 items-center bg-gradient-to-br from-cyan-50 to-teal-50 p-6 rounded-3xl shadow-2xl border-2 border-cyan-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <label htmlFor="filter-child" className="text-sm font-black text-gray-700">
             Filter by child:
           </label>
           <select
             id="filter-child"
             value={filterChild}
             onChange={(e) => setFilterChild(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border-2 border-cyan-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold"
           >
             <option value="all">All Children</option>
             {children.map(child => (
               <option key={child.id} value={child.id}>{child.name}</option>
             ))}
           </select>
-        </div>
+        </motion.div>
 
         {/* Completions List */}
         {completions.length === 0 ? (
-          <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <p className="text-xl text-gray-500">No completions yet</p>
-            <p className="text-gray-400 mt-2">Completed tasks will appear here</p>
-          </div>
+          <motion.div
+            className="text-center py-16 bg-gradient-to-br from-cyan-400 to-teal-400 rounded-3xl shadow-2xl text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <motion.div
+              className="text-6xl mb-4 inline-block"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              📋
+            </motion.div>
+            <p className="text-2xl font-black">No completions yet</p>
+            <p className="text-white/90 mt-2 text-lg">Completed tasks will appear here</p>
+          </motion.div>
         ) : (
           <div className="space-y-4">
-            {completions.map((completion: any) => (
-              <div
+            {completions.map((completion: any, index: number) => (
+              <motion.div
                 key={completion.id}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+                className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-cyan-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-start gap-4">
                   {/* Child Avatar */}
@@ -156,13 +192,13 @@ export default function CompletionsPage() {
                         <p className="font-semibold text-gray-900">{completion.children.name}</p>
                         <p className="text-sm text-gray-500">{formatDate(completion.completed_at)}</p>
                       </div>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-cyan-400 to-teal-400 text-white shadow-lg">
                         ✓ Completed
                       </span>
                     </div>
 
                     {/* Task Info */}
-                    <div className="flex items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3 mt-3 p-3 bg-gradient-to-br from-cyan-50 to-teal-50 rounded-3xl border border-cyan-200">
                       {completion.tasks.image_url && (
                         <div className="flex-shrink-0">
                           {completion.tasks.image_source === 'emoji' ? (
@@ -199,8 +235,8 @@ export default function CompletionsPage() {
 
                     {/* Child Rating & Notes */}
                     {completion.child_rating && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                        <p className="text-xs font-semibold text-gray-700 mb-2">Child's Rating:</p>
+                      <div className="mt-3 p-3 bg-gradient-to-br from-cyan-50 to-teal-50 rounded-3xl border-2 border-cyan-200">
+                        <p className="text-xs font-black text-gray-700 mb-2">Child's Rating:</p>
                         <StarRating
                           value={completion.child_rating}
                           readonly
@@ -208,7 +244,7 @@ export default function CompletionsPage() {
                           showLabel={false}
                         />
                         {completion.child_notes && (
-                          <div className="mt-2 text-sm text-gray-700 italic">
+                          <div className="mt-2 text-sm text-gray-700 italic font-medium">
                             "{completion.child_notes}"
                           </div>
                         )}
@@ -217,9 +253,9 @@ export default function CompletionsPage() {
 
                     {/* Parent Review */}
                     {completion.status === 'completed' && completion.parent_feedback && (
-                      <div className="mt-3 p-4 bg-green-50 rounded-lg border-2 border-green-200">
+                      <div className="mt-3 p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl border-2 border-green-300 shadow-lg">
                         <div className="flex items-start justify-between mb-2">
-                          <p className="text-xs font-semibold text-green-800">Parent's Review:</p>
+                          <p className="text-xs font-black text-green-800">Parent's Review:</p>
                           {completion.parent_rating && (
                             <StarRating
                               value={completion.parent_rating}
@@ -229,14 +265,14 @@ export default function CompletionsPage() {
                             />
                           )}
                         </div>
-                        <p className="text-sm text-green-900 font-medium">
+                        <p className="text-sm text-green-900 font-black">
                           {completion.parent_feedback}
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
