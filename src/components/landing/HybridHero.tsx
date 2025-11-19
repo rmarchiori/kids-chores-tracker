@@ -29,12 +29,13 @@ export default function HybridHero() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Mode Selector Pills - Centered at top */}
-      <motion.div
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
+      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center">
+        <motion.div
+          className="bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
         <button
           onClick={() => setViewMode('split')}
           className={`px-6 py-3 rounded-full font-bold transition-all ${
@@ -65,7 +66,8 @@ export default function HybridHero() {
         >
           {t('landing.hybrid.views.kid')}
         </button>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/* Main Split Screen Container */}
       <div className="flex min-h-screen pt-24">
