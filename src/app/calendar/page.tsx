@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { WeeklyCalendarView } from '@/components/calendar/WeeklyCalendarView'
 import { MonthlyCalendarView } from '@/components/calendar/MonthlyCalendarView'
@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 
 type CalendarView = 'daily' | 'weekly' | 'monthly'
 
-export default function CalendarPage() {
+function CalendarContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -186,5 +186,17 @@ export default function CalendarPage() {
       </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function CalendarPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    }>
+      <CalendarContent />
+    </Suspense>
   )
 }
