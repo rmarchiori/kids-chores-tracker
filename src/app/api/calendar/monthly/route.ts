@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, subMonths } from 'date-fns'
+import { doesTaskOccurOnDate } from '@/lib/utils/rrule-generator'
 
 export async function GET(request: Request) {
   try {
@@ -56,10 +57,10 @@ export async function GET(request: Request) {
       throw completionsError
     }
 
-    // Fetch all tasks for the family
+    // Fetch all tasks for the family with RRULE information
     const { data: tasks, error: tasksError } = await supabase
       .from('tasks')
-      .select('id, due_date, recurring')
+      .select('id, due_date, recurring, rrule, created_at')
       .eq('family_id', familyId)
 
     if (tasksError) {
@@ -77,15 +78,22 @@ export async function GET(request: Request) {
         return completedDate === dayStr && (c.status === 'completed' || c.status === 'pending_review')
       }) || []
 
-      // Estimate total tasks for the day
-      const dueTasks = tasks?.filter(t => {
-        if (t.due_date) {
+      // Count total tasks for the day using RRULE logic
+      const tasksForDay = tasks?.filter(t => {
+        // Non-recurring tasks: check if due_date matches
+        if (!t.recurring && t.due_date) {
           return format(new Date(t.due_date), 'yyyy-MM-dd') === dayStr
         }
-        return t.recurring
+
+        // Recurring tasks: use RRULE to determine if task occurs on this day
+        if (t.recurring && t.rrule) {
+          return doesTaskOccurOnDate(t.rrule, day, t.created_at ? new Date(t.created_at) : undefined)
+        }
+
+        return false
       }) || []
 
-      const totalTasks = dueTasks.length
+      const totalTasks = tasksForDay.length
       const completedTasks = dayCompletions.length
       const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 

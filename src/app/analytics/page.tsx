@@ -8,112 +8,178 @@ import { format, subDays } from 'date-fns'
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
 
+// Type definitions for analytics data
+interface TrendDataPoint {
+  date: string
+  tasks: number
+}
+
+interface ChildPerformanceData {
+  name: string
+  tasks: number
+}
+
+interface CategoryBreakdownData {
+  name: string
+  value: number
+}
+
+interface OverviewStats {
+  total_completions: number
+  monthly_completions: number
+  average_completion_rate: number
+  current_streak: number
+}
+
 export default function AnalyticsPage() {
   const router = useRouter()
   const [familyId, setFamilyId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState('30days')
-  const [overviewStats, setOverviewStats] = useState({
+  const [overviewStats, setOverviewStats] = useState<OverviewStats>({
     total_completions: 0,
     monthly_completions: 0,
     average_completion_rate: 0,
     current_streak: 0
   })
-  const [trendData, setTrendData] = useState<any[]>([])
-  const [childPerformance, setChildPerformance] = useState<any[]>([])
-  const [categoryBreakdown, setCategoryBreakdown] = useState<any[]>([])
+  const [trendData, setTrendData] = useState<TrendDataPoint[]>([])
+  const [childPerformance, setChildPerformance] = useState<ChildPerformanceData[]>([])
+  const [categoryBreakdown, setCategoryBreakdown] = useState<CategoryBreakdownData[]>([])
 
   useEffect(() => {
     async function loadData() {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      try {
+        setError(null)
+        setLoading(true)
 
-      if (!user) {
-        router.push('/auth/login')
-        return
+        const supabase = createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+        if (authError) {
+          throw new Error('Authentication failed')
+        }
+
+        if (!user) {
+          router.push('/auth/login')
+          return
+        }
+
+        const { data: familyMember, error: familyError } = await supabase
+          .from('family_members')
+          .select('family_id')
+          .eq('user_id', user.id)
+          .single()
+
+        if (familyError) {
+          throw new Error('Failed to fetch family membership')
+        }
+
+        if (familyMember) {
+          setFamilyId(familyMember.family_id)
+          await fetchAnalyticsData(familyMember.family_id)
+        }
+      } catch (err) {
+        console.error('Error loading analytics:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load analytics data')
+      } finally {
+        setLoading(false)
       }
-
-      const { data: familyMember } = await supabase
-        .from('family_members')
-        .select('family_id')
-        .eq('user_id', user.id)
-        .single()
-
-      if (familyMember) {
-        setFamilyId(familyMember.family_id)
-        await fetchAnalyticsData(familyMember.family_id)
-      }
-
-      setLoading(false)
     }
 
     loadData()
   }, [router, dateRange])
 
   const fetchAnalyticsData = async (famId: string) => {
-    const supabase = createClient()
-    const daysAgo = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90
-    const startDate = format(subDays(new Date(), daysAgo), 'yyyy-MM-dd')
+    try {
+      const supabase = createClient()
+      const daysAgo = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90
+      const startDate = format(subDays(new Date(), daysAgo), 'yyyy-MM-dd')
 
-    // Fetch completions
-    const { data: completions } = await supabase
-      .from('task_completions')
-      .select(`
-        id,
-        completed_at,
-        rating,
-        tasks!inner(id, family_id, category),
-        children(id, name)
-      `)
-      .eq('tasks.family_id', famId)
-      .gte('completed_at', startDate)
-      .in('status', ['completed', 'pending_review'])
+      // Fetch completions
+      const { data: completions, error: completionsError } = await supabase
+        .from('task_completions')
+        .select(`
+          id,
+          completed_at,
+          rating,
+          tasks!inner(id, family_id, category),
+          children(id, name)
+        `)
+        .eq('tasks.family_id', famId)
+        .gte('completed_at', startDate)
+        .in('status', ['completed', 'pending_review'])
 
-    if (!completions) return
+      if (completionsError) {
+        throw new Error(`Failed to fetch completions: ${completionsError.message}`)
+      }
 
-    // Overview stats
-    const total = completions.length
-    const monthlyComps = completions.filter(c =>
-      new Date(c.completed_at) >= subDays(new Date(), 30)
-    ).length
+      if (!completions) return
 
-    setOverviewStats({
-      total_completions: total,
-      monthly_completions: monthlyComps,
-      average_completion_rate: total > 0 ? Math.round((total / daysAgo) * 100) / 100 : 0,
-      current_streak: 0 // Calculate based on consecutive days
-    })
+      // Overview stats
+      const total = completions.length
+      const monthlyComps = completions.filter(c =>
+        new Date(c.completed_at) >= subDays(new Date(), 30)
+      ).length
 
-    // Trend data - group by day
-    const trendMap = new Map()
-    completions.forEach(c => {
-      const day = format(new Date(c.completed_at), 'MMM d')
-      trendMap.set(day, (trendMap.get(day) || 0) + 1)
-    })
-    const trend = Array.from(trendMap.entries()).map(([date, count]) => ({ date, tasks: count }))
-    setTrendData(trend.slice(-30)) // Last 30 data points
+      setOverviewStats({
+        total_completions: total,
+        monthly_completions: monthlyComps,
+        average_completion_rate: total > 0 ? Math.round((total / daysAgo) * 100) / 100 : 0,
+        current_streak: 0 // Calculate based on consecutive days
+      })
 
-    // Child performance
-    const childMap = new Map()
-    completions.forEach(c => {
-      const childName = c.children?.name || 'Unknown'
-      childMap.set(childName, (childMap.get(childName) || 0) + 1)
-    })
-    const childPerf = Array.from(childMap.entries()).map(([name, count]) => ({ name, tasks: count }))
-    setChildPerformance(childPerf)
+      // Trend data - group by day
+      const trendMap = new Map<string, number>()
+      completions.forEach(c => {
+        const day = format(new Date(c.completed_at), 'MMM d')
+        trendMap.set(day, (trendMap.get(day) || 0) + 1)
+      })
+      const trend: TrendDataPoint[] = Array.from(trendMap.entries()).map(([date, count]) => ({ date, tasks: count }))
+      setTrendData(trend.slice(-30)) // Last 30 data points
 
-    // Category breakdown
-    const catMap = new Map()
-    completions.forEach(c => {
-      const cat = c.tasks?.category || 'other'
-      catMap.set(cat, (catMap.get(cat) || 0) + 1)
-    })
-    const catBreak = Array.from(catMap.entries()).map(([name, value]) => ({ name, value }))
-    setCategoryBreakdown(catBreak)
+      // Child performance
+      const childMap = new Map<string, number>()
+      completions.forEach(c => {
+        const childName = c.children?.name || 'Unknown'
+        childMap.set(childName, (childMap.get(childName) || 0) + 1)
+      })
+      const childPerf: ChildPerformanceData[] = Array.from(childMap.entries()).map(([name, count]) => ({ name, tasks: count }))
+      setChildPerformance(childPerf)
+
+      // Category breakdown
+      const catMap = new Map<string, number>()
+      completions.forEach(c => {
+        const cat = c.tasks?.category || 'other'
+        catMap.set(cat, (catMap.get(cat) || 0) + 1)
+      })
+      const catBreak: CategoryBreakdownData[] = Array.from(catMap.entries()).map(([name, value]) => ({ name, value }))
+      setCategoryBreakdown(catBreak)
+    } catch (err) {
+      console.error('Error fetching analytics data:', err)
+      throw err
+    }
   }
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading analytics...</div>
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="max-w-md w-full bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Analytics</h2>
+          <p className="text-red-700 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useSortable } from '@dnd-kit/sortable'
@@ -88,6 +88,12 @@ function SortableSubtaskItem({
 export function SubtaskList({ taskId, subtasks, onUpdate, editable = false, ageGroup = '9-12' }: SubtaskListProps) {
   const [items, setItems] = useState(subtasks)
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
+
+  // Sync local state with props when subtasks change from parent
+  // This prevents stale state issues
+  useEffect(() => {
+    setItems(subtasks)
+  }, [subtasks])
 
   const sensors = useSensors(
     useSensor(PointerSensor),

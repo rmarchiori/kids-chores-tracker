@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useMemo, memo } from 'react'
 import { format, addWeeks, subWeeks, startOfWeek } from 'date-fns'
 import { useWeeklyCalendarData, getCompletionColor } from '@/lib/hooks/useCalendarData'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
@@ -13,23 +13,36 @@ interface WeeklyCalendarViewProps {
 
 const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export function WeeklyCalendarView({ familyId, initialDate = new Date() }: WeeklyCalendarViewProps) {
+function WeeklyCalendarViewComponent({ familyId, initialDate = new Date() }: WeeklyCalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(initialDate)
   const router = useRouter()
 
   const { data: weekData, isLoading, error } = useWeeklyCalendarData(currentDate, familyId)
 
-  const handlePreviousWeek = () => {
+  // Memoize callbacks to prevent unnecessary re-renders
+  const handlePreviousWeek = useCallback(() => {
     setCurrentDate(prev => subWeeks(prev, 1))
-  }
+  }, [])
 
-  const handleNextWeek = () => {
+  const handleNextWeek = useCallback(() => {
     setCurrentDate(prev => addWeeks(prev, 1))
-  }
+  }, [])
 
-  const handleDayClick = (date: string) => {
+  const handleTodayClick = useCallback(() => {
+    setCurrentDate(new Date())
+  }, [])
+
+  const handleDayClick = useCallback((date: string) => {
     router.push(`/daily?date=${date}`)
-  }
+  }, [router])
+
+  // Memoize computed values
+  const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 0 }), [currentDate])
+
+  const isCurrentWeek = useMemo(
+    () => format(weekStart, 'yyyy-MM-dd') === format(startOfWeek(new Date(), { weekStartsOn: 0 }), 'yyyy-MM-dd'),
+    [weekStart]
+  )
 
   if (isLoading) {
     return (
@@ -74,7 +87,7 @@ export function WeeklyCalendarView({ familyId, initialDate = new Date() }: Weekl
             <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
           </button>
           <button
-            onClick={() => setCurrentDate(new Date())}
+            onClick={handleTodayClick}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
             Today
@@ -224,3 +237,6 @@ export function WeeklyCalendarView({ familyId, initialDate = new Date() }: Weekl
     </div>
   )
 }
+
+// Memoize component to prevent unnecessary re-renders when parent re-renders
+export const WeeklyCalendarView = memo(WeeklyCalendarViewComponent)

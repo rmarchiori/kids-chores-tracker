@@ -50,12 +50,18 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
-              "style-src 'self' 'unsafe-inline'",
+              // Removed 'unsafe-eval' and 'unsafe-inline' from script-src for security
+              // Using nonce or hash would be ideal, but for Next.js we allow 'unsafe-inline' for styles only
+              // Production apps should use nonce-based CSP with Next.js middleware
+              "script-src 'self'",
+              "style-src 'self' 'unsafe-inline'", // Required for styled-jsx and inline styles
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
               "frame-ancestors 'none'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
             ].join('; '),
           },
         ],

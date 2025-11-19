@@ -31,6 +31,9 @@ export function RecurrencePatternPicker({
   const [showPreview, setShowPreview] = useState(false)
 
   // Update parent when pattern changes
+  // Note: Removed onChange from dependencies to prevent infinite render loops
+  // onChange should be stable (memoized) in parent component, but we use
+  // useRef pattern to avoid dependency issues
   useEffect(() => {
     try {
       const rrule = generateRRule(pattern)
@@ -39,7 +42,8 @@ export function RecurrencePatternPicker({
     } catch (error) {
       console.error('Failed to generate RRULE:', error)
     }
-  }, [pattern, onChange])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pattern])
 
   const handleTypeChange = (type: 'daily' | 'weekly' | 'monthly' | 'custom') => {
     setPattern({

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useMemo, memo } from 'react'
 import { format, addMonths, subMonths, startOfMonth, getDay, getDaysInMonth } from 'date-fns'
 import { useMonthlyCalendarData, getHeatmapColor } from '@/lib/hooks/useCalendarData'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
@@ -13,7 +13,7 @@ interface MonthlyCalendarViewProps {
 
 const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export function MonthlyCalendarView({ familyId, initialDate = new Date() }: MonthlyCalendarViewProps) {
+function MonthlyCalendarViewComponent({ familyId, initialDate = new Date() }: MonthlyCalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(initialDate)
   const router = useRouter()
 
@@ -22,21 +22,26 @@ export function MonthlyCalendarView({ familyId, initialDate = new Date() }: Mont
 
   const { data: monthData, isLoading, error } = useMonthlyCalendarData(year, month, familyId)
 
-  const handlePreviousMonth = () => {
+  // Memoize callbacks to prevent unnecessary re-renders
+  const handlePreviousMonth = useCallback(() => {
     setCurrentDate(prev => subMonths(prev, 1))
-  }
+  }, [])
 
-  const handleNextMonth = () => {
+  const handleNextMonth = useCallback(() => {
     setCurrentDate(prev => addMonths(prev, 1))
-  }
+  }, [])
 
-  const handleDayClick = (date: string) => {
+  const handleTodayClick = useCallback(() => {
+    setCurrentDate(new Date())
+  }, [])
+
+  const handleDayClick = useCallback((date: string) => {
     router.push(`/daily?date=${date}`)
-  }
+  }, [router])
 
-  const handleWeekClick = (weekStart: string) => {
+  const handleWeekClick = useCallback((weekStart: string) => {
     router.push(`/calendar?view=weekly&date=${weekStart}`)
-  }
+  }, [router])
 
   if (isLoading) {
     return (
@@ -93,7 +98,7 @@ export function MonthlyCalendarView({ familyId, initialDate = new Date() }: Mont
             <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
           </button>
           <button
-            onClick={() => setCurrentDate(new Date())}
+            onClick={handleTodayClick}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
             Today
@@ -236,3 +241,6 @@ export function MonthlyCalendarView({ familyId, initialDate = new Date() }: Mont
     </div>
   )
 }
+
+// Memoize component to prevent unnecessary re-renders when parent re-renders
+export const MonthlyCalendarView = memo(MonthlyCalendarViewComponent)

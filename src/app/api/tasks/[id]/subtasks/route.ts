@@ -26,6 +26,29 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Verify the task belongs to user's family
+    const { data: task, error: taskError } = await supabase
+      .from('tasks')
+      .select('family_id')
+      .eq('id', taskId)
+      .single()
+
+    if (taskError || !task) {
+      return NextResponse.json({ error: 'Task not found' }, { status: 404 })
+    }
+
+    // Verify user is a member of this family
+    const { data: familyMember, error: familyError } = await supabase
+      .from('family_members')
+      .select('family_id')
+      .eq('user_id', user.id)
+      .eq('family_id', task.family_id)
+      .single()
+
+    if (familyError || !familyMember) {
+      return NextResponse.json({ error: 'Forbidden - access denied' }, { status: 403 })
+    }
+
     // Fetch subtasks
     const { data: subtasks, error } = await supabase
       .from('subtasks')
@@ -64,6 +87,29 @@ export async function POST(
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Verify the task belongs to user's family
+    const { data: task, error: taskError } = await supabase
+      .from('tasks')
+      .select('family_id')
+      .eq('id', taskId)
+      .single()
+
+    if (taskError || !task) {
+      return NextResponse.json({ error: 'Task not found' }, { status: 404 })
+    }
+
+    // Verify user is a member of this family
+    const { data: familyMember, error: familyError } = await supabase
+      .from('family_members')
+      .select('family_id')
+      .eq('user_id', user.id)
+      .eq('family_id', task.family_id)
+      .single()
+
+    if (familyError || !familyMember) {
+      return NextResponse.json({ error: 'Forbidden - access denied' }, { status: 403 })
     }
 
     // Parse and validate request body

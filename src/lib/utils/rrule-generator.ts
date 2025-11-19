@@ -232,3 +232,37 @@ export function legacyTypeToPattern(recurringType: string): RecurrencePattern {
       return { type: 'daily', interval: 1 }
   }
 }
+
+/**
+ * Checks if a recurring task occurs on a specific date based on its RRULE
+ * @param rruleString - The RRULE string from the task
+ * @param targetDate - The date to check
+ * @param taskCreatedAt - When the task was created (used as dtstart if not in RRULE)
+ * @returns true if the task occurs on the target date
+ */
+export function doesTaskOccurOnDate(
+  rruleString: string | null | undefined,
+  targetDate: Date,
+  taskCreatedAt?: Date
+): boolean {
+  if (!rruleString) return false
+
+  try {
+    const rule = rrulestr(rruleString)
+
+    // Get all occurrences between start of target date and end of target date
+    const startOfDay = new Date(targetDate)
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(targetDate)
+    endOfDay.setHours(23, 59, 59, 999)
+
+    // Check if this date falls on one of the rule's occurrences
+    const occurrencesOnDate = rule.between(startOfDay, endOfDay, true)
+
+    return occurrencesOnDate.length > 0
+  } catch (error) {
+    console.error('Error checking task occurrence on date:', error)
+    return false
+  }
+}
