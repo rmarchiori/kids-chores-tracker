@@ -39,10 +39,10 @@ export default function HybridHero() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {coins.map((coin, i) => (
           <motion.div
-            key={i}
-            className="absolute text-5xl filter drop-shadow-xl"
+            key={`coin-${i}`}
+            className="absolute text-5xl filter drop-shadow-xl will-change-transform"
             style={{ left: coin.x, top: coin.y }}
-            initial={{ y: 0, rotate: 0 }}
+            initial={false}
             animate={{
               y: [-15, 15],
               rotate: [0, 180],
@@ -61,8 +61,8 @@ export default function HybridHero() {
               animate={{
                 scale: hoveredCoin === i ? 1.4 : 1,
               }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              className="cursor-pointer"
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+              className="cursor-pointer inline-block"
             >
               🪙
             </motion.span>
@@ -157,19 +157,18 @@ export default function HybridHero() {
               <div className="grid grid-cols-2 gap-4 mb-12">
                 {parentFeatures.map((feature, i) => (
                   <motion.div
-                    key={i}
-                    className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl`}
-                    initial={{ opacity: 0, y: 20 }}
+                    key={`parent-feature-${i}`}
+                    className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl will-change-transform`}
+                    initial={false}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.1 }}
                     whileHover={{
-                      scale: 1.1,
-                      y: -10,
-                      rotateY: 5,
+                      scale: 1.05,
+                      y: -5,
                     }}
                   >
                     <motion.div
-                      className="text-5xl mb-3"
+                      className="text-5xl mb-3 inline-block"
                       animate={{ rotate: [-5, 5] }}
                       transition={{
                         duration: 2,
@@ -288,19 +287,18 @@ export default function HybridHero() {
               <div className="grid grid-cols-2 gap-4 mb-12">
                 {kidFeatures.map((feature, i) => (
                   <motion.div
-                    key={i}
-                    className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl`}
-                    initial={{ opacity: 0, y: 20 }}
+                    key={`kid-feature-${i}`}
+                    className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-6 text-center shadow-2xl will-change-transform`}
+                    initial={false}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + i * 0.1 }}
                     whileHover={{
-                      scale: 1.1,
-                      y: -10,
-                      rotateY: -5,
+                      scale: 1.05,
+                      y: -5,
                     }}
                   >
                     <motion.div
-                      className="text-5xl mb-3"
+                      className="text-5xl mb-3 inline-block"
                       animate={{ rotate: [-5, 5] }}
                       transition={{
                         duration: 2,
