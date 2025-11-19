@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import PlayfulHero from '@/components/landing/PlayfulHero'
 import SplitScreenHero from '@/components/landing/SplitScreenHero'
+import HybridHero from '@/components/landing/HybridHero'
 import { motion, AnimatePresence } from 'framer-motion'
 
-type LandingVersion = 'playful' | 'split'
+type LandingVersion = 'playful' | 'split' | 'hybrid'
 
 export default function Home() {
-  const [version, setVersion] = useState<LandingVersion>('split')
+  const [version, setVersion] = useState<LandingVersion>('hybrid')
 
   return (
     <>
@@ -22,7 +23,17 @@ export default function Home() {
         <div className="text-xs font-semibold text-gray-500 mb-2 text-center">
           Preview Versions
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setVersion('hybrid')}
+            className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+              version === 'hybrid'
+                ? 'bg-gradient-to-r from-indigo-600 to-pink-600 text-white shadow-lg scale-105'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Hybrid 3D ⭐
+          </button>
           <button
             onClick={() => setVersion('split')}
             className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
@@ -45,13 +56,23 @@ export default function Home() {
           </button>
         </div>
         <div className="text-xs text-gray-400 mt-2 text-center">
-          {version === 'split' ? 'Approach 5' : 'Approach 2'}
+          {version === 'hybrid' ? 'Best of Both!' : version === 'split' ? 'Approach 5' : 'Approach 2'}
         </div>
       </motion.div>
 
       {/* Landing Page Content */}
       <AnimatePresence mode="wait">
-        {version === 'playful' ? (
+        {version === 'hybrid' ? (
+          <motion.div
+            key="hybrid"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.5 }}
+          >
+            <HybridHero />
+          </motion.div>
+        ) : version === 'playful' ? (
           <motion.div
             key="playful"
             initial={{ opacity: 0, x: -50 }}

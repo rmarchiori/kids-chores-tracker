@@ -10,21 +10,28 @@ import {
   CheckCircleIcon,
   CogIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  CalendarIcon,
+  TrophyIcon,
+  GiftIcon,
+  TvIcon
 } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useSidebar } from '@/contexts/SidebarContext'
 
 const navigation = [
-  { name: 'nav.dashboard', href: '/dashboard', icon: HomeIcon },
-  { name: 'nav.family', href: '/dashboard/family/settings', icon: UsersIcon },
+  { name: 'nav.home', href: '/home', icon: HomeIcon },
+  { name: 'nav.family', href: '/family/settings', icon: UsersIcon },
   { name: 'nav.children', href: '/children', icon: UsersIcon },
   { name: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
   { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
+  { name: 'nav.calendar', href: '/calendar', icon: CalendarIcon },
   { name: 'nav.reviews', href: '/reviews', icon: CheckCircleIcon },
   { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
-  { name: 'nav.reports', href: '/dashboard/reports', icon: ChartBarIcon },
-  { name: 'nav.settings', href: '/dashboard/settings', icon: CogIcon },
+  { name: 'nav.analytics', href: '/analytics', icon: ChartBarIcon },
+  { name: 'nav.rewards', href: '/rewards', icon: GiftIcon },
+  { name: 'nav.cast', href: '/settings/cast', icon: TvIcon },
+  { name: 'nav.settings', href: '/settings', icon: CogIcon },
 ]
 
 export function Sidebar() {
