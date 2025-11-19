@@ -161,7 +161,6 @@ export default function HybridHero() {
                     {t('landing.hybrid.parent.cta')}
                   </Link>
                 </motion.div>
-              )}
             </motion.div>
 
             {/* Hover Indicator - Desktop only */}
