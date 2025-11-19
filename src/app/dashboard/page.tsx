@@ -315,29 +315,6 @@ export default function DashboardPage() {
             </p>
           </motion.button>
         </div>
-
-        {/* Getting Started Section */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('gettingStarted.title')}</h3>
-          <ol className="space-y-3 list-decimal list-inside text-gray-600">
-            <li>
-              <span className="font-medium text-gray-900">{t('gettingStarted.step1')}</span>
-              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                ✓ {t('gettingStarted.availableNow')}
-              </span>
-            </li>
-            <li>
-              <span className="font-medium text-gray-900">Add your children's profiles</span>
-              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                ✓ {t('gettingStarted.availableNow')}
-              </span>
-            </li>
-            <li>{t('gettingStarted.step3')}</li>
-            <li>{t('gettingStarted.step4')}</li>
-            <li>{t('gettingStarted.step5')}</li>
-            <li>{t('gettingStarted.step6')}</li>
-          </ol>
-        </div>
       </div>
     </DashboardLayout>
   )
