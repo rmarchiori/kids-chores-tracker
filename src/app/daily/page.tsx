@@ -260,7 +260,12 @@ export default function DailyTasksPage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-6xl mx-auto p-6 min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="max-w-6xl mx-auto p-6 min-h-screen bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+        </div>
+        <div className="relative z-10">
         {/* Header */}
         <motion.div
           className="mb-8 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-8 text-white"
@@ -456,6 +461,7 @@ export default function DailyTasksPage() {
             ))}
           </div>
         )}
+        </div>
       </div>
     </DashboardLayout>
   )

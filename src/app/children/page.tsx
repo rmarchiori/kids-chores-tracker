@@ -97,15 +97,19 @@ export default function ChildrenPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-600 to-purple-800 py-8 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+        </div>
+      <div className="max-w-4xl mx-auto px-4 relative z-10">
         <motion.div
           className="flex justify-between items-center mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl font-black text-gray-900">{t('children.title')}</h1>
+          <h1 className="text-3xl font-black text-white">{t('children.title')}</h1>
           {children.length > 0 && (
             <motion.button
               onClick={() => router.push('/children/new')}

@@ -105,8 +105,12 @@ export default function TasksPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-600 via-rose-600 to-pink-800 py-8 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+        </div>
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
           {/* Header */}
           <motion.div
             className="flex justify-between items-center mb-6"
@@ -114,7 +118,7 @@ export default function TasksPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-3xl font-black text-gray-900">{t('tasks.title')}</h1>
+            <h1 className="text-3xl font-black text-white">{t('tasks.title')}</h1>
             <motion.button
               onClick={() => router.push('/tasks/new')}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
@@ -137,7 +141,7 @@ export default function TasksPage() {
           >
             {/* Category Filter */}
             <div>
-              <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category-filter" className="block text-sm font-bold text-white mb-1">
                 {t('tasks.category')}
               </label>
               <select
@@ -162,7 +166,7 @@ export default function TasksPage() {
 
             {/* Priority Filter */}
             <div>
-              <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="priority-filter" className="block text-sm font-bold text-white mb-1">
                 {t('tasks.priority')}
               </label>
               <select

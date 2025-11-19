@@ -84,7 +84,12 @@ export default function CalendarPage() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-700 py-8 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+        </div>
+      <div className="container mx-auto px-4 py-8 max-w-7xl relative z-10">
         {/* View Switcher */}
         <motion.div
           className="mb-8"
@@ -178,6 +183,7 @@ export default function CalendarPage() {
         {view === 'weekly' && <WeeklyCalendarView familyId={familyId} />}
 
         {view === 'monthly' && <MonthlyCalendarView familyId={familyId} />}
+      </div>
       </div>
     </DashboardLayout>
   )
