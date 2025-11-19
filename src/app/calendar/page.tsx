@@ -7,6 +7,7 @@ import { MonthlyCalendarView } from '@/components/calendar/MonthlyCalendarView'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { motion } from 'framer-motion'
 
 type CalendarView = 'daily' | 'weekly' | 'monthly'
 
@@ -85,63 +86,93 @@ export default function CalendarPage() {
     <DashboardLayout>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* View Switcher */}
-        <div className="mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-1 inline-flex">
-            <button
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="bg-gradient-to-br from-indigo-400 to-blue-400 rounded-3xl shadow-2xl p-1 inline-flex">
+            <motion.button
               onClick={() => handleViewChange('daily')}
               className={`
-                px-6 py-2 rounded-md font-medium transition-colors
+                px-6 py-2 rounded-3xl font-black transition-colors
                 ${view === 'daily'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-white text-indigo-600'
+                  : 'text-white hover:bg-white/20'
                 }
               `}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('calendar.view_daily')}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => handleViewChange('weekly')}
               className={`
-                px-6 py-2 rounded-md font-medium transition-colors
+                px-6 py-2 rounded-3xl font-black transition-colors
                 ${view === 'weekly'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-white text-indigo-600'
+                  : 'text-white hover:bg-white/20'
                 }
               `}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('calendar.view_weekly')}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => handleViewChange('monthly')}
               className={`
-                px-6 py-2 rounded-md font-medium transition-colors
+                px-6 py-2 rounded-3xl font-black transition-colors
                 ${view === 'monthly'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-white text-indigo-600'
+                  : 'text-white hover:bg-white/20'
                 }
               `}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('calendar.view_monthly')}
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Calendar Views */}
         {view === 'daily' && (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <motion.div
+            className="bg-gradient-to-br from-indigo-400 to-blue-400 rounded-3xl shadow-2xl p-8 text-center text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <motion.div
+              className="text-6xl mb-4 inline-block"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              📅
+            </motion.div>
+            <h2 className="text-3xl font-black mb-4">
               {t('calendar.daily_view_title')}
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-white/90 mb-6 text-lg">
               {t('calendar.daily_view_description')}
             </p>
-            <button
+            <motion.button
               onClick={() => router.push('/daily')}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+              className="px-8 py-4 bg-white text-indigo-600 rounded-3xl hover:bg-gray-100 font-black transition-colors shadow-lg"
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('calendar.go_to_daily_tasks')}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
 
         {view === 'weekly' && <WeeklyCalendarView familyId={familyId} />}

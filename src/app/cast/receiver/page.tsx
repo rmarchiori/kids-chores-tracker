@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { format, parseISO } from 'date-fns'
+import { motion } from 'framer-motion'
 
 /**
  * Cast Receiver Page
@@ -210,23 +211,59 @@ export default function CastReceiverPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="text-6xl mb-4">⏳</div>
-          <p className="text-3xl font-bold">Loading Family Dashboard...</p>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 flex items-center justify-center relative overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '50px 50px',
+          }} />
         </div>
+        <motion.div
+          className="text-center text-white relative z-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="text-6xl mb-4"
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+          >
+            ⏳
+          </motion.div>
+          <p className="text-3xl font-black">Loading Family Dashboard...</p>
+        </motion.div>
       </div>
     )
   }
 
   if (children.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-          <p className="text-3xl font-bold">No children found</p>
-          <p className="text-xl mt-2">Add children to get started</p>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 flex items-center justify-center relative overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '50px 50px',
+          }} />
         </div>
+        <motion.div
+          className="text-center text-white relative z-10"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="text-6xl mb-4"
+            animate={{ rotate: [-5, 5] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          >
+            👨‍👩‍👧‍👦
+          </motion.div>
+          <p className="text-3xl font-black">No children found</p>
+          <p className="text-xl mt-2 text-white/90">Add children to get started</p>
+        </motion.div>
       </div>
     )
   }
@@ -238,13 +275,30 @@ export default function CastReceiverPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 p-12">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 p-12 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header with Child Info */}
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 mb-8">
+        <motion.div
+          className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-6xl">
+              <motion.div
+                className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-6xl"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              >
                 {currentChild.profile_photo_url ? (
                   <img
                     src={currentChild.profile_photo_url}
@@ -252,38 +306,70 @@ export default function CastReceiverPage() {
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  '👤'
+                  <motion.span
+                    animate={{ rotate: [-5, 5] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+                  >
+                    👤
+                  </motion.span>
                 )}
-              </div>
+              </motion.div>
               <div className="text-white">
-                <h1 className="text-6xl font-bold mb-2">{currentChild.name}'s Dashboard</h1>
-                <p className="text-3xl opacity-90">
+                <h1 className="text-6xl font-black mb-2">{currentChild.name}'s Dashboard</h1>
+                <p className="text-3xl font-bold opacity-90">
                   Age Group: {currentChild.age_group === '5-8' ? '5-8 years' : '9-12 years'}
                 </p>
               </div>
             </div>
             <div className="text-white text-right">
-              <p className="text-2xl opacity-75">{format(new Date(), 'EEEE')}</p>
-              <p className="text-4xl font-bold">{format(new Date(), 'MMM dd, yyyy')}</p>
+              <p className="text-2xl font-bold opacity-75">{format(new Date(), 'EEEE')}</p>
+              <p className="text-4xl font-black">{format(new Date(), 'MMM dd, yyyy')}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Today's Tasks */}
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 mb-8">
-          <h2 className="text-white text-4xl font-bold mb-6">📋 Today's Tasks</h2>
+        <motion.div
+          className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <motion.span
+              className="text-5xl"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              📋
+            </motion.span>
+            <h2 className="text-white text-4xl font-black">Today's Tasks</h2>
+          </div>
           {tasks.length === 0 ? (
-            <p className="text-white/70 text-3xl text-center py-12">
+            <motion.p
+              className="text-white/90 text-3xl font-bold text-center py-12"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               🎉 All caught up! No pending tasks.
-            </p>
+            </motion.p>
           ) : (
             <div className="grid grid-cols-2 gap-6">
-              {tasks.slice(0, 6).map((task) => (
-                <div
+              {tasks.slice(0, 6).map((task, index) => (
+                <motion.div
                   key={task.id}
-                  className="bg-white/20 rounded-2xl p-6 flex items-center gap-4"
+                  className="bg-white/20 rounded-2xl shadow-lg p-6 flex items-center gap-4"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
                 >
-                  <div className="text-6xl">
+                  <motion.div
+                    className="text-6xl"
+                    animate={{ rotate: [-3, 3] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: index * 0.2 }}
+                  >
                     {task.image_source === 'emoji' ? (
                       task.image_url
                     ) : task.image_url ? (
@@ -295,32 +381,54 @@ export default function CastReceiverPage() {
                     ) : (
                       '✅'
                     )}
-                  </div>
+                  </motion.div>
                   <div className="flex-1">
-                    <h3 className="text-white text-2xl font-bold">{task.title}</h3>
-                    <p className="text-white/70 text-xl capitalize">{task.category}</p>
+                    <h3 className="text-white text-2xl font-black">{task.title}</h3>
+                    <p className="text-white/80 text-xl font-bold capitalize">{task.category}</p>
                   </div>
-                  <div className="text-yellow-400 text-3xl font-bold">
+                  <div className="text-yellow-300 text-3xl font-black">
                     {task.points} ⭐
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Recent Completions */}
         {completions.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8">
-            <h2 className="text-white text-4xl font-bold mb-6">🎯 Today's Achievements</h2>
+          <motion.div
+            className="bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <motion.span
+                className="text-5xl"
+                animate={{ rotate: [-5, 5] }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+              >
+                🎯
+              </motion.span>
+              <h2 className="text-white text-4xl font-black">Today's Achievements</h2>
+            </div>
             <div className="space-y-4">
-              {completions.map((completion) => (
-                <div
+              {completions.map((completion, index) => (
+                <motion.div
                   key={completion.id}
-                  className="bg-white/20 rounded-2xl p-6 flex items-center justify-between"
+                  className="bg-white/20 rounded-2xl shadow-lg p-6 flex items-center justify-between"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.01, y: -2 }}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="text-6xl">
+                    <motion.div
+                      className="text-6xl"
+                      animate={{ rotate: [-3, 3] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: index * 0.2 }}
+                    >
                       {completion.tasks.image_source === 'emoji' ? (
                         completion.tasks.image_url
                       ) : completion.tasks.image_url ? (
@@ -332,69 +440,78 @@ export default function CastReceiverPage() {
                       ) : (
                         '✅'
                       )}
-                    </div>
+                    </motion.div>
                     <div>
-                      <h3 className="text-white text-2xl font-bold">
+                      <h3 className="text-white text-2xl font-black">
                         {completion.tasks.title}
                       </h3>
-                      <p className="text-white/70 text-xl">
+                      <p className="text-white/80 text-xl font-bold">
                         {format(parseISO(completion.completed_at), 'h:mm a')}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
                     <div>
-                      <p className="text-white/70 text-lg mb-1">Self Rating:</p>
+                      <p className="text-white/80 text-lg font-bold mb-1">Self Rating:</p>
                       <div className="flex gap-1">
                         {[...Array(5)].map((_, i) => (
-                          <span
+                          <motion.span
                             key={i}
                             className={`text-3xl ${
-                              i < completion.child_rating ? 'text-yellow-400' : 'text-white/30'
+                              i < completion.child_rating ? 'text-yellow-300' : 'text-white/30'
                             }`}
+                            whileHover={{ scale: 1.2 }}
                           >
                             ⭐
-                          </span>
+                          </motion.span>
                         ))}
                       </div>
                     </div>
                     {completion.parent_rating && (
                       <div>
-                        <p className="text-white/70 text-lg mb-1">Parent Rating:</p>
+                        <p className="text-white/80 text-lg font-bold mb-1">Parent Rating:</p>
                         <div className="flex gap-1">
                           {[...Array(5)].map((_, i) => (
-                            <span
+                            <motion.span
                               key={i}
                               className={`text-3xl ${
-                                i < completion.parent_rating! ? 'text-yellow-400' : 'text-white/30'
+                                i < completion.parent_rating! ? 'text-yellow-300' : 'text-white/30'
                               }`}
+                              whileHover={{ scale: 1.2 }}
                             >
                               ⭐
-                            </span>
+                            </motion.span>
                           ))}
                         </div>
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Rotation Indicator */}
-        <div className="flex justify-center gap-2 mt-8">
+        <motion.div
+          className="flex justify-center gap-2 mt-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           {children.map((_, index) => (
-            <div
+            <motion.div
               key={index}
               className={`h-3 rounded-full transition-all ${
                 index === currentChildIndex
-                  ? 'w-12 bg-white'
+                  ? 'w-12 bg-white shadow-lg'
                   : 'w-3 bg-white/30'
               }`}
+              animate={index === currentChildIndex ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ duration: 1, repeat: Infinity }}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )
