@@ -191,7 +191,7 @@ See the following files for reference implementations:
 - `/src/app/page.tsx` - Landing page
 - `/src/components/landing/HybridHero.tsx` - Complete hybrid design showcase
 - `/src/app/auth/login/page.tsx` - Auth page pattern
-- `/src/app/home/page.tsx` - Dashboard with feature cards
+- `/src/app/dashboard/page.tsx` - Dashboard with feature cards
 - `/src/app/onboarding/page.tsx` - Onboarding flow
 
 ---

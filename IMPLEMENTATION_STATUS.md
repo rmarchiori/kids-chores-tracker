@@ -18,9 +18,9 @@
   - **Files**: All in `/src/app/auth/**` and `/src/app/onboarding/`
 
 ### Dashboard
-- ✅ `/home` - Full hybrid design with 8 animated cards
 - ✅ `/dashboard` - Full hybrid design with 8 animated cards
-  - **Files**: `/src/app/home/page.tsx`, `/src/app/dashboard/page.tsx`
+  - **File**: `/src/app/dashboard/page.tsx`
+  - **Note**: Consolidated from duplicate `/home` route
 
 ### Documentation
 - ✅ `HYBRID_DESIGN_GUIDE.md` - Complete design system documentation
@@ -69,14 +69,14 @@
 |----------|-----------|-------|------------|
 | Landing | 1 | 1 | 100% |
 | Auth Flow | 6 | 6 | 100% |
-| Dashboard | 2 | 2 | 100% |
+| Dashboard | 1 | 1 | 100% |
 | Children | 0 | 4 | 0% |
 | Tasks | 0 | 4 | 0% |
 | Calendar/Reviews | 0 | 3 | 0% |
 | Analytics/Rewards | 0 | 2 | 0% |
 | Settings | 0 | 4 | 0% |
 | Special | 0 | 3 | 0% |
-| **TOTAL** | **9** | **29** | **31%** |
+| **TOTAL** | **8** | **28** | **29%** |
 
 ---
 
@@ -109,6 +109,6 @@ All remaining pages should follow patterns in `HYBRID_DESIGN_GUIDE.md`:
 7. Use font-black for headers, font-bold for subheads
 
 See examples in:
-- `/src/app/home/page.tsx` - Feature cards pattern
+- `/src/app/dashboard/page.tsx` - Feature cards pattern
 - `/src/app/auth/login/page.tsx` - Form page pattern
 - `/src/components/landing/HybridHero.tsx` - Full showcase
