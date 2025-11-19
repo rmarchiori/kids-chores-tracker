@@ -1,372 +1,664 @@
 {
   "app": {
-    "title": "Tarefas para Crianças",
-    "tagline": "Tornando as tarefas divertidas e recompensadoras"
+    "title": "Kids Chores Tracker",
+    "tagline": "Making chores fun and rewarding"
   },
   "nav": {
-    "dashboard": "Painel",
-    "home": "Início",
-    "family": "Família",
-    "children": "Crianças",
-    "today": "Hoje",
-    "tasks": "Tarefas",
-    "reviews": "Avaliações",
-    "completions": "Conclusões",
-    "reports": "Relatórios",
-    "progress": "Progresso",
-    "settings": "Configurações",
-    "logout": "Sair"
+    "dashboard": "Dashboard",
+    "home": "Home",
+    "family": "Family",
+    "children": "Children",
+    "today": "Today",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
+    "reviews": "Reviews",
+    "completions": "Completions",
+    "analytics": "Analytics",
+    "rewards": "Rewards",
+    "reports": "Reports",
+    "progress": "Progress",
+    "cast": "Chromecast",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "auth": {
-    "login": "Entrar",
-    "register": "Cadastrar",
-    "logout": "Sair",
-    "email": "E-mail",
-    "password": "Senha",
-    "confirmPassword": "Confirmar Senha",
-    "fullName": "Nome Completo",
-    "forgotPassword": "Esqueceu a senha?",
-    "noAccount": "Não tem uma conta?",
-    "hasAccount": "Já tem uma conta?",
-    "resetPassword": "Redefinir Senha",
-    "updatePassword": "Atualizar Senha",
-    "newPassword": "Nova Senha",
-    "sendResetLink": "Enviar Link de Redefinição"
+    "login": "Log In",
+    "register": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "resetPassword": "Reset Password",
+    "updatePassword": "Update Password",
+    "newPassword": "New Password",
+    "sendResetLink": "Send Reset Link"
   },
   "dashboard": {
-    "welcome": "Bem-vindo(a), {{name}}!",
-    "family": "Família",
+    "welcome": "Welcome, {{name}}!",
+    "family": "Family",
     "familyName": "{{familyName}}",
-    "comingSoon": "Mais funcionalidades em breve!",
-    "loading": "Carregando...",
-    "error": "Falha ao carregar perfil",
-    "backToLogin": "Voltar ao Login"
+    "comingSoon": "More features coming soon!",
+    "loading": "Loading...",
+    "error": "Failed to load profile",
+    "backToLogin": "Back to Login"
   },
   "family": {
-    "settings": "Configurações da Família",
-    "members": "Membros da Família",
-    "invitations": "Convites Pendentes",
-    "inviteMember": "Convidar Membro da Família",
-    "email": "Endereço de E-mail",
-    "role": "Função",
-    "selectRole": "Selecione uma função",
-    "sendInvitation": "Enviar Convite",
-    "remove": "Remover",
-    "cancel": "Cancelar",
-    "admin": "Administrador",
-    "parent": "Pai/Mãe",
-    "teen": "Adolescente",
-    "invitedBy": "Convidado por",
-    "expiresAt": "Expira em",
+    "settings": "Family Settings",
+    "members": "Family Members",
+    "invitations": "Pending Invitations",
+    "inviteMember": "Invite Family Member",
+    "email": "Email Address",
+    "role": "Role",
+    "selectRole": "Select a role",
+    "sendInvitation": "Send Invitation",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "admin": "Admin",
+    "parent": "Parent",
+    "teen": "Teen",
+    "invitedBy": "Invited by",
+    "expiresAt": "Expires",
     "status": "Status",
-    "pending": "Pendente",
-    "accepted": "Aceito",
-    "rejected": "Rejeitado",
-    "expired": "Expirado"
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "expired": "Expired"
   },
   "invitation": {
-    "title": "Convite da Família",
-    "youAreInvited": "Você foi convidado(a) para se juntar à",
-    "invitedAs": "Você foi convidado(a) como",
-    "invitedBy": "Convidado por",
-    "expires": "Expira em",
-    "accept": "Aceitar Convite",
-    "decline": "Recusar",
-    "notFound": "Convite não encontrado",
-    "expired": "Este convite expirou",
-    "alreadyUsed": "Este convite já foi {{status}}",
-    "emailMismatch": "Este convite foi enviado para {{email}}. Por favor, faça login com esse e-mail.",
-    "pleaseLogin": "Por favor, faça login para aceitar este convite",
-    "loading": "Carregando convite..."
+    "title": "Family Invitation",
+    "youAreInvited": "You've been invited to join",
+    "invitedAs": "You've been invited as a",
+    "invitedBy": "Invited by",
+    "expires": "Expires",
+    "accept": "Accept Invitation",
+    "decline": "Decline",
+    "notFound": "Invitation not found",
+    "expired": "This invitation has expired",
+    "alreadyUsed": "This invitation has already been {{status}}",
+    "emailMismatch": "This invitation was sent to {{email}}. Please log in with that email address.",
+    "pleaseLogin": "Please log in to accept this invitation",
+    "loading": "Loading invitation..."
   },
   "cards": {
     "family": {
-      "title": "Família",
-      "description": "Convide membros da família e gerencie funções"
+      "title": "Family",
+      "description": "Invite family members and manage roles"
     },
     "tasks": {
-      "title": "Tarefas",
-      "description": "Crie e gerencie tarefas (em breve)"
+      "title": "Tasks",
+      "description": "Create and manage all tasks"
     },
     "children": {
-      "title": "Crianças",
-      "description": "Adicione e gerencie crianças (em breve)"
+      "title": "Children",
+      "description": "Add and manage children profiles"
+    },
+    "today": {
+      "title": "Today's Tasks",
+      "description": "View and manage today's tasks for all children"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "description": "Review and approve completed tasks"
+    },
+    "completions": {
+      "title": "Completions",
+      "description": "View task completion history"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage account and preferences"
     },
     "progress": {
-      "title": "Progresso",
-      "description": "Acompanhe conclusões e avaliações (em breve)"
+      "title": "Progress",
+      "description": "Track completion and ratings (coming soon)"
     }
   },
   "gettingStarted": {
-    "title": "Primeiros Passos",
-    "step1": "Convide membros da família",
-    "step2": "Adicione perfis de suas crianças (em breve)",
-    "step3": "Crie tarefas domésticas (em breve)",
-    "step4": "Atribua tarefas às suas crianças (em breve)",
-    "step5": "Revise e avalie o trabalho delas (em breve)",
-    "step6": "Acompanhe o progresso ao longo do tempo (em breve)",
-    "availableNow": "Disponível agora"
+    "title": "Getting Started",
+    "step1": "Invite family members",
+    "step2": "Add your children's profiles",
+    "step3": "Create chores and tasks (coming soon)",
+    "step4": "Assign tasks to your children (coming soon)",
+    "step5": "Review and rate their work (coming soon)",
+    "step6": "Track progress over time (coming soon)",
+    "availableNow": "Available now"
   },
   "common": {
-    "save": "Salvar",
-    "cancel": "Cancelar",
-    "delete": "Excluir",
-    "edit": "Editar",
-    "close": "Fechar",
-    "confirm": "Confirmar",
-    "loading": "Carregando...",
-    "error": "Erro",
-    "success": "Sucesso",
-    "warning": "Aviso",
-    "info": "Informação",
-    "back": "Voltar",
-    "saving": "Salvando..."
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "back": "Back",
+    "saving": "Saving..."
   },
   "children": {
-    "title": "Crianças",
-    "add_child": "Adicionar Criança",
-    "edit_child": "Editar Criança",
-    "no_children": "Ainda Não Há Crianças",
-    "add_first_child": "Adicione sua primeira criança para começar o acompanhamento de tarefas!",
-    "name": "Nome da Criança",
-    "name_placeholder": "Digite o nome da criança",
-    "name_required": "Nome é obrigatório",
-    "age_group": "Faixa Etária",
-    "years": "anos",
-    "younger_kids": "Crianças mais novas",
-    "older_kids": "Crianças mais velhas",
-    "theme": "Tema",
-    "theme_help": "Escolha como a interface desta criança será exibida",
-    "profile_photo": "Foto de Perfil",
-    "delete_confirm": "Tem certeza de que deseja excluir {{name}}? Esta ação não pode ser desfeita.",
-    "add_child_description": "Adicione uma nova criança à sua família para acompanhamento de tarefas",
-    "edit_child_description": "Atualize as informações da sua criança"
+    "title": "Children",
+    "add_child": "Add Child",
+    "edit_child": "Edit Child",
+    "no_children": "No Children Yet",
+    "add_first_child": "Add your first child to get started with chore tracking!",
+    "name": "Child's Name",
+    "name_placeholder": "Enter child's name",
+    "name_required": "Name is required",
+    "age_group": "Age Group",
+    "years": "years",
+    "younger_kids": "Younger kids",
+    "older_kids": "Older kids",
+    "theme": "Theme",
+    "theme_help": "Choose how this child's interface will look",
+    "profile_photo": "Profile Photo",
+    "delete_confirm": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "add_child_description": "Add a new child to your family for chore tracking",
+    "edit_child_description": "Update your child's information"
   },
   "tasks": {
-    "title": "Tarefas",
-    "new_task": "Nova Tarefa",
-    "edit_task": "Editar Tarefa",
-    "create_task": "Criar Tarefa",
-    "update_task": "Atualizar Tarefa",
-    "delete_task": "Excluir Tarefa",
-    "no_tasks": "Ainda Não Há Tarefas",
-    "add_first_task": "Crie sua primeira tarefa para começar!",
-    "task_title": "Título da Tarefa",
-    "title_placeholder": "ex: Arrumar o quarto",
-    "title_required": "Título é obrigatório",
-    "description": "Descrição",
-    "description_placeholder": "Adicione detalhes sobre esta tarefa...",
-    "description_help": "Detalhes opcionais para ajudar sua criança a entender o que precisa ser feito",
-    "category": "Categoria",
-    "select_category": "Selecione uma categoria",
-    "priority": "Prioridade",
-    "select_priority": "Selecione a prioridade",
-    "due_date": "Data Limite",
-    "recurring": "Recorrente",
-    "recurring_help": "Com que frequência esta tarefa deve se repetir?",
-    "assign_to": "Atribuir Para",
-    "assign_help": "Selecione quais crianças devem fazer esta tarefa",
-    "select_children": "Selecione crianças",
-    "task_image": "Imagem da Tarefa",
-    "image_help": "Escolha uma imagem para ajudar a identificar esta tarefa",
-    "choose_image": "Escolher Imagem",
-    "choose_from_library": "Escolher da Biblioteca",
-    "upload_custom": "Enviar Personalizada",
-    "remove_image": "Remover Imagem",
-    "image_preview": "Pré-visualização da Imagem",
-    "no_image": "Nenhuma imagem selecionada",
-    "delete_confirm": "Tem certeza de que deseja excluir esta tarefa?",
-    "delete_warning": "Esta ação não pode ser desfeita.",
-    "filter_by": "Filtrar por",
-    "all_tasks": "Todas as Tarefas",
-    "all_categories": "Todas as Categorias",
-    "all_priorities": "Todas as Prioridades",
+    "title": "Tasks",
+    "new_task": "New Task",
+    "edit_task": "Edit Task",
+    "create_task": "Create Task",
+    "update_task": "Update Task",
+    "delete_task": "Delete Task",
+    "no_tasks": "No Tasks Yet",
+    "add_first_task": "Create your first task to get started!",
+    "task_title": "Task Title",
+    "title_placeholder": "e.g., Clean your room",
+    "title_required": "Title is required",
+    "description": "Description",
+    "description_placeholder": "Add details about this task...",
+    "description_help": "Optional details to help your child understand what needs to be done",
+    "category": "Category",
+    "select_category": "Select a category",
+    "priority": "Priority",
+    "select_priority": "Select priority",
+    "due_date": "Due Date",
+    "recurring": "Recurring",
+    "recurring_help": "How often should this task repeat?",
+    "assign_to": "Assign To",
+    "assign_help": "Select which children should do this task",
+    "select_children": "Select children",
+    "task_image": "Task Image",
+    "image_help": "Choose an image to help identify this task",
+    "choose_image": "Choose Image",
+    "choose_from_library": "Choose from Library",
+    "upload_custom": "Upload Custom",
+    "remove_image": "Remove Image",
+    "image_preview": "Image Preview",
+    "no_image": "No image selected",
+    "delete_confirm": "Are you sure you want to delete this task?",
+    "delete_warning": "This action cannot be undone.",
+    "filter_by": "Filter by",
+    "all_tasks": "All Tasks",
+    "all_categories": "All Categories",
+    "all_priorities": "All Priorities",
     "categories": {
-      "cleaning": "Limpeza",
-      "homework": "Lição de Casa",
-      "hygiene": "Higiene",
-      "outdoor": "Ao Ar Livre",
-      "helping": "Ajudando",
-      "meals": "Refeições",
-      "pets": "Animais de Estimação",
-      "bedtime": "Hora de Dormir",
-      "other": "Outro"
+      "cleaning": "Cleaning",
+      "homework": "Homework",
+      "hygiene": "Hygiene",
+      "outdoor": "Outdoor",
+      "helping": "Helping",
+      "meals": "Meals",
+      "pets": "Pets",
+      "bedtime": "Bedtime",
+      "other": "Other"
     },
     "priorities": {
-      "low": "Baixa",
-      "medium": "Média",
-      "high": "Alta"
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
     },
     "recurring_options": {
-      "none": "Não se repete",
-      "daily": "Diariamente",
-      "weekly": "Semanalmente",
-      "monthly": "Mensalmente",
-      "business_days": "Dias Úteis (Seg-Sex)"
+      "none": "Does not repeat",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "business_days": "Business Days (Mon-Fri)"
     },
     "status": {
-      "pending": "Pendente",
-      "in_progress": "Em Andamento",
-      "completed": "Concluída"
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed"
     },
     "image_picker": {
-      "title": "Escolher Imagem da Tarefa",
-      "library_tab": "Biblioteca",
+      "title": "Choose Task Image",
+      "library_tab": "Library",
       "emoji_tab": "Emoji",
-      "search_placeholder": "Buscar imagens...",
-      "search_label": "Buscar imagens de tarefas",
-      "category_filter": "Filtrar por categoria",
-      "all_categories": "Todas",
-      "no_results": "Nenhuma imagem encontrada",
-      "loading": "Carregando imagens...",
-      "select_emoji": "Selecionar um emoji"
+      "search_placeholder": "Search images...",
+      "search_label": "Search task images",
+      "category_filter": "Filter by category",
+      "all_categories": "All",
+      "no_results": "No images found",
+      "loading": "Loading images...",
+      "select_emoji": "Select an emoji"
     },
     "upload": {
-      "title": "Enviar Imagem Personalizada",
-      "drag_drop": "Arraste e solte ou clique para enviar",
-      "click_to_upload": "Clique para enviar imagem personalizada",
-      "uploading": "Enviando...",
-      "file_types": "JPEG, PNG ou WebP",
-      "max_size": "Máximo 1MB",
-      "error_file_type": "Por favor, envie um arquivo de imagem válido (JPEG, PNG ou WebP)",
-      "error_file_size": "A imagem deve ter menos de 1MB",
-      "error_upload_failed": "Falha no envio. Por favor, tente novamente."
+      "title": "Upload Custom Image",
+      "drag_drop": "Drag and drop or click to upload",
+      "click_to_upload": "Click to upload custom image",
+      "uploading": "Uploading...",
+      "file_types": "JPEG, PNG, or WebP",
+      "max_size": "Max 1MB",
+      "error_file_type": "Please upload a valid image file (JPEG, PNG, or WebP)",
+      "error_file_size": "Image must be less than 1MB",
+      "error_upload_failed": "Upload failed. Please try again."
     },
     "messages": {
-      "task_created": "Tarefa criada com sucesso!",
-      "task_updated": "Tarefa atualizada com sucesso!",
-      "task_deleted": "Tarefa excluída com sucesso!",
-      "error_loading": "Falha ao carregar tarefas",
-      "error_creating": "Falha ao criar tarefa",
-      "error_updating": "Falha ao atualizar tarefa",
-      "error_deleting": "Falha ao excluir tarefa",
-      "no_family": "Você deve ser membro de uma família para criar tarefas"
+      "task_created": "Task created successfully!",
+      "task_updated": "Task updated successfully!",
+      "task_deleted": "Task deleted successfully!",
+      "error_loading": "Failed to load tasks",
+      "error_creating": "Failed to create task",
+      "error_updating": "Failed to update task",
+      "error_deleting": "Failed to delete task",
+      "no_family": "You must be a member of a family to create tasks"
     },
     "images": {
-      "make_bed": "Fazer a cama",
-      "make_bed_alt": "Criança fazendo a cama com cobertor colorido",
-      "clean_room": "Limpar o quarto",
-      "clean_room_alt": "Criança organizando brinquedos no quarto",
-      "vacuum": "Aspirar",
-      "vacuum_alt": "Criança usando aspirador de pó",
-      "dust_furniture": "Tirar pó dos móveis",
-      "dust_furniture_alt": "Criança limpando móveis com pano",
-      "take_out_trash": "Levar o lixo",
-      "take_out_trash_alt": "Criança levando saco de lixo para a lixeira",
-      "organize_toys": "Organizar brinquedos",
-      "organize_toys_alt": "Criança separando brinquedos em caixas",
-      "put_away_laundry": "Guardar roupa",
-      "put_away_laundry_alt": "Criança dobrando e guardando roupas",
-      "wipe_surfaces": "Limpar superfícies",
-      "wipe_surfaces_alt": "Criança limpando balcão ou mesa",
-      "math_homework": "Lição de matemática",
-      "math_homework_alt": "Criança trabalhando em problemas de matemática",
-      "reading_time": "Hora da leitura",
-      "reading_time_alt": "Criança lendo um livro",
-      "writing_practice": "Prática de escrita",
-      "writing_practice_alt": "Criança escrevendo em caderno",
-      "study": "Estudar",
-      "study_alt": "Criança estudando na mesa",
-      "school_project": "Projeto escolar",
-      "school_project_alt": "Criança trabalhando em projeto",
-      "practice_instrument": "Praticar instrumento",
-      "practice_instrument_alt": "Criança praticando instrumento musical",
-      "brush_teeth": "Escovar os dentes",
-      "brush_teeth_alt": "Criança escovando os dentes",
-      "take_shower": "Tomar banho",
-      "take_shower_alt": "Criança tomando banho",
-      "wash_hands": "Lavar as mãos",
-      "wash_hands_alt": "Criança lavando as mãos com sabão",
-      "comb_hair": "Pentear o cabelo",
-      "comb_hair_alt": "Criança penteando o cabelo",
-      "clip_nails": "Cortar as unhas",
-      "clip_nails_alt": "Criança cortando as unhas",
-      "apply_sunscreen": "Passar protetor solar",
-      "apply_sunscreen_alt": "Criança aplicando protetor solar",
-      "change_clothes": "Trocar de roupa",
-      "change_clothes_alt": "Criança trocando de roupa",
-      "wash_face": "Lavar o rosto",
-      "wash_face_alt": "Criança lavando o rosto",
-      "water_plants": "Regar plantas",
-      "water_plants_alt": "Criança regando plantas com regador",
-      "rake_leaves": "Juntar folhas",
-      "rake_leaves_alt": "Criança juntando folhas de outono",
-      "shovel_snow": "Tirar neve",
-      "shovel_snow_alt": "Criança tirando neve",
-      "mow_lawn": "Cortar grama",
-      "mow_lawn_alt": "Criança empurrando cortador de grama",
-      "garden_work": "Trabalho de jardim",
-      "garden_work_alt": "Criança jardinando com ferramentas",
-      "set_table": "Pôr a mesa",
-      "set_table_alt": "Criança arrumando a mesa para o jantar",
-      "clear_dishes": "Recolher pratos",
-      "clear_dishes_alt": "Criança recolhendo pratos da mesa",
-      "help_cook": "Ajudar a cozinhar",
-      "help_cook_alt": "Criança ajudando a cozinhar",
-      "help_sibling": "Ajudar irmão/irmã",
-      "help_sibling_alt": "Criança ajudando irmão ou irmã mais novo(a)",
-      "fold_laundry": "Dobrar roupa",
-      "fold_laundry_alt": "Criança dobrando roupa limpa",
-      "load_dishwasher": "Carregar lava-louças",
-      "load_dishwasher_alt": "Criança carregando lava-louças",
-      "care_for_sibling": "Cuidar de irmão/irmã",
-      "care_for_sibling_alt": "Criança cuidando de irmão ou irmã mais novo(a)",
-      "eat_breakfast": "Tomar café da manhã",
-      "eat_breakfast_alt": "Criança tomando café da manhã",
-      "eat_lunch": "Almoçar",
-      "eat_lunch_alt": "Criança almoçando",
-      "eat_dinner": "Jantar",
-      "eat_dinner_alt": "Criança jantando",
-      "drink_water": "Beber água",
-      "drink_water_alt": "Criança bebendo água",
-      "feed_pet": "Alimentar animal",
-      "feed_pet_alt": "Criança alimentando cachorro ou gato",
-      "walk_dog": "Passear com cachorro",
-      "walk_dog_alt": "Criança passeando com cachorro na coleira",
-      "clean_litter_box": "Limpar caixa de areia",
-      "clean_litter_box_alt": "Criança limpando caixa de areia do gato",
-      "groom_pet": "Escovar animal",
-      "groom_pet_alt": "Criança escovando animal de estimação",
-      "fill_water_bowl": "Encher tigela de água",
-      "fill_water_bowl_alt": "Criança enchendo tigela de água do animal",
-      "put_on_pajamas": "Vestir pijama",
-      "put_on_pajamas_alt": "Criança vestindo pijama",
-      "story_time": "Hora da história",
-      "story_time_alt": "Criança lendo história antes de dormir",
-      "lights_out": "Apagar as luzes",
-      "lights_out_alt": "Criança dormindo na cama",
-      "morning_routine": "Rotina matinal",
-      "morning_routine_alt": "Criança se preparando de manhã"
+      "make_bed": "Make Bed",
+      "make_bed_alt": "Child making bed with colorful blanket",
+      "clean_room": "Clean Room",
+      "clean_room_alt": "Child organizing toys in room",
+      "vacuum": "Vacuum",
+      "vacuum_alt": "Child using vacuum cleaner",
+      "dust_furniture": "Dust Furniture",
+      "dust_furniture_alt": "Child dusting furniture with cloth",
+      "take_out_trash": "Take Out Trash",
+      "take_out_trash_alt": "Child taking trash bag to bin",
+      "organize_toys": "Organize Toys",
+      "organize_toys_alt": "Child sorting toys into bins",
+      "put_away_laundry": "Put Away Laundry",
+      "put_away_laundry_alt": "Child folding and putting away clothes",
+      "wipe_surfaces": "Wipe Surfaces",
+      "wipe_surfaces_alt": "Child wiping counter or table",
+      "math_homework": "Math Homework",
+      "math_homework_alt": "Child working on math problems",
+      "reading_time": "Reading Time",
+      "reading_time_alt": "Child reading a book",
+      "writing_practice": "Writing Practice",
+      "writing_practice_alt": "Child writing in notebook",
+      "study": "Study",
+      "study_alt": "Child studying at desk",
+      "school_project": "School Project",
+      "school_project_alt": "Child working on project",
+      "practice_instrument": "Practice Instrument",
+      "practice_instrument_alt": "Child practicing musical instrument",
+      "brush_teeth": "Brush Teeth",
+      "brush_teeth_alt": "Child brushing teeth",
+      "take_shower": "Take Shower",
+      "take_shower_alt": "Child taking shower",
+      "wash_hands": "Wash Hands",
+      "wash_hands_alt": "Child washing hands with soap",
+      "comb_hair": "Comb Hair",
+      "comb_hair_alt": "Child combing hair",
+      "clip_nails": "Clip Nails",
+      "clip_nails_alt": "Child clipping fingernails",
+      "apply_sunscreen": "Apply Sunscreen",
+      "apply_sunscreen_alt": "Child applying sunscreen",
+      "change_clothes": "Change Clothes",
+      "change_clothes_alt": "Child changing clothes",
+      "wash_face": "Wash Face",
+      "wash_face_alt": "Child washing face",
+      "water_plants": "Water Plants",
+      "water_plants_alt": "Child watering plants with watering can",
+      "rake_leaves": "Rake Leaves",
+      "rake_leaves_alt": "Child raking autumn leaves",
+      "shovel_snow": "Shovel Snow",
+      "shovel_snow_alt": "Child shoveling snow",
+      "mow_lawn": "Mow Lawn",
+      "mow_lawn_alt": "Child pushing lawn mower",
+      "garden_work": "Garden Work",
+      "garden_work_alt": "Child gardening with tools",
+      "set_table": "Set Table",
+      "set_table_alt": "Child setting dinner table",
+      "clear_dishes": "Clear Dishes",
+      "clear_dishes_alt": "Child clearing dishes from table",
+      "help_cook": "Help Cook",
+      "help_cook_alt": "Child helping with cooking",
+      "help_sibling": "Help Sibling",
+      "help_sibling_alt": "Child helping younger sibling",
+      "fold_laundry": "Fold Laundry",
+      "fold_laundry_alt": "Child folding clean laundry",
+      "load_dishwasher": "Load Dishwasher",
+      "load_dishwasher_alt": "Child loading dishwasher",
+      "care_for_sibling": "Care for Sibling",
+      "care_for_sibling_alt": "Child watching younger sibling",
+      "eat_breakfast": "Eat Breakfast",
+      "eat_breakfast_alt": "Child eating breakfast",
+      "eat_lunch": "Eat Lunch",
+      "eat_lunch_alt": "Child eating lunch",
+      "eat_dinner": "Eat Dinner",
+      "eat_dinner_alt": "Child eating dinner",
+      "drink_water": "Drink Water",
+      "drink_water_alt": "Child drinking water",
+      "feed_pet": "Feed Pet",
+      "feed_pet_alt": "Child feeding dog or cat",
+      "walk_dog": "Walk Dog",
+      "walk_dog_alt": "Child walking dog on leash",
+      "clean_litter_box": "Clean Litter Box",
+      "clean_litter_box_alt": "Child cleaning cat litter box",
+      "groom_pet": "Groom Pet",
+      "groom_pet_alt": "Child brushing pet",
+      "fill_water_bowl": "Fill Water Bowl",
+      "fill_water_bowl_alt": "Child filling pet water bowl",
+      "put_on_pajamas": "Put On Pajamas",
+      "put_on_pajamas_alt": "Child putting on pajamas",
+      "story_time": "Story Time",
+      "story_time_alt": "Child reading bedtime story",
+      "lights_out": "Lights Out",
+      "lights_out_alt": "Child sleeping in bed",
+      "morning_routine": "Morning Routine",
+      "morning_routine_alt": "Child getting ready in morning"
     },
     "emojis": {
-      "bed": "Cama",
-      "broom": "Vassoura",
-      "toothbrush": "Escova de dentes",
-      "books": "Livros",
-      "plate": "Prato",
-      "dog": "Cachorro",
-      "plant": "Planta",
-      "toy": "Brinquedo",
-      "clothes": "Roupas",
-      "shower": "Chuveiro"
+      "bed": "Bed",
+      "broom": "Broom",
+      "toothbrush": "Toothbrush",
+      "books": "Books",
+      "plate": "Plate",
+      "dog": "Dog",
+      "plant": "Plant",
+      "toy": "Toy",
+      "clothes": "Clothes",
+      "shower": "Shower"
     }
   },
   "errors": {
-    "generic": "Ocorreu um erro. Por favor, tente novamente.",
-    "network": "Erro de rede. Por favor, verifique sua conexão.",
-    "unauthorized": "Você não está autorizado a realizar esta ação.",
-    "notFound": "O recurso solicitado não foi encontrado.",
-    "validation": "Por favor, verifique sua entrada e tente novamente."
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "The requested resource was not found.",
+    "validation": "Please check your input and try again."
   },
   "theme": {
-    "auto": "Automático",
-    "age_based": "Baseado na idade",
-    "bright": "Brilhante",
-    "young_style": "Estilo 5-8",
-    "cool": "Legal",
-    "older_style": "Estilo 9-12"
+    "auto": "Auto",
+    "age_based": "Age-based",
+    "bright": "Bright",
+    "young_style": "5-8 style",
+    "cool": "Cool",
+    "older_style": "9-12 style"
   },
   "settings": {
-    "theme_preference": "Preferência de Tema"
+    "theme_preference": "Theme Preference"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "view_daily": "Daily",
+    "view_weekly": "Weekly",
+    "view_monthly": "Monthly",
+    "loading": "Loading...",
+    "no_family": "No family found",
+    "daily_redirect": "Daily view is available at Daily Tasks page."
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "date_ranges": {
+      "7days": "Last 7 days",
+      "30days": "Last 30 days",
+      "90days": "Last 90 days"
+    },
+    "stats": {
+      "total_completions": "Total Completions",
+      "this_month": "This Month",
+      "avg_per_day": "Avg Per Day",
+      "current_streak": "Current Streak",
+      "days": "days"
+    },
+    "charts": {
+      "completion_trend": "Completion Trend",
+      "child_performance": "Child Performance",
+      "category_breakdown": "Category Breakdown",
+      "top_performers": "Top Performers",
+      "tasks": "tasks"
+    },
+    "errors": {
+      "auth_failed": "Authentication failed",
+      "family_fetch_failed": "Failed to fetch family membership",
+      "load_failed": "Failed to load analytics data",
+      "completions_failed": "Failed to fetch completions"
+    },
+    "loading": "Loading analytics...",
+    "error_title": "Error Loading Analytics",
+    "retry": "Retry"
+  },
+  "rewards": {
+    "title": "Rewards Store",
+    "add_reward": "Add Reward",
+    "create_reward": "Create Reward",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "form": {
+      "create_title": "Create New Reward",
+      "name_label": "Reward Name",
+      "name_placeholder": "e.g., 30 min extra screen time",
+      "description_label": "Description",
+      "points_cost_label": "Points Cost",
+      "category_label": "Category"
+    },
+    "categories": {
+      "screen_time": "Screen Time",
+      "allowance": "Allowance",
+      "privileges": "Privileges",
+      "activities": "Activities",
+      "items": "Items"
+    },
+    "points_suffix": "pts",
+    "redeem": "Redeem",
+    "no_rewards": "No rewards available yet.",
+    "create_prompt": "Create some rewards to motivate your children!"
+  },
+  "achievements": {
+    "first_task": {
+      "name": "First Task",
+      "description": "Complete your first task"
+    },
+    "first_week": {
+      "name": "First Week",
+      "description": "Complete 7+ tasks in your first week"
+    },
+    "helpful_helper": {
+      "name": "Helpful Helper",
+      "description": "Complete 25 tasks total"
+    },
+    "week_warrior": {
+      "name": "Week Warrior",
+      "description": "7+ tasks completed in one week"
+    },
+    "month_champion": {
+      "name": "Month Champion",
+      "description": "30+ tasks completed in one month"
+    },
+    "perfect_week": {
+      "name": "Perfect Week",
+      "description": "100% completion rate for one week"
+    },
+    "perfect_month": {
+      "name": "Perfect Month",
+      "description": "100% completion rate for one month"
+    },
+    "streak_starter": {
+      "name": "Streak Starter",
+      "description": "3-day completion streak"
+    },
+    "streak_champion": {
+      "name": "Streak Champion",
+      "description": "14-day completion streak"
+    },
+    "streak_legend": {
+      "name": "Streak Legend",
+      "description": "30-day completion streak"
+    },
+    "quality_master": {
+      "name": "Quality Master",
+      "description": "All ratings 5⭐ for one week"
+    },
+    "excellence_award": {
+      "name": "Excellence Award",
+      "description": "All ratings 5⭐ for one month"
+    },
+    "above_beyond": {
+      "name": "Above & Beyond",
+      "description": "50 tasks with 5⭐ rating"
+    }
+  },
+  "cast": {
+    "title": "Chromecast Settings",
+    "description": "Configure your Chromecast TV dashboard display",
+    "back_to_settings": "Back to Settings",
+    "connect": {
+      "title": "Connect to Chromecast",
+      "description": "Click the button below to cast your family dashboard to a TV."
+    },
+    "display_settings": {
+      "title": "Display Settings",
+      "rotation_interval": "Child Rotation Interval",
+      "rotation_help": "How long to display each child's dashboard before rotating",
+      "seconds": "sec",
+      "show_achievements": "Show Today's Achievements",
+      "achievements_help": "Display completed tasks from today on the TV dashboard",
+      "auto_start": "Auto-start on Connect",
+      "auto_start_help": "Automatically begin rotation when connecting to Chromecast",
+      "save": "Save Settings",
+      "saved": "Settings saved successfully!"
+    },
+    "setup": {
+      "title": "Setup Instructions",
+      "prerequisites": {
+        "title": "1. Prerequisites",
+        "chromecast": "A Chromecast device connected to your TV",
+        "network": "TV and computer/phone on the same WiFi network",
+        "browser": "Google Chrome browser (recommended)"
+      },
+      "first_time": {
+        "title": "2. First Time Setup",
+        "step1": "Ensure your Chromecast is set up and connected to WiFi",
+        "step2": "Open this page in Google Chrome",
+        "step3": "Click the \"Cast\" button above",
+        "step4": "Select your Chromecast device from the list"
+      },
+      "usage": {
+        "title": "3. Using the TV Dashboard",
+        "rotation": "The dashboard will automatically rotate between children every {{seconds}} seconds",
+        "display": "Each child's screen shows their pending tasks and today's achievements",
+        "realtime": "Updates happen in real-time when tasks are completed",
+        "disconnect": "Click \"Cast\" again to disconnect"
+      },
+      "troubleshooting": {
+        "title": "4. Troubleshooting",
+        "no_button": "Can't see Cast button? Make sure you're using Google Chrome browser",
+        "no_devices": "No devices found? Ensure your Chromecast and computer are on the same WiFi network",
+        "connection_fails": "Connection fails? Try restarting your Chromecast device",
+        "display_issues": "Display issues? Check your TV's HDMI input and Chromecast connection"
+      }
+    },
+    "features": {
+      "title": "📺 TV Dashboard Features",
+      "auto_rotation": {
+        "title": "✨ Auto-Rotation",
+        "description": "Cycles through each child's dashboard automatically"
+      },
+      "todays_tasks": {
+        "title": "📋 Today's Tasks",
+        "description": "Shows all pending tasks with images and point values"
+      },
+      "achievements": {
+        "title": "🎯 Achievements",
+        "description": "Displays completed tasks with ratings and timestamps"
+      },
+      "realtime": {
+        "title": "🔄 Real-time Updates",
+        "description": "Automatically refreshes when tasks are completed"
+      },
+      "optimized": {
+        "title": "🎨 TV-Optimized",
+        "description": "Large text and high contrast for easy viewing from distance"
+      },
+      "profile": {
+        "title": "👤 Profile Display",
+        "description": "Shows each child's name, photo, and age group"
+      }
+    }
+  },
+  "landing": {
+    "playful": {
+      "title": "Kids Chores\nMade Fun! 🎉",
+      "subtitle": "Turn chores into adventures for the whole family",
+      "features": {
+        "daily_tasks": "Daily Tasks",
+        "earn_stars": "Earn Stars",
+        "get_rewards": "Get Rewards",
+        "track_progress": "Track Progress"
+      },
+      "cta": {
+        "get_started": "Get Started Free",
+        "subtitle": "Join thousands of families making chores fun!",
+        "learn_more": "Learn More"
+      }
+    },
+    "split": {
+      "view_modes": {
+        "both": "Both Views",
+        "parents": "For Parents",
+        "kids": "For Kids"
+      },
+      "parent": {
+        "title": "For Parents",
+        "subtitle": "Organize, track, and guide your family's daily routines",
+        "cta": "Start Managing Now",
+        "features": {
+          "family_dashboard": {
+            "title": "Family Dashboard",
+            "description": "Manage all family members"
+          },
+          "progress_tracking": {
+            "title": "Progress Tracking",
+            "description": "See completion stats"
+          },
+          "review_approve": {
+            "title": "Review & Approve",
+            "description": "Quality control tasks"
+          },
+          "reward_system": {
+            "title": "Reward System",
+            "description": "Set up incentives"
+          }
+        }
+      },
+      "kid": {
+        "title": "For Kids",
+        "subtitle": "Complete tasks, earn rewards, and have fun!",
+        "cta": "Start Your Adventure! 🚀",
+        "features": {
+          "my_tasks": {
+            "title": "My Tasks",
+            "description": "See what to do today"
+          },
+          "complete_earn": {
+            "title": "Complete & Earn",
+            "description": "Check off chores"
+          },
+          "collect_stars": {
+            "title": "Collect Stars",
+            "description": "Build your streak"
+          },
+          "level_up": {
+            "title": "Level Up",
+            "description": "Unlock achievements"
+          }
+        }
+      },
+      "bottom_cta": {
+        "register": "Start Free for Everyone! 🎉",
+        "login": "Login"
+      }
+    }
   }
 }

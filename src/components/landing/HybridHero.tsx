@@ -9,15 +9,6 @@ type ViewMode = 'split' | 'parent' | 'kid'
 export default function HybridHero() {
   const [viewMode, setViewMode] = useState<ViewMode>('split')
   const [hoveredSide, setHoveredSide] = useState<'parent' | 'kid' | null>(null)
-  const [hoveredCoin, setHoveredCoin] = useState<number | null>(null)
-
-  // Floating coins for visual interest
-  const coins = [
-    { x: '5%', y: '15%', delay: 0, size: 50 },
-    { x: '92%', y: '12%', delay: 0.2, size: 45 },
-    { x: '8%', y: '75%', delay: 0.4, size: 40 },
-    { x: '90%', y: '80%', delay: 0.6, size: 48 },
-  ]
 
   const parentFeatures = [
     { icon: '👨‍👩‍👧‍👦', title: 'Family Dashboard', desc: 'Manage everyone', gradient: 'from-blue-400 to-cyan-400' },
@@ -35,47 +26,12 @@ export default function HybridHero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Floating Coins (3D-style from Approach 2) */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {coins.map((coin, i) => (
-          <motion.div
-            key={`coin-${i}`}
-            className="absolute text-5xl filter drop-shadow-xl will-change-transform"
-            style={{ left: coin.x, top: coin.y }}
-            initial={false}
-            animate={{
-              y: [-15, 15],
-              rotate: [0, 180],
-            }}
-            transition={{
-              duration: 3 + i * 0.3,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              delay: coin.delay,
-              ease: 'easeInOut',
-            }}
-            onHoverStart={() => setHoveredCoin(i)}
-            onHoverEnd={() => setHoveredCoin(null)}
-          >
-            <motion.span
-              animate={{
-                scale: hoveredCoin === i ? 1.4 : 1,
-              }}
-              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-              className="cursor-pointer inline-block"
-            >
-              🪙
-            </motion.span>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Mode Selector Pills */}
+      {/* Mode Selector Pills - Centered at top */}
       <motion.div
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
+        className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 0.3 }}
       >
         <button
           onClick={() => setViewMode('split')}

@@ -10,10 +10,14 @@
     "children": "Children",
     "today": "Today",
     "tasks": "Tasks",
+    "calendar": "Calendar",
     "reviews": "Reviews",
     "completions": "Completions",
+    "analytics": "Analytics",
+    "rewards": "Rewards",
     "reports": "Reports",
     "progress": "Progress",
+    "cast": "Chromecast",
     "settings": "Settings",
     "logout": "Logout"
   },
@@ -86,11 +90,27 @@
     },
     "tasks": {
       "title": "Tasks",
-      "description": "Create and manage chores (coming soon)"
+      "description": "Create and manage all tasks"
     },
     "children": {
       "title": "Children",
-      "description": "Add and manage children (coming soon)"
+      "description": "Add and manage children profiles"
+    },
+    "today": {
+      "title": "Today's Tasks",
+      "description": "View and manage today's tasks for all children"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "description": "Review and approve completed tasks"
+    },
+    "completions": {
+      "title": "Completions",
+      "description": "View task completion history"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage account and preferences"
     },
     "progress": {
       "title": "Progress",
@@ -100,7 +120,7 @@
   "gettingStarted": {
     "title": "Getting Started",
     "step1": "Invite family members",
-    "step2": "Add your children's profiles (coming soon)",
+    "step2": "Add your children's profiles",
     "step3": "Create chores and tasks (coming soon)",
     "step4": "Assign tasks to your children (coming soon)",
     "step5": "Review and rate their work (coming soon)",
@@ -368,5 +388,277 @@
   },
   "settings": {
     "theme_preference": "Theme Preference"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "view_daily": "Daily",
+    "view_weekly": "Weekly",
+    "view_monthly": "Monthly",
+    "loading": "Loading...",
+    "no_family": "No family found",
+    "daily_redirect": "Daily view is available at Daily Tasks page."
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "date_ranges": {
+      "7days": "Last 7 days",
+      "30days": "Last 30 days",
+      "90days": "Last 90 days"
+    },
+    "stats": {
+      "total_completions": "Total Completions",
+      "this_month": "This Month",
+      "avg_per_day": "Avg Per Day",
+      "current_streak": "Current Streak",
+      "days": "days"
+    },
+    "charts": {
+      "completion_trend": "Completion Trend",
+      "child_performance": "Child Performance",
+      "category_breakdown": "Category Breakdown",
+      "top_performers": "Top Performers",
+      "tasks": "tasks"
+    },
+    "errors": {
+      "auth_failed": "Authentication failed",
+      "family_fetch_failed": "Failed to fetch family membership",
+      "load_failed": "Failed to load analytics data",
+      "completions_failed": "Failed to fetch completions"
+    },
+    "loading": "Loading analytics...",
+    "error_title": "Error Loading Analytics",
+    "retry": "Retry"
+  },
+  "rewards": {
+    "title": "Rewards Store",
+    "add_reward": "Add Reward",
+    "create_reward": "Create Reward",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "form": {
+      "create_title": "Create New Reward",
+      "name_label": "Reward Name",
+      "name_placeholder": "e.g., 30 min extra screen time",
+      "description_label": "Description",
+      "points_cost_label": "Points Cost",
+      "category_label": "Category"
+    },
+    "categories": {
+      "screen_time": "Screen Time",
+      "allowance": "Allowance",
+      "privileges": "Privileges",
+      "activities": "Activities",
+      "items": "Items"
+    },
+    "points_suffix": "pts",
+    "redeem": "Redeem",
+    "no_rewards": "No rewards available yet.",
+    "create_prompt": "Create some rewards to motivate your children!"
+  },
+  "achievements": {
+    "first_task": {
+      "name": "First Task",
+      "description": "Complete your first task"
+    },
+    "first_week": {
+      "name": "First Week",
+      "description": "Complete 7+ tasks in your first week"
+    },
+    "helpful_helper": {
+      "name": "Helpful Helper",
+      "description": "Complete 25 tasks total"
+    },
+    "week_warrior": {
+      "name": "Week Warrior",
+      "description": "7+ tasks completed in one week"
+    },
+    "month_champion": {
+      "name": "Month Champion",
+      "description": "30+ tasks completed in one month"
+    },
+    "perfect_week": {
+      "name": "Perfect Week",
+      "description": "100% completion rate for one week"
+    },
+    "perfect_month": {
+      "name": "Perfect Month",
+      "description": "100% completion rate for one month"
+    },
+    "streak_starter": {
+      "name": "Streak Starter",
+      "description": "3-day completion streak"
+    },
+    "streak_champion": {
+      "name": "Streak Champion",
+      "description": "14-day completion streak"
+    },
+    "streak_legend": {
+      "name": "Streak Legend",
+      "description": "30-day completion streak"
+    },
+    "quality_master": {
+      "name": "Quality Master",
+      "description": "All ratings 5⭐ for one week"
+    },
+    "excellence_award": {
+      "name": "Excellence Award",
+      "description": "All ratings 5⭐ for one month"
+    },
+    "above_beyond": {
+      "name": "Above & Beyond",
+      "description": "50 tasks with 5⭐ rating"
+    }
+  },
+  "cast": {
+    "title": "Chromecast Settings",
+    "description": "Configure your Chromecast TV dashboard display",
+    "back_to_settings": "Back to Settings",
+    "connect": {
+      "title": "Connect to Chromecast",
+      "description": "Click the button below to cast your family dashboard to a TV."
+    },
+    "display_settings": {
+      "title": "Display Settings",
+      "rotation_interval": "Child Rotation Interval",
+      "rotation_help": "How long to display each child's dashboard before rotating",
+      "seconds": "sec",
+      "show_achievements": "Show Today's Achievements",
+      "achievements_help": "Display completed tasks from today on the TV dashboard",
+      "auto_start": "Auto-start on Connect",
+      "auto_start_help": "Automatically begin rotation when connecting to Chromecast",
+      "save": "Save Settings",
+      "saved": "Settings saved successfully!"
+    },
+    "setup": {
+      "title": "Setup Instructions",
+      "prerequisites": {
+        "title": "1. Prerequisites",
+        "chromecast": "A Chromecast device connected to your TV",
+        "network": "TV and computer/phone on the same WiFi network",
+        "browser": "Google Chrome browser (recommended)"
+      },
+      "first_time": {
+        "title": "2. First Time Setup",
+        "step1": "Ensure your Chromecast is set up and connected to WiFi",
+        "step2": "Open this page in Google Chrome",
+        "step3": "Click the \"Cast\" button above",
+        "step4": "Select your Chromecast device from the list"
+      },
+      "usage": {
+        "title": "3. Using the TV Dashboard",
+        "rotation": "The dashboard will automatically rotate between children every {{seconds}} seconds",
+        "display": "Each child's screen shows their pending tasks and today's achievements",
+        "realtime": "Updates happen in real-time when tasks are completed",
+        "disconnect": "Click \"Cast\" again to disconnect"
+      },
+      "troubleshooting": {
+        "title": "4. Troubleshooting",
+        "no_button": "Can't see Cast button? Make sure you're using Google Chrome browser",
+        "no_devices": "No devices found? Ensure your Chromecast and computer are on the same WiFi network",
+        "connection_fails": "Connection fails? Try restarting your Chromecast device",
+        "display_issues": "Display issues? Check your TV's HDMI input and Chromecast connection"
+      }
+    },
+    "features": {
+      "title": "📺 TV Dashboard Features",
+      "auto_rotation": {
+        "title": "✨ Auto-Rotation",
+        "description": "Cycles through each child's dashboard automatically"
+      },
+      "todays_tasks": {
+        "title": "📋 Today's Tasks",
+        "description": "Shows all pending tasks with images and point values"
+      },
+      "achievements": {
+        "title": "🎯 Achievements",
+        "description": "Displays completed tasks with ratings and timestamps"
+      },
+      "realtime": {
+        "title": "🔄 Real-time Updates",
+        "description": "Automatically refreshes when tasks are completed"
+      },
+      "optimized": {
+        "title": "🎨 TV-Optimized",
+        "description": "Large text and high contrast for easy viewing from distance"
+      },
+      "profile": {
+        "title": "👤 Profile Display",
+        "description": "Shows each child's name, photo, and age group"
+      }
+    }
+  },
+  "landing": {
+    "playful": {
+      "title": "Kids Chores\nMade Fun! 🎉",
+      "subtitle": "Turn chores into adventures for the whole family",
+      "features": {
+        "daily_tasks": "Daily Tasks",
+        "earn_stars": "Earn Stars",
+        "get_rewards": "Get Rewards",
+        "track_progress": "Track Progress"
+      },
+      "cta": {
+        "get_started": "Get Started Free",
+        "subtitle": "Join thousands of families making chores fun!",
+        "learn_more": "Learn More"
+      }
+    },
+    "split": {
+      "view_modes": {
+        "both": "Both Views",
+        "parents": "For Parents",
+        "kids": "For Kids"
+      },
+      "parent": {
+        "title": "For Parents",
+        "subtitle": "Organize, track, and guide your family's daily routines",
+        "cta": "Start Managing Now",
+        "features": {
+          "family_dashboard": {
+            "title": "Family Dashboard",
+            "description": "Manage all family members"
+          },
+          "progress_tracking": {
+            "title": "Progress Tracking",
+            "description": "See completion stats"
+          },
+          "review_approve": {
+            "title": "Review & Approve",
+            "description": "Quality control tasks"
+          },
+          "reward_system": {
+            "title": "Reward System",
+            "description": "Set up incentives"
+          }
+        }
+      },
+      "kid": {
+        "title": "For Kids",
+        "subtitle": "Complete tasks, earn rewards, and have fun!",
+        "cta": "Start Your Adventure! 🚀",
+        "features": {
+          "my_tasks": {
+            "title": "My Tasks",
+            "description": "See what to do today"
+          },
+          "complete_earn": {
+            "title": "Complete & Earn",
+            "description": "Check off chores"
+          },
+          "collect_stars": {
+            "title": "Collect Stars",
+            "description": "Build your streak"
+          },
+          "level_up": {
+            "title": "Level Up",
+            "description": "Unlock achievements"
+          }
+        }
+      },
+      "bottom_cta": {
+        "register": "Start Free for Everyone! 🎉",
+        "login": "Login"
+      }
+    }
   }
 }

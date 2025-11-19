@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { WeeklyCalendarView } from '@/components/calendar/WeeklyCalendarView'
 import { MonthlyCalendarView } from '@/components/calendar/MonthlyCalendarView'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/hooks/useTranslation'
 
 type CalendarView = 'daily' | 'weekly' | 'monthly'
 
 export default function CalendarPage() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const router = useRouter()
   const [view, setView] = useState<CalendarView>('weekly')
@@ -65,7 +67,7 @@ export default function CalendarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">{t('calendar.loading')}</div>
       </div>
     )
   }
@@ -73,7 +75,7 @@ export default function CalendarPage() {
   if (!familyId) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600">No family found</div>
+        <div className="text-red-600">{t('calendar.no_family')}</div>
       </div>
     )
   }
@@ -93,7 +95,7 @@ export default function CalendarPage() {
               }
             `}
           >
-            Daily
+            {t('calendar.view_daily')}
           </button>
           <button
             onClick={() => handleViewChange('weekly')}
@@ -105,7 +107,7 @@ export default function CalendarPage() {
               }
             `}
           >
-            Weekly
+            {t('calendar.view_weekly')}
           </button>
           <button
             onClick={() => handleViewChange('monthly')}
@@ -117,7 +119,7 @@ export default function CalendarPage() {
               }
             `}
           >
-            Monthly
+            {t('calendar.view_monthly')}
           </button>
         </div>
       </div>
@@ -126,7 +128,7 @@ export default function CalendarPage() {
       {view === 'daily' && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
           <p className="text-blue-900">
-            Daily view is available at <a href="/daily" className="underline font-medium">Daily Tasks</a> page.
+            {t('calendar.daily_redirect')}
           </p>
         </div>
       )}

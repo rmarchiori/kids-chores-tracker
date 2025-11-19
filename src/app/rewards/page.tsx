@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface Reward {
   id: string
@@ -14,6 +15,7 @@ interface Reward {
 }
 
 export default function RewardsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [familyId, setFamilyId] = useState<string | null>(null)
   const [role, setRole] = useState<string | null>(null)
@@ -88,19 +90,19 @@ export default function RewardsPage() {
   const isParent = role === 'admin' || role === 'parent'
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">{t('rewards.loading')}</div>
   }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Rewards Store</h1>
+        <h1 className="text-3xl font-bold">{t('rewards.title')}</h1>
         {isParent && (
           <button
             onClick={() => setShowForm(!showForm)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            {showForm ? 'Cancel' : 'Add Reward'}
+            {showForm ? t('rewards.cancel') : t('rewards.add_reward')}
           </button>
         )}
       </div>
@@ -108,20 +110,20 @@ export default function RewardsPage() {
       {/* Create Reward Form */}
       {showForm && isParent && (
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Create New Reward</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('rewards.form.create_title')}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Reward Name</label>
+              <label className="block text-sm font-medium mb-1">{t('rewards.form.name_label')}</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="e.g., 30 min extra screen time"
+                placeholder={t('rewards.form.name_placeholder')}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">{t('rewards.form.description_label')}</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -131,7 +133,7 @@ export default function RewardsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Points Cost</label>
+                <label className="block text-sm font-medium mb-1">{t('rewards.form.points_cost_label')}</label>
                 <input
                   type="number"
                   value={formData.points_cost}
@@ -141,17 +143,17 @@ export default function RewardsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">{t('rewards.form.category_label')}</label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 >
-                  <option value="screen_time">Screen Time</option>
-                  <option value="allowance">Allowance</option>
-                  <option value="privileges">Privileges</option>
-                  <option value="activities">Activities</option>
-                  <option value="items">Items</option>
+                  <option value="screen_time">{t('rewards.categories.screen_time')}</option>
+                  <option value="allowance">{t('rewards.categories.allowance')}</option>
+                  <option value="privileges">{t('rewards.categories.privileges')}</option>
+                  <option value="activities">{t('rewards.categories.activities')}</option>
+                  <option value="items">{t('rewards.categories.items')}</option>
                 </select>
               </div>
             </div>
@@ -159,7 +161,7 @@ export default function RewardsPage() {
               onClick={handleCreateReward}
               className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
-              Create Reward
+              {t('rewards.create_reward')}
             </button>
           </div>
         </div>
@@ -179,9 +181,9 @@ export default function RewardsPage() {
               <p className="text-gray-600 mb-4">{reward.description}</p>
             )}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500 capitalize">{reward.category.replace('_', ' ')}</span>
+              <span className="text-sm text-gray-500 capitalize">{t(`rewards.categories.${reward.category}`)}</span>
               <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                Redeem
+                {t('rewards.redeem')}
               </button>
             </div>
           </div>
@@ -190,8 +192,8 @@ export default function RewardsPage() {
 
       {rewards.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          <p>No rewards available yet.</p>
-          {isParent && <p className="mt-2">Create some rewards to motivate your children!</p>}
+          <p>{t('rewards.no_rewards')}</p>
+          {isParent && <p className="mt-2">{t('rewards.create_prompt')}</p>}
         </div>
       )}
     </div>
