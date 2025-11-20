@@ -48,6 +48,11 @@ export default function RegisterPage() {
       setError(null)
       setSuccessMessage(null)
 
+      // Get the base URL for email confirmation callback
+      const baseUrl = typeof window !== 'undefined'
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
       // Create auth user only - family setup happens during onboarding
       const { error: signUpError } = await supabase.auth.signUp({
         email: data.email,
@@ -56,6 +61,7 @@ export default function RegisterPage() {
           data: {
             name: data.name,
           },
+          emailRedirectTo: `${baseUrl}/auth/callback`,
         },
       })
 
