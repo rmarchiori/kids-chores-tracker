@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation System Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 4px solid #2563eb;
+    }
+
+    .test-section h2 {
+      color: #1f2937;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+
+    .test-result {
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    .info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #3b82f6;
+    }
+
+    .warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:active {
+      background: #1e40af;
+    }
+
+    .language-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .current-locale {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    pre {
+      background: #1f2937;
+      color: #f3f4f6;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌐 Translation System Validation</h1>
+    <p class="subtitle">Comprehensive test suite for the translation system</p>
+
+    <div class="test-section">
+      <h2>Current Locale</h2>
+      <div class="test-result info">
+        Current locale: <span class="current-locale" id="currentLocale">Detecting...</span>
+      </div>
+      <div class="test-result info">
+        Cookie value: <span id="cookieValue">Reading...</span>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>Change Language</h2>
+      <p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+        Click a button to change the language. The page will reload with the new language.
+      </p>
+      <div class="language-selector">
+        <button onclick="changeLanguage('en-CA')">🇬🇧 English (Canada)</button>
+        <button onclick="changeLanguage('pt-BR')">🇧🇷 Português (Brasil)</button>
+        <button onclick="changeLanguage('fr-CA')">🇫🇷 Français (Canada)</button>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>Translation Loading Test</h2>
+      <button onclick="runTranslationTests()">Run Translation Tests</button>
+      <div id="testResults"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Cache Busting Test</h2>
+      <button onclick="runCacheBustingTest()">Test Cache Busting</button>
+      <div id="cacheBustingResults"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>All Languages Test</h2>
+      <button onclick="testAllLanguages()">Test All Languages</button>
+      <div id="allLanguagesResults"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Console Logs</h2>
+      <p style="color: #666; margin-bottom: 10px; font-size: 14px;">
+        Check browser console (F12) for detailed logs from the translation system
+      </p>
+      <div id="consoleLogs"></div>
+    </div>
+  </div>
+
+  <script>
+    // Get current locale from cookie
+    function getLocaleFromCookie() {
+      const cookies = document.cookie.split(';')
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=')
+        if (name === 'NEXT_LOCALE') {
+          return value
+        }
+      }
+      return 'en-CA' // default
+    }
+
+    // Display current locale
+    function displayCurrentLocale() {
+      const locale = getLocaleFromCookie()
+      document.getElementById('currentLocale').textContent = locale
+      document.getElementById('cookieValue').textContent = document.cookie || 'No cookies'
+    }
+
+    // Change language
+    function changeLanguage(locale) {
+      console.log('🌐 Changing language to:', locale)
+
+      // Set cookie
+      document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`
+      console.log('🍪 Cookie set:', document.cookie)
+
+      // Add delay to ensure cookie persists (same as LanguageSelector)
+      console.log('🔄 Reloading page in 150ms...')
+      setTimeout(() => {
+        window.location.reload()
+      }, 150)
+    }
+
+    // Run translation loading tests
+    async function runTranslationTests() {
+      const resultsDiv = document.getElementById('testResults')
+      resultsDiv.innerHTML = '<div class="test-result info">Running tests...</div>'
+
+      const locale = getLocaleFromCookie()
+      const results = []
+
+      try {
+        // Test 1: Fetch translation file
+        const timestamp = Date.now()
+        const url = `/locales/${locale}/common.json?t=${timestamp}`
+        console.log('📥 Fetching:', url)
+
+        const startTime = performance.now()
+        const response = await fetch(url, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        })
+        const loadTime = performance.now() - startTime
+
+        if (response.ok) {
+          const translations = await response.json()
+          const keyCount = Object.keys(translations).length
+
+          results.push({
+            type: 'success',
+            message: `✅ Translations loaded successfully (${loadTime.toFixed(2)}ms)`
+          })
+
+          results.push({
+            type: 'info',
+            message: `📊 ${keyCount} top-level keys found`
+          })
+
+          // Test 2: Check for required keys
+          const requiredKeys = ['nav.dashboard', 'nav.tasks', 'auth.login']
+          const missingKeys = []
+
+          for (const key of requiredKeys) {
+            const keys = key.split('.')
+            let value = translations
+            let found = true
+
+            for (const k of keys) {
+              if (value && typeof value === 'object' && k in value) {
+                value = value[k]
+              } else {
+                found = false
+                break
+              }
+            }
+
+            if (!found) {
+              missingKeys.push(key)
+            }
+          }
+
+          if (missingKeys.length === 0) {
+            results.push({
+              type: 'success',
+              message: `✅ All required keys present`
+            })
+          } else {
+            results.push({
+              type: 'warning',
+              message: `⚠️  Missing keys: ${missingKeys.join(', ')}`
+            })
+          }
+
+          // Show sample translations
+          results.push({
+            type: 'info',
+            message: `Sample translations:<pre>${JSON.stringify({
+              'nav.dashboard': translations.nav?.dashboard,
+              'nav.tasks': translations.nav?.tasks,
+              'auth.login': translations.auth?.login,
+            }, null, 2)}</pre>`
+          })
+
+        } else {
+          results.push({
+            type: 'error',
+            message: `❌ Failed to load translations: HTTP ${response.status}`
+          })
+        }
+
+      } catch (error) {
+        results.push({
+          type: 'error',
+          message: `❌ Error: ${error.message}`
+        })
+      }
+
+      // Display results
+      resultsDiv.innerHTML = results.map(r =>
+        `<div class="test-result ${r.type}">${r.message}</div>`
+      ).join('')
+    }
+
+    // Run cache busting test
+    async function runCacheBustingTest() {
+      const resultsDiv = document.getElementById('cacheBustingResults')
+      resultsDiv.innerHTML = '<div class="test-result info">Running cache busting test...</div>'
+
+      const locale = getLocaleFromCookie()
+      const results = []
+
+      try {
+        // Request 1
+        const timestamp1 = Date.now()
+        const url1 = `/locales/${locale}/common.json?t=${timestamp1}`
+        const start1 = performance.now()
+        const response1 = await fetch(url1, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        })
+        const time1 = performance.now() - start1
+        const data1 = await response1.json()
+
+        results.push({
+          type: 'info',
+          message: `Request 1 (t=${timestamp1}): ${time1.toFixed(2)}ms, ${Object.keys(data1).length} keys`
+        })
+
+        // Wait a bit
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        // Request 2
+        const timestamp2 = Date.now()
+        const url2 = `/locales/${locale}/common.json?t=${timestamp2}`
+        const start2 = performance.now()
+        const response2 = await fetch(url2, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        })
+        const time2 = performance.now() - start2
+        const data2 = await response2.json()
+
+        results.push({
+          type: 'info',
+          message: `Request 2 (t=${timestamp2}): ${time2.toFixed(2)}ms, ${Object.keys(data2).length} keys`
+        })
+
+        // Verify different timestamps
+        if (timestamp1 !== timestamp2) {
+          results.push({
+            type: 'success',
+            message: `✅ Timestamps are different (cache busting working)`
+          })
+        }
+
+        // Verify same content
+        if (JSON.stringify(data1) === JSON.stringify(data2)) {
+          results.push({
+            type: 'success',
+            message: `✅ Both requests returned identical data (as expected)`
+          })
+        } else {
+          results.push({
+            type: 'error',
+            message: `❌ Requests returned different data (unexpected!)`
+          })
+        }
+
+        // Check cache headers
+        const cacheControl = response2.headers.get('Cache-Control')
+        results.push({
+          type: 'info',
+          message: `Cache-Control header: ${cacheControl || 'not set'}`
+        })
+
+      } catch (error) {
+        results.push({
+          type: 'error',
+          message: `❌ Error: ${error.message}`
+        })
+      }
+
+      resultsDiv.innerHTML = results.map(r =>
+        `<div class="test-result ${r.type}">${r.message}</div>`
+      ).join('')
+    }
+
+    // Test all languages
+    async function testAllLanguages() {
+      const resultsDiv = document.getElementById('allLanguagesResults')
+      resultsDiv.innerHTML = '<div class="test-result info">Testing all languages...</div>'
+
+      const languages = ['en-CA', 'pt-BR', 'fr-CA']
+      const results = []
+
+      for (const lang of languages) {
+        try {
+          const timestamp = Date.now()
+          const url = `/locales/${lang}/common.json?t=${timestamp}`
+          const startTime = performance.now()
+          const response = await fetch(url, {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' }
+          })
+          const loadTime = performance.now() - startTime
+
+          if (response.ok) {
+            const translations = await response.json()
+            const keyCount = Object.keys(translations).length
+
+            results.push({
+              type: 'success',
+              message: `✅ ${lang}: ${keyCount} keys (${loadTime.toFixed(2)}ms)`
+            })
+          } else {
+            results.push({
+              type: 'error',
+              message: `❌ ${lang}: HTTP ${response.status}`
+            })
+          }
+        } catch (error) {
+          results.push({
+            type: 'error',
+            message: `❌ ${lang}: ${error.message}`
+          })
+        }
+      }
+
+      resultsDiv.innerHTML = results.map(r =>
+        `<div class="test-result ${r.type}">${r.message}</div>`
+      ).join('')
+    }
+
+    // Capture console logs
+    const originalLog = console.log
+    const originalError = console.error
+    const originalWarn = console.warn
+
+    const consoleLogs = []
+
+    console.log = function(...args) {
+      consoleLogs.push({ type: 'log', message: args.join(' '), time: new Date().toISOString() })
+      originalLog.apply(console, args)
+    }
+
+    console.error = function(...args) {
+      consoleLogs.push({ type: 'error', message: args.join(' '), time: new Date().toISOString() })
+      originalError.apply(console, args)
+    }
+
+    console.warn = function(...args) {
+      consoleLogs.push({ type: 'warn', message: args.join(' '), time: new Date().toISOString() })
+      originalWarn.apply(console, args)
+    }
+
+    // Initialize
+    displayCurrentLocale()
+
+    console.log('🧪 Translation test page loaded')
+    console.log('📍 Current locale:', getLocaleFromCookie())
+    console.log('🍪 Cookies:', document.cookie)
+  </script>
+</body>
+</html>

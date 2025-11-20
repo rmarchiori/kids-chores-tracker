@@ -55,8 +55,10 @@ export default function LanguageSelector({
       document.cookie = `NEXT_LOCALE=${localeCode}; path=/; max-age=31536000; SameSite=Lax`
       console.log('🍪 Cookie set:', document.cookie)
 
-      // Refresh the page to apply new language
-      console.log('🔄 Reloading page...')
+      // Add small delay before reload to ensure cookie is persisted to disk
+      // This prevents race condition where page reloads before cookie is fully written
+      console.log('🔄 Reloading page in 150ms...')
+      await new Promise(resolve => setTimeout(resolve, 150))
       window.location.reload()
     } catch (error) {
       console.error('❌ Failed to change language:', error)
