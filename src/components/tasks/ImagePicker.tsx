@@ -175,6 +175,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
                 return (
                   <button
                     key={image.id}
+                    type="button"
                     onClick={() => onSelect(image.file_path, translatedAlt, 'library')}
                     role="gridcell"
                     className={`
@@ -218,6 +219,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
             return (
               <button
                 key={option.emoji}
+                type="button"
                 onClick={() => onSelect(option.emoji, translatedName, 'emoji')}
                 className={`
                   aspect-square rounded-lg border-2 flex items-center justify-center
