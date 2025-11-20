@@ -2,7 +2,12 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { QueryProvider } from '@/components/providers/QueryProvider'
-import { VersionBadge } from '@/components/VersionBadge'
+import dynamic from 'next/dynamic'
+
+// Load VersionBadge only on client to avoid hydration mismatch
+const VersionBadge = dynamic(() => import('@/components/VersionBadge').then(mod => ({ default: mod.VersionBadge })), {
+  ssr: false
+})
 
 export const metadata: Metadata = {
   title: 'Kids Chores Tracker',
@@ -15,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="bg-white text-gray-900">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-white text-gray-900" suppressHydrationWarning>
         <QueryProvider>
           <ThemeProvider>
             {children}
