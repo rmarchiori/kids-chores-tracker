@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { VersionBadge } from '@/components/VersionBadge'
 
 export const metadata: Metadata = {
   title: 'Kids Chores Tracker',
@@ -19,6 +20,7 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider>
             {children}
+            <VersionBadge />
           </ThemeProvider>
         </QueryProvider>
       </body>
