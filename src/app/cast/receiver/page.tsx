@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { format, parseISO } from 'date-fns'
 import { motion } from 'framer-motion'
+import { useTranslation } from '@/hooks/useTranslation'
 
 /**
  * Cast Receiver Page
@@ -56,6 +57,7 @@ interface Completion {
 }
 
 export default function CastReceiverPage() {
+  const { t } = useTranslation()
   const [children, setChildren] = useState<Child[]>([])
   const [currentChildIndex, setCurrentChildIndex] = useState(0)
   const [tasks, setTasks] = useState<Task[]>([])
@@ -315,9 +317,9 @@ export default function CastReceiverPage() {
                 )}
               </motion.div>
               <div className="text-white">
-                <h1 className="text-6xl font-black mb-2">{currentChild.name}'s Dashboard</h1>
+                <h1 className="text-6xl font-black mb-2">{currentChild.name}'s {t('cast.dashboard')}</h1>
                 <p className="text-3xl font-bold opacity-90">
-                  Age Group: {currentChild.age_group === '5-8' ? '5-8 years' : '9-12 years'}
+                  {t('cast.age_group')}: {currentChild.age_group === '5-8' ? '5-8 years' : '9-12 years'}
                 </p>
               </div>
             </div>
@@ -343,7 +345,7 @@ export default function CastReceiverPage() {
             >
               📋
             </motion.span>
-            <h2 className="text-white text-4xl font-black">Today's Tasks</h2>
+            <h2 className="text-white text-4xl font-black">{t('cast.todays_tasks')}</h2>
           </div>
           {tasks.length === 0 ? (
             <motion.p
@@ -352,7 +354,7 @@ export default function CastReceiverPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              🎉 All caught up! No pending tasks.
+              🎉 {t('cast.all_caught_up')}
             </motion.p>
           ) : (
             <div className="grid grid-cols-2 gap-6">
@@ -384,7 +386,7 @@ export default function CastReceiverPage() {
                   </motion.div>
                   <div className="flex-1">
                     <h3 className="text-white text-2xl font-black">{task.title}</h3>
-                    <p className="text-white/80 text-xl font-bold capitalize">{task.category}</p>
+                    <p className="text-white/80 text-xl font-bold capitalize">{t(`tasks.categories.${task.category}`)}</p>
                   </div>
                   <div className="text-yellow-300 text-3xl font-black">
                     {task.points} ⭐
@@ -411,7 +413,7 @@ export default function CastReceiverPage() {
               >
                 🎯
               </motion.span>
-              <h2 className="text-white text-4xl font-black">Today's Achievements</h2>
+              <h2 className="text-white text-4xl font-black">{t('cast.todays_achievements')}</h2>
             </div>
             <div className="space-y-4">
               {completions.map((completion, index) => (

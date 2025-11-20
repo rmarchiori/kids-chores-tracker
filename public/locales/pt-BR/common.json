@@ -529,6 +529,11 @@
     "title": "Chromecast Settings",
     "description": "Configure your Chromecast TV dashboard display",
     "back_to_settings": "Back to Settings",
+    "dashboard": "Dashboard",
+    "age_group": "Age Group",
+    "todays_tasks": "Today's Tasks",
+    "all_caught_up": "All caught up! No pending tasks.",
+    "todays_achievements": "Today's Achievements",
     "connect": {
       "title": "Connect to Chromecast",
       "description": "Click the button below to cast your family dashboard to a TV."
