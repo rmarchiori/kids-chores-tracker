@@ -7,7 +7,6 @@ type Translations = Record<string, any>
 
 // Global cache for translations (shared across all hook instances)
 const translationCache = new Map<Language, Translations>()
-let cachedLocale: Language | null = null
 let loadingPromise: Promise<void> | null = null
 
 export function useTranslation() {
@@ -23,7 +22,6 @@ export function useTranslation() {
     const loadTranslations = async () => {
       // Get current locale
       const currentLocale = getClientLocale()
-      cachedLocale = currentLocale
       setLocale(currentLocale)
 
       // If already cached, use cached version
