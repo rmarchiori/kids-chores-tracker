@@ -10,8 +10,11 @@ const translationCache = new Map<Language, Translations>()
 let loadingPromise: Promise<void> | null = null
 
 export function useTranslation() {
-  // Always read locale from cookie, don't rely on cached value
-  const [locale, setLocale] = useState<Language>(() => getClientLocale())
+  // Always read locale from cookie on mount, but protect against SSR
+  const [locale, setLocale] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'en-CA'
+    return getClientLocale()
+  })
   const [translations, setTranslations] = useState<Translations>(() => {
     // Return cached translations if available
     return translationCache.get(locale) || {}
@@ -20,9 +23,16 @@ export function useTranslation() {
 
   useEffect(() => {
     const loadTranslations = async () => {
+      // Only run on client side
+      if (typeof window === 'undefined') return
+
       // Get current locale
       const currentLocale = getClientLocale()
-      setLocale(currentLocale)
+
+      // Update locale state if it changed
+      if (currentLocale !== locale) {
+        setLocale(currentLocale)
+      }
 
       // If already cached, use cached version
       if (translationCache.has(currentLocale)) {
@@ -76,10 +86,15 @@ export function useTranslation() {
     }
 
     loadTranslations()
-  }, [])
+  }, [locale]) // Re-run when locale changes
 
   // Translation function with dot notation support
   const t = (key: string, params?: Record<string, string | number>): string => {
+    // Return key during SSR or if translations are empty
+    if (typeof window === 'undefined' || !translations || Object.keys(translations).length === 0) {
+      return key
+    }
+
     const keys = key.split('.')
     let value: any = translations
 
@@ -88,8 +103,7 @@ export function useTranslation() {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
-        // Silently return key if translation not found (to avoid build noise)
-        // Translations load client-side, so this is expected during SSR/build
+        // Return key if translation not found
         return key
       }
     }
