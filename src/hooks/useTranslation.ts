@@ -11,10 +11,8 @@ let cachedLocale: Language | null = null
 let loadingPromise: Promise<void> | null = null
 
 export function useTranslation() {
-  const [locale, setLocale] = useState<Language>(() => {
-    if (cachedLocale) return cachedLocale
-    return getClientLocale()
-  })
+  // Always read locale from cookie, don't rely on cached value
+  const [locale, setLocale] = useState<Language>(() => getClientLocale())
   const [translations, setTranslations] = useState<Translations>(() => {
     // Return cached translations if available
     return translationCache.get(locale) || {}
