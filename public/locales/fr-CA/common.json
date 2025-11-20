@@ -408,13 +408,24 @@
   },
   "analytics": {
     "title": "Analytics Dashboard",
+    "loading": "Loading analytics...",
+    "error": "Error Loading Analytics",
+    "error_title": "Error Loading Analytics",
+    "retry": "Retry",
+    "tasks": "tasks",
     "date_ranges": {
       "7days": "Last 7 days",
       "30days": "Last 30 days",
       "90days": "Last 90 days"
     },
+    "dateRange": {
+      "last7days": "Last 7 days",
+      "last30days": "Last 30 days",
+      "last90days": "Last 90 days"
+    },
     "stats": {
       "total_completions": "Total Completions",
+      "monthly_completions": "This Month",
       "this_month": "This Month",
       "avg_per_day": "Avg Per Day",
       "current_streak": "Current Streak",
@@ -432,10 +443,7 @@
       "family_fetch_failed": "Failed to fetch family membership",
       "load_failed": "Failed to load analytics data",
       "completions_failed": "Failed to fetch completions"
-    },
-    "loading": "Loading analytics...",
-    "error_title": "Error Loading Analytics",
-    "retry": "Retry"
+    }
   },
   "rewards": {
     "title": "Rewards Store",
