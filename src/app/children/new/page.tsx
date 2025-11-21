@@ -6,6 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { ThemeSwitcher } from '@/components/theme/ThemeSwitcher'
 import { ImageUpload } from '@/components/ImageUpload'
 import type { AgeGroup, ThemeType } from '@/lib/theme-utils'
+import { motion } from 'framer-motion'
 
 export default function NewChildPage() {
   const router = useRouter()
@@ -58,28 +59,46 @@ export default function NewChildPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <div className="mb-8">
-          <button
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.button
             onClick={() => router.back()}
-            className="text-blue-600 hover:text-blue-700 font-medium mb-4 flex items-center gap-2"
+            className="text-purple-600 hover:text-purple-700 font-bold mb-4 flex items-center gap-2"
+            whileHover={{ x: -5 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             {t('common.back')}
-          </button>
+          </motion.button>
 
-          <h1 className="text-3xl font-bold text-gray-900">{t('children.add_child')}</h1>
-          <p className="text-gray-600 mt-2">{t('children.add_child_description')}</p>
-        </div>
+          <h1 className="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{t('children.add_child')}</h1>
+          <p className="text-gray-700 mt-2">{t('children.add_child_description')}</p>
+        </motion.div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-3xl shadow-2xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600">
+            <motion.div
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-3xl text-red-600 shadow-lg"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           {/* Profile Photo Upload */}
@@ -92,7 +111,7 @@ export default function NewChildPage() {
 
           {/* Name Field */}
           <div className="mb-6">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-2">
               {t('children.name')} *
             </label>
             <input
@@ -100,7 +119,7 @@ export default function NewChildPage() {
               id="name"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              className="w-full px-4 py-3 border-2 border-purple-300 rounded-3xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors shadow-lg"
               placeholder={t('children.name_placeholder')}
               required
               disabled={submitting}
@@ -109,39 +128,57 @@ export default function NewChildPage() {
 
           {/* Age Group Selection */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-bold text-gray-700 mb-3">
               {t('children.age_group')} *
             </label>
             <div className="grid grid-cols-2 gap-4">
-              <button
+              <motion.button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, age_group: '5-8' }))}
                 disabled={submitting}
-                className={`p-4 rounded-lg border-2 transition-all ${
+                className={`p-4 rounded-3xl border-2 transition-all shadow-xl ${
                   formData.age_group === '5-8'
-                    ? 'border-pink-500 bg-pink-50'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-pink-500 bg-gradient-to-br from-pink-400 to-pink-300 text-white'
+                    : 'border-purple-300 hover:border-pink-400 bg-white'
                 }`}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <div className="text-4xl mb-2">🧒</div>
-                <div className="font-semibold text-gray-900">5-8 {t('children.years')}</div>
-                <div className="text-sm text-gray-600">{t('children.younger_kids')}</div>
-              </button>
+                <motion.div
+                  className="text-4xl mb-2"
+                  animate={{ rotate: [-5, 5] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+                >
+                  🧒
+                </motion.div>
+                <div className={`font-black ${formData.age_group === '5-8' ? 'text-white' : 'text-gray-900'}`}>5-8 {t('children.years')}</div>
+                <div className={`text-sm ${formData.age_group === '5-8' ? 'text-white/90' : 'text-gray-600'}`}>{t('children.younger_kids')}</div>
+              </motion.button>
 
-              <button
+              <motion.button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, age_group: '9-12' }))}
                 disabled={submitting}
-                className={`p-4 rounded-lg border-2 transition-all ${
+                className={`p-4 rounded-3xl border-2 transition-all shadow-xl ${
                   formData.age_group === '9-12'
-                    ? 'border-purple-500 bg-purple-50'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-purple-500 bg-gradient-to-br from-purple-400 to-purple-300 text-white'
+                    : 'border-purple-300 hover:border-purple-400 bg-white'
                 }`}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <div className="text-4xl mb-2">👦</div>
-                <div className="font-semibold text-gray-900">9-12 {t('children.years')}</div>
-                <div className="text-sm text-gray-600">{t('children.older_kids')}</div>
-              </button>
+                <motion.div
+                  className="text-4xl mb-2"
+                  animate={{ rotate: [-5, 5] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 0.2 }}
+                >
+                  👦
+                </motion.div>
+                <div className={`font-black ${formData.age_group === '9-12' ? 'text-white' : 'text-gray-900'}`}>9-12 {t('children.years')}</div>
+                <div className={`text-sm ${formData.age_group === '9-12' ? 'text-white/90' : 'text-gray-600'}`}>{t('children.older_kids')}</div>
+              </motion.button>
             </div>
           </div>
 
@@ -159,18 +196,24 @@ export default function NewChildPage() {
 
           {/* Action Buttons */}
           <div className="flex gap-4">
-            <button
+            <motion.button
               type="button"
               onClick={() => router.back()}
               disabled={submitting}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
+              className="flex-1 px-6 py-3 border-2 border-purple-300 text-purple-700 rounded-3xl hover:bg-purple-50 transition-colors font-bold disabled:opacity-50 shadow-lg"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {t('common.cancel')}
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               type="submit"
               disabled={submitting}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-3xl hover:from-purple-500 hover:to-pink-500 transition-colors font-black disabled:opacity-50 flex items-center justify-center gap-2 shadow-2xl"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {submitting ? (
                 <>
@@ -180,9 +223,9 @@ export default function NewChildPage() {
               ) : (
                 t('children.add_child')
               )}
-            </button>
+            </motion.button>
           </div>
-        </form>
+        </motion.form>
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import { TaskForm } from '@/components/tasks/TaskForm'
 import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { Child } from '@/lib/schemas'
+import { motion } from 'framer-motion'
 
 interface EditTaskPageProps {
   params: Promise<{ id: string }>
@@ -109,7 +110,7 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
     }
   }
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: any, subtasks: any[]) {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
@@ -132,6 +133,38 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
           errorMessage = `${t('errors.validation')}\n${fieldErrors}`
         }
         throw new Error(errorMessage)
+      }
+
+      // Update subtasks: delete all existing and create new ones
+      // First get existing subtasks
+      if (taskId) {
+        const existingResponse = await fetch(`/api/tasks/${taskId}/subtasks`)
+        if (existingResponse.ok) {
+          const existingData = await existingResponse.json()
+          // Delete all existing subtasks
+          if (existingData.subtasks && Array.isArray(existingData.subtasks)) {
+            for (const subtask of existingData.subtasks) {
+              await fetch(`/api/tasks/${taskId}/subtasks/${subtask.id}`, {
+                method: 'DELETE',
+              })
+            }
+          }
+        }
+
+        // Create new subtasks
+        for (const subtask of subtasks) {
+          await fetch(`/api/tasks/${taskId}/subtasks`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: subtask.title,
+              description: subtask.description,
+              order_index: subtask.order_index
+            }),
+          })
+        }
       }
 
       // Navigate back to tasks list
@@ -158,26 +191,40 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 py-8">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
-          <div className="mb-6">
-            <button
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.button
               onClick={() => router.push('/tasks')}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
               aria-label={`${t('common.back')} ${t('tasks.title')}`}
+              whileHover={{ scale: 1.05, x: -5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <ArrowLeftIcon className="w-5 h-5" aria-hidden="true" />
               {t('common.back')}
-            </button>
-            <h1 className="text-3xl font-bold text-gray-900">{t('tasks.edit_task')}</h1>
+            </motion.button>
+            <h1 className="text-3xl font-black bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">{t('tasks.edit_task')}</h1>
             <p className="text-gray-600 mt-2">
               {t('tasks.assign_help')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Task Form */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <motion.div
+            className="bg-white rounded-3xl shadow-2xl p-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
             <TaskForm
               familyId={familyId}
               taskId={taskId || undefined}
@@ -189,7 +236,7 @@ export default function EditTaskPage({ params }: EditTaskPageProps) {
                 name: child.name
               }))}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>

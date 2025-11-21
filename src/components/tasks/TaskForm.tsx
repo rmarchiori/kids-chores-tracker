@@ -10,6 +10,7 @@ import { CustomImageUpload } from './CustomImageUpload'
 import { CreateTaskSchema } from '@/lib/schemas'
 import { useTranslation } from '@/hooks/useTranslation'
 import { RecurrencePickerSkeleton } from '@/components/ui/LoadingSkeletons'
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 // Dynamic import for RecurrencePatternPicker (only loads when recurring checkbox is checked)
 // Saves ~100KB (RRULE library + component) from initial bundle
@@ -23,6 +24,12 @@ const RecurrencePatternPicker = dynamic(
 
 type TaskFormData = z.infer<typeof CreateTaskSchema>
 
+export interface SubtaskFormData {
+  title: string
+  description?: string
+  order_index: number
+}
+
 interface TaskFormProps {
   familyId: string
   taskId?: string
@@ -31,7 +38,7 @@ interface TaskFormProps {
     image_alt_text?: string | null
     image_source?: 'library' | 'custom' | 'emoji' | null
   }
-  onSubmit: (data: TaskFormData) => Promise<void>
+  onSubmit: (data: TaskFormData, subtasks: SubtaskFormData[]) => Promise<void>
   submitLabel?: string
   availableChildren?: Array<{ id: string; name: string }>
 }
@@ -53,6 +60,9 @@ export function TaskForm({
     altText: initialData?.image_alt_text || null,
     source: initialData?.image_source || null
   })
+  const [subtasks, setSubtasks] = useState<Array<{ title: string; description?: string; order_index: number }>>([])
+  const [subtaskInput, setSubtaskInput] = useState('')
+  const [loadingSubtasks, setLoadingSubtasks] = useState(false)
 
   const {
     register,
@@ -92,6 +102,34 @@ export function TaskForm({
     }
   }, [selectedImage, setValue])
 
+  // Load existing subtasks when editing a task
+  useEffect(() => {
+    async function loadSubtasks() {
+      if (!taskId) return
+
+      setLoadingSubtasks(true)
+      try {
+        const response = await fetch(`/api/tasks/${taskId}/subtasks`)
+        if (response.ok) {
+          const data = await response.json()
+          if (data.subtasks && Array.isArray(data.subtasks)) {
+            setSubtasks(data.subtasks.map((st: any, idx: number) => ({
+              title: st.title,
+              description: st.description,
+              order_index: idx
+            })))
+          }
+        }
+      } catch (error) {
+        console.error('Error loading subtasks:', error)
+      } finally {
+        setLoadingSubtasks(false)
+      }
+    }
+
+    loadSubtasks()
+  }, [taskId])
+
   const handleImageSelect = (url: string, altText: string, source: 'library' | 'emoji') => {
     setSelectedImage({ url, altText, source })
     setShowImagePicker(false)
@@ -102,10 +140,24 @@ export function TaskForm({
     setShowCustomUpload(false)
   }
 
+  const handleAddSubtask = () => {
+    if (subtaskInput.trim()) {
+      setSubtasks([...subtasks, {
+        title: subtaskInput.trim(),
+        order_index: subtasks.length
+      }])
+      setSubtaskInput('')
+    }
+  }
+
+  const handleRemoveSubtask = (index: number) => {
+    setSubtasks(subtasks.filter((_, i) => i !== index))
+  }
+
   const onFormSubmit = async (data: TaskFormData) => {
     try {
       setSubmitting(true)
-      await onSubmit(data)
+      await onSubmit(data, subtasks)
     } catch (error) {
       console.error('Form submission error:', error)
     } finally {
@@ -354,6 +406,69 @@ export function TaskForm({
           </div>
         </div>
       )}
+
+      {/* Subtasks */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('tasks.subtasks')}
+        </label>
+        <p className="text-xs text-gray-500 mb-2">{t('tasks.subtasks_help')}</p>
+
+        {loadingSubtasks ? (
+          <div className="text-sm text-gray-500">{t('common.loading')}</div>
+        ) : (
+          <>
+            {/* Add subtask input */}
+            <div className="flex gap-2 mb-3">
+              <input
+                type="text"
+                value={subtaskInput}
+                onChange={(e) => setSubtaskInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleAddSubtask()
+                  }
+                }}
+                placeholder={t('tasks.subtask_placeholder')}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label={t('tasks.add_subtask')}
+              />
+              <button
+                type="button"
+                onClick={handleAddSubtask}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                aria-label={t('tasks.add_subtask')}
+              >
+                <PlusIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">{t('common.add')}</span>
+              </button>
+            </div>
+
+            {/* List of subtasks */}
+            {subtasks.length > 0 && (
+              <div className="space-y-2">
+                {subtasks.map((subtask, index) => (
+                  <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <span className="flex-1 text-sm text-gray-700">{subtask.title}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSubtask(index)}
+                      className="text-red-600 hover:text-red-700 transition-colors"
+                      aria-label={`${t('common.remove')} ${subtask.title}`}
+                    >
+                      <XMarkIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+                <p className="text-xs text-gray-500 mt-2">
+                  {subtasks.length} {subtasks.length === 1 ? t('tasks.subtask') : t('tasks.subtasks_count')}
+                </p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Submit Button */}
       <div className="flex gap-4">

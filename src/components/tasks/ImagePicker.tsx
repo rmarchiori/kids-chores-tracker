@@ -73,6 +73,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
       {/* Tab Selector */}
       <div className="flex gap-2 border-b border-gray-200" role="tablist" aria-label={t('tasks.image_picker.title')}>
         <button
+          type="button"
           onClick={() => setActiveTab('library')}
           role="tab"
           aria-selected={activeTab === 'library'}
@@ -88,6 +89,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
           {t('tasks.image_picker.library_tab')}
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('emoji')}
           role="tab"
           aria-selected={activeTab === 'emoji'}
@@ -128,6 +130,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
             {categories.map(category => (
               <button
                 key={category}
+                type="button"
                 onClick={() => setSelectedCategory(category)}
                 className={`
                   px-4 py-2 rounded-lg text-sm font-medium transition-colors
@@ -175,6 +178,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
                 return (
                   <button
                     key={image.id}
+                    type="button"
                     onClick={() => onSelect(image.file_path, translatedAlt, 'library')}
                     role="gridcell"
                     className={`
@@ -218,6 +222,7 @@ export function ImagePicker({ onSelect, currentImage }: ImagePickerProps) {
             return (
               <button
                 key={option.emoji}
+                type="button"
                 onClick={() => onSelect(option.emoji, translatedName, 'emoji')}
                 className={`
                   aspect-square rounded-lg border-2 flex items-center justify-center

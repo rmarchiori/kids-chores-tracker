@@ -7,6 +7,7 @@ import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
+import { motion } from 'framer-motion'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -104,33 +105,50 @@ export default function TasksPage() {
 
   return (
     <DashboardLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-pink-600 via-rose-600 to-pink-800 py-8 relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+        </div>
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">{t('tasks.title')}</h1>
-            <button
+          <motion.div
+            className="flex justify-between items-center mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-3xl font-black text-white">{t('tasks.title')}</h1>
+            <motion.button
               onClick={() => router.push('/tasks/new')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
               aria-label={t('tasks.new_task')}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               <PlusIcon className="w-5 h-5" aria-hidden="true" />
               {t('tasks.new_task')}
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {/* Filters */}
-          <div className="mb-6 flex flex-wrap gap-4">
+          <motion.div
+            className="mb-6 flex flex-wrap gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             {/* Category Filter */}
             <div>
-              <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category-filter" className="block text-sm font-bold text-white mb-1">
                 {t('tasks.category')}
               </label>
               <select
                 id="category-filter"
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
                 aria-label={t('tasks.category')}
               >
                 <option value="all">{t('tasks.all_categories')}</option>
@@ -148,14 +166,14 @@ export default function TasksPage() {
 
             {/* Priority Filter */}
             <div>
-              <label htmlFor="priority-filter" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="priority-filter" className="block text-sm font-bold text-white mb-1">
                 {t('tasks.priority')}
               </label>
               <select
                 id="priority-filter"
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
                 aria-label={t('tasks.priority')}
               >
                 <option value="all">{t('tasks.all_priorities')}</option>
@@ -164,49 +182,78 @@ export default function TasksPage() {
                 <option value="high">{t('tasks.priorities.high')}</option>
               </select>
             </div>
-          </div>
+          </motion.div>
 
           {/* Error State */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6" role="alert">
+            <motion.div
+              className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-3xl shadow-2xl mb-6"
+              role="alert"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               {t('tasks.messages.error_loading')}
-            </div>
+            </motion.div>
           )}
 
           {/* Empty State */}
           {tasks.length === 0 && !error ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow">
-              <p className="text-gray-600 mb-4">{t('tasks.no_tasks')}</p>
-              <button
+            <motion.div
+              className="text-center py-12 bg-white rounded-3xl shadow-2xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <motion.p
+                className="text-gray-600 mb-4 text-xl"
+                animate={{ rotate: [-5, 5] }}
+                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+              >
+                {t('tasks.no_tasks')}
+              </motion.p>
+              <motion.button
                 onClick={() => router.push('/tasks/new')}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
                 aria-label={t('tasks.add_first_task')}
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
                 <PlusIcon className="w-5 h-5" aria-hidden="true" />
                 {t('tasks.add_first_task')}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           ) : (
             /* Tasks Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {tasks.map((task) => (
-                <div key={task.id} className="relative group">
+              {tasks.map((task, index) => (
+                <motion.div
+                  key={task.id}
+                  className="relative group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                >
                   <TaskCard
                     task={task}
                     onClick={() => handleTaskClick(task.id)}
                   />
 
                   {/* Delete Button (appears on hover) */}
-                  <button
+                  <motion.button
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDelete(task.id, task.title)
                     }}
-                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-700"
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white px-3 py-1 rounded-3xl text-sm hover:bg-red-700 shadow-2xl"
                     aria-label={`${t('tasks.delete_task')} ${task.title}`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {t('common.delete')}
-                  </button>
+                  </motion.button>
 
                   {/* Assignment Info */}
                   {task.task_assignments && task.task_assignments.length > 0 && (
@@ -214,7 +261,7 @@ export default function TasksPage() {
                       {t('tasks.assign_to')}: {task.task_assignments.map(a => a.children.name).join(', ')}
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
             </div>
           )}

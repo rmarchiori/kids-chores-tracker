@@ -140,7 +140,9 @@
     "warning": "Warning",
     "info": "Info",
     "back": "Back",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "add": "Add",
+    "remove": "Remove"
   },
   "children": {
     "title": "Children",
@@ -187,6 +189,12 @@
     "assign_to": "Assign To",
     "assign_help": "Select which children should do this task",
     "select_children": "Select children",
+    "subtasks": "Subtasks",
+    "subtask": "subtask",
+    "subtasks_count": "subtasks",
+    "subtasks_help": "Break down this task into smaller steps (optional)",
+    "subtask_placeholder": "Enter subtask title...",
+    "add_subtask": "Add Subtask",
     "task_image": "Task Image",
     "image_help": "Choose an image to help identify this task",
     "choose_image": "Choose Image",
@@ -412,13 +420,24 @@
   },
   "analytics": {
     "title": "Analytics Dashboard",
+    "loading": "Loading analytics...",
+    "error": "Error Loading Analytics",
+    "error_title": "Error Loading Analytics",
+    "retry": "Retry",
+    "tasks": "tasks",
     "date_ranges": {
       "7days": "Last 7 days",
       "30days": "Last 30 days",
       "90days": "Last 90 days"
     },
+    "dateRange": {
+      "last7days": "Last 7 days",
+      "last30days": "Last 30 days",
+      "last90days": "Last 90 days"
+    },
     "stats": {
       "total_completions": "Total Completions",
+      "monthly_completions": "This Month",
       "this_month": "This Month",
       "avg_per_day": "Avg Per Day",
       "current_streak": "Current Streak",
@@ -436,10 +455,7 @@
       "family_fetch_failed": "Failed to fetch family membership",
       "load_failed": "Failed to load analytics data",
       "completions_failed": "Failed to fetch completions"
-    },
-    "loading": "Loading analytics...",
-    "error_title": "Error Loading Analytics",
-    "retry": "Retry"
+    }
   },
   "rewards": {
     "title": "Rewards Store",
@@ -528,6 +544,11 @@
     "settingsSaved": "Settings saved successfully!",
     "backToSettings": "Back to Settings",
     "back_to_settings": "Back to Settings",
+    "dashboard": "Dashboard",
+    "age_group": "Age Group",
+    "todays_tasks": "Today's Tasks",
+    "all_caught_up": "All caught up! No pending tasks.",
+    "todays_achievements": "Today's Achievements",
     "connect": {
       "title": "Connect to Chromecast",
       "description": "Click the button below to cast your family dashboard to a TV."
@@ -655,68 +676,6 @@
     }
   },
   "landing": {
-    "playful": {
-      "title": "Kids Chores\nMade Fun! 🎉",
-      "subtitle": "Turn chores into adventures for the whole family",
-      "features": {
-        "dailyTasks": "Daily Tasks",
-        "earnStars": "Earn Stars",
-        "getRewards": "Get Rewards",
-        "trackProgress": "Track Progress"
-      },
-      "cta": {
-        "start": "Start Free! 🚀",
-        "login": "Login 👋"
-      },
-      "hint": "✨ Hover over the coins! ✨"
-    },
-    "split": {
-      "views": {
-        "both": "Both Views",
-        "parent": "For Parents",
-        "kid": "For Kids"
-      },
-      "parent": {
-        "title": "For Parents",
-        "subtitle": "Organize, track, and guide your family's daily routines",
-        "cta": "Start Managing Now",
-        "hoverHint": "Click to explore parent features →",
-        "features": {
-          "dashboard": "Family Dashboard",
-          "tracking": "Progress Tracking",
-          "review": "Review & Approve",
-          "rewards": "Reward System"
-        },
-        "featuresDesc": {
-          "dashboard": "Manage all family members",
-          "tracking": "See completion stats",
-          "review": "Quality control tasks",
-          "rewards": "Set up incentives"
-        }
-      },
-      "kid": {
-        "title": "For Kids",
-        "subtitle": "Complete tasks, earn rewards, and have fun!",
-        "cta": "Start Your Adventure! 🚀",
-        "hoverHint": "← Click to explore kid features",
-        "features": {
-          "tasks": "My Tasks",
-          "complete": "Complete & Earn",
-          "stars": "Collect Stars",
-          "levelup": "Level Up"
-        },
-        "featuresDesc": {
-          "tasks": "See what to do today",
-          "complete": "Check off chores",
-          "stars": "Build your streak",
-          "levelup": "Unlock achievements"
-        }
-      },
-      "bottomCta": {
-        "start": "Start Free for Everyone! 🎉",
-        "login": "Login"
-      }
-    },
     "hybrid": {
       "views": {
         "both": "Both Views",

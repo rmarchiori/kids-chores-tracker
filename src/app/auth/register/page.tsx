@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { motion } from 'framer-motion'
 
 // Validation schema - simplified for auth-only registration
 const registerSchema = z
@@ -47,6 +48,11 @@ export default function RegisterPage() {
       setError(null)
       setSuccessMessage(null)
 
+      // Get the base URL for email confirmation callback
+      const baseUrl = typeof window !== 'undefined'
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
       // Create auth user only - family setup happens during onboarding
       const { error: signUpError } = await supabase.auth.signUp({
         email: data.email,
@@ -55,6 +61,7 @@ export default function RegisterPage() {
           data: {
             name: data.name,
           },
+          emailRedirectTo: `${baseUrl}/auth/callback`,
         },
       })
 
@@ -79,18 +86,40 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-indigo-700 to-blue-800 px-4 py-8 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      <motion.div
+        className="w-full max-w-md relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h1 className="text-5xl font-black text-white mb-2">
             Kids Chores Tracker
           </h1>
-          <p className="text-lg text-gray-600">Create Account</p>
-        </div>
+          <p className="text-xl text-purple-100">Create Account</p>
+        </motion.div>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+          whileHover={{ scale: 1.01, y: -2 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        >
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -205,13 +234,16 @@ export default function RegisterPage() {
             )}
 
             {/* Submit Button */}
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-400 text-white font-bold rounded-xl shadow-lg transition-colors duration-200"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
-            </button>
+            </motion.button>
           </form>
 
           {/* Divider */}
@@ -225,21 +257,27 @@ export default function RegisterPage() {
           </div>
 
           {/* Links */}
-          <Link
-            href="/auth/login"
-            className="block w-full text-center py-3 px-4 border border-gray-300 hover:border-blue-600 text-blue-600 font-medium rounded-lg transition-colors duration-200"
+          <motion.div
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            Sign In
-          </Link>
-        </div>
+            <Link
+              href="/auth/login"
+              className="block w-full text-center py-3 px-4 border-2 border-purple-600 hover:border-blue-600 text-purple-600 hover:text-blue-600 font-bold rounded-xl transition-colors duration-200"
+            >
+              Sign In
+            </Link>
+          </motion.div>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-purple-100">
             By creating an account, you agree to our Terms and Privacy Policy
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

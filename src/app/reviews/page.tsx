@@ -7,6 +7,7 @@ import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { StarRating } from '@/components/StarRating'
 import { ReviewDialog } from '@/components/ReviewDialog'
 import { usePendingReviews } from '@/lib/hooks/useData'
+import { motion } from 'framer-motion'
 
 interface PendingReview {
   id: string
@@ -103,25 +104,55 @@ export default function ReviewsPage() {
     <DashboardLayout>
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tasks to Review</h1>
-          <p className="text-gray-600">
+        <motion.div
+          className="mb-8 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-3xl shadow-2xl p-8 text-white"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <motion.div
+            className="text-6xl mb-4 inline-block"
+            animate={{ rotate: [-5, 5] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          >
+            ⭐
+          </motion.div>
+          <h1 className="text-4xl font-black mb-2">Tasks to Review</h1>
+          <p className="text-white/90 text-lg">
             {pendingReviews.length} task{pendingReviews.length !== 1 ? 's' : ''} waiting for your review
           </p>
-        </div>
+        </motion.div>
 
         {/* Pending Reviews List */}
         {pendingReviews.length === 0 ? (
-          <div className="text-center py-16 bg-gray-50 rounded-xl">
-            <p className="text-xl text-gray-500">🎉 All caught up!</p>
-            <p className="text-gray-400 mt-2">No tasks pending review</p>
-          </div>
+          <motion.div
+            className="text-center py-16 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-3xl shadow-2xl text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <motion.div
+              className="text-6xl mb-4 inline-block"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              🎉
+            </motion.div>
+            <p className="text-2xl font-black">All caught up!</p>
+            <p className="text-white/90 mt-2 text-lg">No tasks pending review</p>
+          </motion.div>
         ) : (
           <div className="space-y-4">
-            {pendingReviews.map((review: PendingReview) => (
-              <div
+            {pendingReviews.map((review: PendingReview, index: number) => (
+              <motion.div
                 key={review.id}
-                className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+                className="bg-white rounded-3xl p-6 shadow-2xl border-2 border-orange-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-start gap-4">
                   {/* Child Avatar */}
@@ -150,13 +181,13 @@ export default function ReviewsPage() {
                         <p className="font-semibold text-gray-900">{review.children.name}</p>
                         <p className="text-sm text-gray-500">{formatDate(review.completed_at)}</p>
                       </div>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-lg">
                         ⏳ Pending Review
                       </span>
                     </div>
 
                     {/* Task Info */}
-                    <div className="flex items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3 mt-3 p-3 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl border border-orange-200">
                       {review.tasks.image_url && (
                         <div className="flex-shrink-0">
                           {review.tasks.image_source === 'emoji' ? (
@@ -183,8 +214,8 @@ export default function ReviewsPage() {
                     </div>
 
                     {/* Child's Rating */}
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                      <p className="text-sm font-semibold text-gray-700 mb-2">Child's Self-Rating:</p>
+                    <div className="mt-4 p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl border-2 border-orange-200">
+                      <p className="text-sm font-black text-gray-700 mb-2">Child's Self-Rating:</p>
                       <StarRating
                         value={review.child_rating}
                         readonly
@@ -192,24 +223,27 @@ export default function ReviewsPage() {
                         showLabel={false}
                       />
                       {review.child_notes && (
-                        <div className="mt-3 p-3 bg-white rounded-lg">
+                        <div className="mt-3 p-3 bg-white rounded-3xl shadow-lg">
                           <p className="text-sm text-gray-700">
-                            <span className="font-medium">Note:</span> {review.child_notes}
+                            <span className="font-black">Note:</span> {review.child_notes}
                           </p>
                         </div>
                       )}
                     </div>
 
                     {/* Review Button */}
-                    <button
+                    <motion.button
                       onClick={() => handleReview(review)}
-                      className="mt-4 w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
+                      className="mt-4 w-full px-6 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white font-black rounded-3xl transition-colors shadow-2xl"
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                     >
                       Review Task
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

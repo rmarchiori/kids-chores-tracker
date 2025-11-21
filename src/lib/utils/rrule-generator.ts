@@ -7,6 +7,7 @@ export type RecurrencePattern = {
   selectedDays?: number[] // 0=Sunday, 1=Monday, ..., 6=Saturday
   monthDay?: number // For monthly: 1-31
   count?: number // Number of occurrences
+  businessDaysOnly?: boolean // For daily: skip weekends (Sat/Sun)
 }
 
 /**
@@ -17,9 +18,15 @@ export function generateRRule(pattern: RecurrencePattern, startDate?: Date): str
 
   switch (pattern.type) {
     case 'daily': {
+      // If business days only, use DAILY freq with byweekday to exclude weekends
+      const byweekday = pattern.businessDaysOnly
+        ? [0, 1, 2, 3, 4] // MO, TU, WE, TH, FR in RRule format (0=Monday in RRule)
+        : undefined
+
       const rule = new RRule({
         freq: Frequency.DAILY,
         interval: pattern.interval || 1,
+        byweekday,
         dtstart: start
       })
       return rule.toString()
@@ -77,18 +84,31 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
     const options = rule.origOptions
 
     if (options.freq === Frequency.DAILY) {
+      // Check if business days only (Mon-Fri)
+      const byweekday = options.byweekday
+      const weekdayArray = Array.isArray(byweekday) ? byweekday : byweekday ? [byweekday] : []
+      const isBusinessDays = weekdayArray.length === 5 &&
+        weekdayArray.every((day: any) => {
+          const dayNum = typeof day === 'number' ? day : day.weekday
+          return dayNum >= 0 && dayNum <= 4 // MO-FR in RRule (0-4)
+        })
+
       return {
         type: 'daily',
-        interval: options.interval || 1
+        interval: options.interval || 1,
+        businessDaysOnly: isBusinessDays
       }
     }
 
     if (options.freq === Frequency.WEEKLY) {
       // Convert RRule weekday format back to our format
-      const selectedDays = options.byweekday?.map((day: number) => {
+      const byweekday = options.byweekday
+      const weekdayArray = Array.isArray(byweekday) ? byweekday : byweekday ? [byweekday] : []
+      const selectedDays = weekdayArray.map((day: any) => {
+        const dayNum = typeof day === 'number' ? day : day.weekday
         // RRule: MO=0, TU=1, ..., SU=6
         // Our format: Sun=0, Mon=1, ..., Sat=6
-        return day === 6 ? 0 : day + 1
+        return dayNum === 6 ? 0 : dayNum + 1
       })
 
       return {
@@ -99,10 +119,12 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
     }
 
     if (options.freq === Frequency.MONTHLY) {
+      const bymonthday = options.bymonthday
+      const monthDay = Array.isArray(bymonthday) ? bymonthday[0] : bymonthday
       return {
         type: 'monthly',
         interval: options.interval || 1,
-        monthDay: options.bymonthday?.[0] as number
+        monthDay: monthDay as number
       }
     }
 
@@ -122,7 +144,7 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
 export function getNextOccurrences(rruleString: string, count: number = 5): Date[] {
   try {
     const rule = rrulestr(rruleString)
-    return rule.all((date, i) => i < count)
+    return rule.all((_date, i) => i < count)
   } catch (error) {
     console.error('Failed to get occurrences:', error)
     return []
@@ -136,6 +158,9 @@ export function describeRecurrencePattern(pattern: RecurrencePattern): string {
   switch (pattern.type) {
     case 'daily': {
       const interval = pattern.interval || 1
+      if (pattern.businessDaysOnly) {
+        return interval === 1 ? 'Every business day (Mon-Fri)' : `Every ${interval} business days`
+      }
       if (interval === 1) return 'Every day'
       return `Every ${interval} days`
     }
@@ -243,7 +268,7 @@ export function legacyTypeToPattern(recurringType: string): RecurrencePattern {
 export function doesTaskOccurOnDate(
   rruleString: string | null | undefined,
   targetDate: Date,
-  taskCreatedAt?: Date
+  _taskCreatedAt?: Date
 ): boolean {
   if (!rruleString) return false
 

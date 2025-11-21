@@ -17,6 +17,7 @@ import {
   ShieldCheckIcon,
   UserIcon
 } from '@heroicons/react/24/outline'
+import { motion } from 'framer-motion'
 
 // Validation schema for invitation
 const invitationSchema = z.object({
@@ -245,66 +246,121 @@ export default function FamilySettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-700">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-white font-medium">Loading family settings...</p>
+          </div>
+        </div>
+      </DashboardLayout>
     )
   }
 
   if (currentUserRole !== 'admin') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-          <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-6">
-            Only family admins can manage family settings.
-          </p>
-          <button
-            onClick={() => router.push('/home')}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+      <DashboardLayout>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-700 px-4 relative overflow-hidden">
+          {/* Animated Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+              backgroundSize: '50px 50px',
+            }} />
+          </div>
+
+          <motion.div
+            className="max-w-md w-full bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 text-center relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            Back to Home
-          </button>
+            <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-3xl font-black text-gray-900 mb-3">Access Denied</h2>
+            <p className="text-gray-700 mb-6 font-medium">
+              Only family admins can manage family settings.
+            </p>
+            <motion.button
+              onClick={() => router.push('/dashboard')}
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-xl shadow-lg"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
+              Back to Home
+            </motion.button>
+          </motion.div>
         </div>
-      </div>
+      </DashboardLayout>
     )
   }
 
   return (
     <DashboardLayout>
-      <div className="py-8 px-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-700 py-8 px-4 relative overflow-hidden">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+            backgroundSize: '50px 50px',
+          }} />
+        </div>
+
+        <div className="max-w-4xl mx-auto relative z-10">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              <UserGroupIcon className="w-8 h-8 mr-3 text-blue-600" />
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+            >
+              <UserGroupIcon className="w-20 h-20 mx-auto mb-4 text-white" />
+            </motion.div>
+            <h1 className="text-5xl font-black text-white mb-3">
               Family Settings
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="text-xl text-white/90">
               Manage your family members and invite others to join
             </p>
-          </div>
+          </motion.div>
 
         {/* Success/Error Messages */}
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start">
-            <CheckCircleIcon className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
-            <p className="text-green-800 text-sm font-medium">{success}</p>
-          </div>
+          <motion.div
+            className="mb-6 p-4 bg-green-500 rounded-xl shadow-lg flex items-start"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <CheckCircleIcon className="w-6 h-6 text-white mt-0.5 mr-3 flex-shrink-0" />
+            <p className="text-white font-bold">{success}</p>
+          </motion.div>
         )}
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-            <XCircleIcon className="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
-            <p className="text-red-800 text-sm font-medium">{error}</p>
-          </div>
+          <motion.div
+            className="mb-6 p-4 bg-red-500 rounded-xl shadow-lg flex items-start"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <XCircleIcon className="w-6 h-6 text-white mt-0.5 mr-3 flex-shrink-0" />
+            <p className="text-white font-bold">{error}</p>
+          </motion.div>
         )}
 
         {/* Invite Member Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            <EnvelopeIcon className="w-6 h-6 mr-2 text-blue-600" />
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <EnvelopeIcon className="w-7 h-7 mr-3 text-cyan-600" />
             Invite Family Member
           </h2>
 
@@ -353,10 +409,13 @@ export default function FamilySettingsPage() {
             </div>
 
             {/* Submit Button */}
-            <button
+            <motion.button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:bg-gray-400 text-white font-bold rounded-xl shadow-lg flex items-center justify-center"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {submitting ? (
                 <>
@@ -369,28 +428,38 @@ export default function FamilySettingsPage() {
                   Send Invitation
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
 
         {/* Current Members Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            <UserGroupIcon className="w-6 h-6 mr-2 text-blue-600" />
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          whileHover={{ scale: 1.01, y: -2 }}
+        >
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+            <UserGroupIcon className="w-7 h-7 mr-3 text-cyan-600" />
             Family Members ({members.length})
           </h2>
 
           {members.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No family members found</p>
+            <p className="text-gray-600 text-center py-8 font-medium">No family members found</p>
           ) : (
-            <div className="space-y-3">
-              {members.map((member) => {
+            <div className="space-y-4">
+              {members.map((member, index) => {
                 const isOnlyAdmin = member.role === 'admin' && members.filter(m => m.role === 'admin').length === 1
 
                 return (
-                  <div
+                  <motion.div
                     key={member.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-5 bg-gradient-to-r from-gray-50 to-cyan-50 border border-cyan-200 rounded-2xl hover:shadow-lg transition-all"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ scale: 1.02, x: 5 }}
                   >
                     <div className="flex items-center flex-1">
                       <div className={`
@@ -420,60 +489,74 @@ export default function FamilySettingsPage() {
                     </div>
 
                     {!isOnlyAdmin && (
-                      <button
+                      <motion.button
                         onClick={() => handleRemoveMember(member.id, member.email)}
-                        className="ml-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="ml-4 p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
                         title="Remove member"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                       >
                         <TrashIcon className="w-5 h-5" />
-                      </button>
+                      </motion.button>
                     )}
 
                     {isOnlyAdmin && (
-                      <div className="ml-4 px-3 py-1 bg-gray-100 rounded-lg text-xs text-gray-600">
+                      <div className="ml-4 px-3 py-1 bg-purple-100 rounded-lg text-xs text-purple-700 font-bold">
                         Last Admin
                       </div>
                     )}
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Pending Invitations Section */}
         {invitations.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-              <ClockIcon className="w-6 h-6 mr-2 text-yellow-600" />
+          <motion.div
+            className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <ClockIcon className="w-7 h-7 mr-3 text-yellow-600" />
               Pending Invitations ({invitations.length})
             </h2>
 
-            <div className="space-y-3">
-              {invitations.map((invitation) => (
-                <div
+            <div className="space-y-4">
+              {invitations.map((invitation, index) => (
+                <motion.div
                   key={invitation.id}
-                  className="flex items-center justify-between p-4 border border-yellow-200 bg-yellow-50 rounded-lg"
+                  className="flex items-center justify-between p-5 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-300 rounded-2xl"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.02, x: 5 }}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-base font-bold text-gray-900 truncate">
                       {invitation.invited_email}
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-sm text-gray-700 font-medium">
                       Role: {invitation.invited_role} •
                       Expires: {new Date(invitation.expires_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <button
+                  <motion.button
                     onClick={() => handleCancelInvitation(invitation.id, invitation.invited_email)}
-                    className="ml-4 px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="ml-4 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
                     Cancel
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
         </div>
       </div>

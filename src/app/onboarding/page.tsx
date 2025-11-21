@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { motion } from 'framer-motion'
 
 // Validation schema for family creation
 const onboardingSchema = z.object({
@@ -52,7 +53,7 @@ export default function OnboardingPage() {
 
       if (familyMember) {
         // User already has a family, redirect to dashboard
-        router.push('/home')
+        router.push('/dashboard')
       }
     }
 
@@ -99,7 +100,7 @@ export default function OnboardingPage() {
       }
 
       // Success! Redirect to dashboard
-      router.push('/home')
+      router.push('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -116,18 +117,44 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-purple-700 to-pink-600 px-4 py-8 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      <motion.div
+        className="w-full max-w-md relative z-10"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <motion.h1
+            className="text-5xl font-black text-white mb-2"
+            animate={{ scale: [1, 1.02, 1] }}
+            transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+          >
             Welcome, {user.user_metadata.name}!
-          </h1>
-          <p className="text-lg text-gray-600">Let's create your family</p>
-        </div>
+          </motion.h1>
+          <p className="text-xl text-white/90">Let's create your family</p>
+        </motion.div>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+          whileHover={{ scale: 1.01, y: -2 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        >
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -171,23 +198,26 @@ export default function OnboardingPage() {
             </div>
 
             {/* Submit Button */}
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 disabled:bg-gray-400 text-white font-bold rounded-xl shadow-lg transition-colors duration-200"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
               {isLoading ? 'Creating Family...' : 'Create Family'}
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-white/90">
             You can change your family name later in settings
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { motion } from 'framer-motion'
 
 // Validation schema for new password
 const newPasswordSchema = z
@@ -130,18 +131,40 @@ function ResetPasswordConfirmForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-teal-700 to-cyan-800 px-4 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+      </div>
+
+      <motion.div
+        className="w-full max-w-md relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h1 className="text-5xl font-black text-white mb-2">
             Kids Chores Tracker
           </h1>
-          <p className="text-lg text-gray-600">Create New Password</p>
-        </div>
+          <p className="text-xl text-teal-100">Create New Password</p>
+        </motion.div>
 
         {/* Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <motion.div
+          className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-8"
+          whileHover={{ scale: 1.01, y: -2 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+        >
           {/* Loading State */}
           {isValidToken === null && (
             <div className="text-center py-8">
@@ -238,13 +261,16 @@ function ResetPasswordConfirmForm() {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <motion.button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-700 hover:to-cyan-700 disabled:bg-gray-400 text-white font-bold rounded-xl shadow-lg transition-colors duration-200"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
                   {isLoading ? 'Updating Password...' : 'Update Password'}
-                </button>
+                </motion.button>
               </form>
 
               {/* Password Requirements */}
@@ -258,18 +284,18 @@ function ResetPasswordConfirmForm() {
               </div>
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-teal-100">
             Need help?{' '}
-            <a href="mailto:support@example.com" className="text-blue-600 hover:underline">
+            <a href="mailto:support@example.com" className="text-white hover:underline font-medium">
               Contact Support
             </a>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
@@ -277,10 +303,10 @@ function ResetPasswordConfirmForm() {
 export default function ResetPasswordConfirmPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-teal-700 to-cyan-800">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Loading...</p>
         </div>
       </div>
     }>

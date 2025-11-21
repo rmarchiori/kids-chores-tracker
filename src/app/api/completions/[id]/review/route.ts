@@ -2,6 +2,8 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { updateStreak } from '@/lib/utils/streak-tracker'
+import { unlockAchievements } from '@/lib/utils/achievement-checker'
 
 const ReviewSchema = z.object({
   parent_rating: z.number().int().min(1).max(5),
@@ -92,7 +94,7 @@ export async function POST(
       })
       .eq('id', params.id)
       .eq('status', 'pending_review')  // Only update if still pending review
-      .select()
+      .select('*, child_id')
       .single()
 
     if (updateError || !updatedCompletion) {
@@ -102,7 +104,75 @@ export async function POST(
       )
     }
 
-    return NextResponse.json(updatedCompletion, { status: 200 })
+    // Award points to the child
+    try {
+      // Get task priority
+      const { data: task, error: taskError } = await supabase
+        .from('tasks')
+        .select('priority')
+        .eq('id', updatedCompletion.task_id)
+        .single()
+
+      if (!taskError && task) {
+        // Calculate base points by priority
+        const basePoints: Record<string, number> = {
+          low: 10,
+          medium: 15,
+          high: 20
+        }
+        const points = basePoints[task.priority] || 10
+
+        // Quality bonus: avg rating >= 4.5 = +5 pts, >= 4.0 = +3 pts
+        const avgRating = (parent_rating + (updatedCompletion as any).child_rating) / 2
+        const qualityBonus = avgRating >= 4.5 ? 5 : avgRating >= 4.0 ? 3 : 0
+        const totalPoints = points + qualityBonus
+
+        // Get current child points
+        const { data: child } = await supabase
+          .from('children')
+          .select('points')
+          .eq('id', updatedCompletion.child_id)
+          .single()
+
+        const currentPoints = child?.points || 0
+
+        // Update child points
+        await supabase
+          .from('children')
+          .update({ points: currentPoints + totalPoints })
+          .eq('id', updatedCompletion.child_id)
+
+        // Record transaction
+        await supabase
+          .from('point_transactions')
+          .insert({
+            child_id: updatedCompletion.child_id,
+            points: totalPoints,
+            reason: `Completed task (${task.priority} priority, ${avgRating.toFixed(1)}⭐)`,
+            type: 'task_completion',
+            related_id: updatedCompletion.id
+          })
+      }
+    } catch (pointsError) {
+      // Log error but don't fail the review
+      console.error('Error awarding points:', pointsError)
+    }
+
+    // Update streak and check achievements
+    try {
+      await updateStreak(updatedCompletion.child_id)
+      const newlyUnlocked = await unlockAchievements(updatedCompletion.child_id)
+
+      // Return unlocked achievements in response
+      return NextResponse.json({
+        ...updatedCompletion,
+        newly_unlocked_achievements: newlyUnlocked
+      }, { status: 200 })
+    } catch (streakError) {
+      // Log error but don't fail the review
+      console.error('Error updating streak/achievements:', streakError)
+      return NextResponse.json(updatedCompletion, { status: 200 })
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 })

@@ -5,100 +5,127 @@ import { getClientLocale, type Language } from '@/lib/i18n'
 
 type Translations = Record<string, any>
 
-// Global cache for translations (shared across all hook instances)
-const translationCache = new Map<Language, Translations>()
-let cachedLocale: Language | null = null
-let loadingPromise: Promise<void> | null = null
-
 export function useTranslation() {
-  const [locale, setLocale] = useState<Language>(() => {
-    if (cachedLocale) return cachedLocale
+  // Read locale from cookie ONCE on mount - never update it
+  // If language changes, the page will reload and this will re-initialize
+  const [locale] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'en-CA'
     return getClientLocale()
   })
-  const [translations, setTranslations] = useState<Translations>(() => {
-    // Return cached translations if available
-    return translationCache.get(locale) || {}
-  })
-  const [isLoading, setIsLoading] = useState(() => !translationCache.has(locale))
+
+  const [translations, setTranslations] = useState<Translations>({})
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    // Cleanup flag to prevent state updates after unmount
+    let cancelled = false
+
     const loadTranslations = async () => {
-      // Get current locale
-      const currentLocale = getClientLocale()
-      cachedLocale = currentLocale
-      setLocale(currentLocale)
+      // Only run on client side
+      if (typeof window === 'undefined') return
 
-      // If already cached, use cached version
-      if (translationCache.has(currentLocale)) {
-        setTranslations(translationCache.get(currentLocale)!)
-        setIsLoading(false)
-        return
-      }
-
-      // If another component is already loading, wait for it
-      if (loadingPromise) {
-        await loadingPromise
-        if (translationCache.has(currentLocale)) {
-          setTranslations(translationCache.get(currentLocale)!)
-          setIsLoading(false)
-          return
-        }
-      }
-
-      // Load translations for the first time
       setIsLoading(true)
-      loadingPromise = (async () => {
-        try {
-          // Load translation file for current locale
-          const translationModule = await import(`../../public/locales/${currentLocale}/common.json`)
-          const loadedTranslations = translationModule.default || translationModule
-          translationCache.set(currentLocale, loadedTranslations)
+
+      try {
+        // Fetch translation file with cache busting to prevent stale translations
+        // Add timestamp to bypass browser cache
+        const timestamp = Date.now()
+        const response = await fetch(
+          `/locales/${locale}/common.json?t=${timestamp}`,
+          {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+            },
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`Failed to load translations: ${response.status}`)
+        }
+
+        const loadedTranslations = await response.json()
+
+        // Only update state if component is still mounted
+        if (!cancelled) {
           setTranslations(loadedTranslations)
-        } catch (error) {
-          console.error('Failed to load translations:', error)
-          // Fallback to English
+          setIsLoading(false)
+          console.log(`✅ Translations loaded for ${locale}:`, Object.keys(loadedTranslations).length, 'keys')
+        }
+      } catch (error) {
+        console.error(`❌ Failed to load translations for ${locale}:`, error)
+
+        // Fallback to English if current locale fails
+        if (locale !== 'en-CA') {
           try {
-            const fallbackModule = await import(`../../public/locales/en-CA/common.json`)
-            const fallbackTranslations = fallbackModule.default || fallbackModule
-            translationCache.set(currentLocale, fallbackTranslations)
-            setTranslations(fallbackTranslations)
+            const timestamp = Date.now()
+            const fallbackResponse = await fetch(
+              `/locales/en-CA/common.json?t=${timestamp}`,
+              {
+                cache: 'no-store',
+                headers: {
+                  'Cache-Control': 'no-cache',
+                },
+              }
+            )
+
+            if (!fallbackResponse.ok) {
+              throw new Error(`Failed to load fallback translations: ${fallbackResponse.status}`)
+            }
+
+            const fallbackTranslations = await fallbackResponse.json()
+
+            if (!cancelled) {
+              setTranslations(fallbackTranslations)
+              setIsLoading(false)
+              console.log('⚠️ Using fallback English translations')
+            }
           } catch (fallbackError) {
-            console.error('Failed to load fallback translations:', fallbackError)
+            console.error('❌ Failed to load fallback translations:', fallbackError)
+            if (!cancelled) {
+              setIsLoading(false)
+            }
+          }
+        } else {
+          if (!cancelled) {
+            setIsLoading(false)
           }
         }
-        setIsLoading(false)
-      })()
-
-      await loadingPromise
-      loadingPromise = null
+      }
     }
 
     loadTranslations()
-  }, [])
+
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      cancelled = true
+    }
+  }, [locale]) // Only re-run if locale changes (which shouldn't happen after mount)
 
   // Translation function with dot notation support
   const t = (key: string, params?: Record<string, string | number>): string => {
+    // Return key during SSR or if translations are empty
+    if (typeof window === 'undefined' || !translations || Object.keys(translations).length === 0) {
+      return key
+    }
+
     const keys = key.split('.')
     let value: any = translations
-
-    // Debug: Log translation attempt
-    if (key.startsWith('landing.hybrid')) {
-      console.log('🔍 Translation attempt:', { key, translations: translations?.landing?.hybrid, isLoading })
-    }
 
     // Navigate through nested object
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k]
       } else {
-        console.warn('❌ Translation key not found:', key, 'at segment:', k)
-        return key // Return key if translation not found
+        // Return key if translation not found
+        console.warn(`⚠️ Translation key not found: ${key}`)
+        return key
       }
     }
 
     // If final value is not a string, return the key
     if (typeof value !== 'string') {
-      console.warn('⚠️ Translation value is not a string:', key, typeof value)
+      console.warn(`⚠️ Translation value is not a string: ${key}`)
       return key
     }
 
