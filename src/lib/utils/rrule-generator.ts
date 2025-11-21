@@ -85,11 +85,15 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
 
     if (options.freq === Frequency.WEEKLY) {
       // Convert RRule weekday format back to our format
-      const selectedDays = options.byweekday?.map((day: number) => {
-        // RRule: MO=0, TU=1, ..., SU=6
-        // Our format: Sun=0, Mon=1, ..., Sat=6
-        return day === 6 ? 0 : day + 1
-      })
+      const byweekday = options.byweekday
+      const selectedDays = Array.isArray(byweekday)
+        ? byweekday.map((day: any) => {
+            const dayNum = typeof day === 'number' ? day : day.weekday
+            // RRule: MO=0, TU=1, ..., SU=6
+            // Our format: Sun=0, Mon=1, ..., Sat=6
+            return dayNum === 6 ? 0 : dayNum + 1
+          })
+        : undefined
 
       return {
         type: 'weekly',
@@ -99,10 +103,12 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
     }
 
     if (options.freq === Frequency.MONTHLY) {
+      const bymonthday = options.bymonthday
+      const monthDay = Array.isArray(bymonthday) ? bymonthday[0] : bymonthday
       return {
         type: 'monthly',
         interval: options.interval || 1,
-        monthDay: options.bymonthday?.[0] as number
+        monthDay: monthDay as number | undefined
       }
     }
 
@@ -122,7 +128,7 @@ export function parseRRule(rruleString: string): RecurrencePattern | null {
 export function getNextOccurrences(rruleString: string, count: number = 5): Date[] {
   try {
     const rule = rrulestr(rruleString)
-    return rule.all((date, i) => i < count)
+    return rule.all((_date, i) => i < count)
   } catch (error) {
     console.error('Failed to get occurrences:', error)
     return []
@@ -243,7 +249,7 @@ export function legacyTypeToPattern(recurringType: string): RecurrencePattern {
 export function doesTaskOccurOnDate(
   rruleString: string | null | undefined,
   targetDate: Date,
-  taskCreatedAt?: Date
+  _taskCreatedAt?: Date
 ): boolean {
   if (!rruleString) return false
 

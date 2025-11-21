@@ -12,7 +12,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CalendarIcon,
-  TrophyIcon,
   GiftIcon,
   TvIcon
 } from '@heroicons/react/24/outline'
