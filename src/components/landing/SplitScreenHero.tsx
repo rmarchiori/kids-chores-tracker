@@ -4,12 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
-import LanguageSelector from '@/components/LanguageSelector'
 
 type ViewMode = 'split' | 'parent' | 'kid'
 
 export default function SplitScreenHero() {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<ViewMode>('split')
   const [hoveredSide, setHoveredSide] = useState<'parent' | 'kid' | null>(null)
 
@@ -29,11 +28,6 @@ export default function SplitScreenHero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Language Selector - Top Right */}
-      <div className="fixed top-6 right-6 z-50">
-        <LanguageSelector currentLocale={locale} />
-      </div>
-
       {/* Mode Selector Pills */}
       <motion.div
         className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-white/90 backdrop-blur-md rounded-full shadow-2xl p-2 flex gap-2"
@@ -243,8 +237,8 @@ export default function SplitScreenHero() {
                     whileHover={{ scale: 1.05, y: -5 }}
                   >
                     <div className="text-4xl mb-3">{feature.icon}</div>
-                    <h3 className="font-bold text-lg mb-1">{t(feature.titleKey)}</h3>
-                    <p className="text-sm text-purple-200">{t(feature.descKey)}</p>
+                    <h3 className="font-bold text-lg mb-1">{feature.title}</h3>
+                    <p className="text-sm text-purple-200">{feature.desc}</p>
                   </motion.div>
                 ))}
               </div>

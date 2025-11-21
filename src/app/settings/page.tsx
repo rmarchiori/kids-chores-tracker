@@ -1,10 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { useTranslation } from '@/hooks/useTranslation'
 import Link from 'next/link'
 
 export default function SettingsPage() {
+  const router = useRouter()
   const { t } = useTranslation()
 
   const settingsOptions = [
