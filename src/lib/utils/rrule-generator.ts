@@ -249,7 +249,7 @@ export function legacyTypeToPattern(recurringType: string): RecurrencePattern {
 export function doesTaskOccurOnDate(
   rruleString: string | null | undefined,
   targetDate: Date,
-  taskCreatedAt?: Date
+  _taskCreatedAt?: Date
 ): boolean {
   if (!rruleString) return false
 
