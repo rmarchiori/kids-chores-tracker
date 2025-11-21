@@ -20,35 +20,37 @@ import { useEffect, useState, useRef } from 'react'
 // Chromecast types (augmenting window object)
 declare global {
   interface Window {
-    __onGCastApiAvailable: (isAvailable: boolean) => void
-    chrome: {
-      cast: {
-        initialize: (
-          apiConfig: any,
-          successCallback: () => void,
-          errorCallback: (error: any) => void
-        ) => void
-        SessionRequest: new (appId: string) => any
-        ApiConfig: new (
-          sessionRequest: any,
-          sessionListener: (session: any) => void,
-          receiverListener: (availability: string) => void,
-          autoJoinPolicy: string,
-          defaultActionPolicy: string
-        ) => any
-        AutoJoinPolicy: {
-          ORIGIN_SCOPED: string
-        }
-        DefaultActionPolicy: {
-          CREATE_SESSION: string
-        }
-        requestSession: (
-          successCallback: (session: any) => void,
-          errorCallback: (error: any) => void
-        ) => void
-        isAvailable: boolean
-      }
+    __onGCastApiAvailable: (available: boolean, reason?: string) => void
+  }
+}
+
+// Cast API types (used via window.chrome)
+type CastAPI = {
+  cast: {
+    initialize: (
+      apiConfig: any,
+      successCallback: () => void,
+      errorCallback: (error: any) => void
+    ) => void
+    SessionRequest: new (appId: string) => any
+    ApiConfig: new (
+      sessionRequest: any,
+      sessionListener: (session: any) => void,
+      receiverListener: (availability: string) => void,
+      autoJoinPolicy: string,
+      defaultActionPolicy: string
+    ) => any
+    AutoJoinPolicy: {
+      ORIGIN_SCOPED: string
     }
+    DefaultActionPolicy: {
+      CREATE_SESSION: string
+    }
+    requestSession: (
+      successCallback: (session: any) => void,
+      errorCallback: (error: any) => void
+    ) => void
+    isAvailable: boolean
   }
 }
 
@@ -88,7 +90,7 @@ export function CastButton({
     }
 
     // Check if Cast API is already loaded
-    if (window.chrome?.cast?.isAvailable) {
+    if ((window.chrome as any)?.cast?.isAvailable) {
       initializeCastApi()
     }
 
@@ -102,17 +104,18 @@ export function CastButton({
 
   const initializeCastApi = () => {
     try {
-      const sessionRequest = new window.chrome.cast.SessionRequest(CAST_APP_ID)
+      const chrome = window.chrome as any as CastAPI
+      const sessionRequest = new chrome.cast.SessionRequest(CAST_APP_ID)
 
-      const apiConfig = new window.chrome.cast.ApiConfig(
+      const apiConfig = new chrome.cast.ApiConfig(
         sessionRequest,
         sessionListener,
         receiverListener,
-        window.chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
-        window.chrome.cast.DefaultActionPolicy.CREATE_SESSION
+        chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
+        chrome.cast.DefaultActionPolicy.CREATE_SESSION
       )
 
-      window.chrome.cast.initialize(
+      chrome.cast.initialize(
         apiConfig,
         () => {
           console.log('Cast API initialized successfully')
@@ -207,7 +210,8 @@ export function CastButton({
       )
     } else {
       // Request new session
-      window.chrome.cast.requestSession(
+      const chrome = window.chrome as any as CastAPI
+      chrome.cast.requestSession(
         (session) => {
           console.log('Session created:', session)
           sessionListener(session)
