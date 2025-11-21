@@ -4,12 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
-import LanguageSelector from '@/components/LanguageSelector'
 
 type ViewMode = 'split' | 'parent' | 'kid'
 
 export default function HybridHero() {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
   const [viewMode, setViewMode] = useState<ViewMode>('split')
   const [hoveredSide, setHoveredSide] = useState<'parent' | 'kid' | null>(null)
 
@@ -29,11 +28,6 @@ export default function HybridHero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Language Selector - Top Right */}
-      <div className="fixed top-6 right-6 z-50">
-        <LanguageSelector currentLocale={locale} />
-      </div>
-
       {/* Mode Selector Pills - Centered at top */}
       <div className="fixed top-6 left-0 right-0 z-50 flex justify-center">
         <motion.div

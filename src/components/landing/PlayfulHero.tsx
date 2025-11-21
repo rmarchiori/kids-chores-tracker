@@ -4,10 +4,9 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
-import LanguageSelector from '@/components/LanguageSelector'
 
 export default function PlayfulHero() {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
   const [hoveredCoin, setHoveredCoin] = useState<number | null>(null)
 
   const coins = [
@@ -27,11 +26,6 @@ export default function PlayfulHero() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Language Selector - Top Right */}
-      <div className="fixed top-6 right-6 z-50">
-        <LanguageSelector currentLocale={locale} />
-      </div>
-
       {/* Floating Coins Background */}
       <div className="absolute inset-0 pointer-events-none">
         {coins.map((coin, i) => (
