@@ -414,6 +414,30 @@
     "cool": "Cool",
     "older_style": "9-12 style"
   },
+  "daily": {
+    "title": "Today's Tasks",
+    "showTasksFor": "Show tasks for:",
+    "allChildren": "All Children",
+    "noTasks": "No tasks for today",
+    "createTasksPrompt": "Create some tasks to get started",
+    "assignedTo": "Assigned to:",
+    "progress": "Progress",
+    "status": {
+      "notStarted": "Not Started",
+      "pendingReview": "Pending Review",
+      "completed": "Completed"
+    }
+  },
+  "childTasks": {
+    "title": "{{name}}'s Tasks",
+    "completedToday": "{{completed}} of {{total}} tasks completed today!",
+    "tasksToDo": "Tasks To Do",
+    "completedTodayTitle": "Completed Today!",
+    "greatJob": "Great job!",
+    "noTasksAssigned": "No tasks assigned yet!",
+    "iDidThis": "I Did This!",
+    "markComplete": "Mark Complete"
+  },
   "settings": {
     "title": "Settings",
     "theme_preference": "Theme Preference",

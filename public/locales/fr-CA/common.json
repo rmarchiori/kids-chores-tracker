@@ -414,6 +414,30 @@
     "cool": "Cool",
     "older_style": "Style 9-12 ans"
   },
+  "daily": {
+    "title": "Tâches d'aujourd'hui",
+    "showTasksFor": "Afficher les tâches pour:",
+    "allChildren": "Tous les Enfants",
+    "noTasks": "Aucune tâche pour aujourd'hui",
+    "createTasksPrompt": "Créez des tâches pour commencer",
+    "assignedTo": "Assigné à:",
+    "progress": "Progrès",
+    "status": {
+      "notStarted": "Non Commencé",
+      "pendingReview": "En Attente de Révision",
+      "completed": "Terminé"
+    }
+  },
+  "childTasks": {
+    "title": "Tâches de {{name}}",
+    "completedToday": "{{completed}} de {{total}} tâches terminées aujourd'hui!",
+    "tasksToDo": "Tâches à Faire",
+    "completedTodayTitle": "Terminées Aujourd'hui!",
+    "greatJob": "Bon travail!",
+    "noTasksAssigned": "Aucune tâche assignée pour le moment!",
+    "iDidThis": "J'ai Fait Ça!",
+    "markComplete": "Marquer comme Terminé"
+  },
   "settings": {
     "title": "Paramètres",
     "theme_preference": "Préférence de thème",

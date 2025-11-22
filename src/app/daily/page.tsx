@@ -80,11 +80,36 @@ export default function DailyTasksPage() {
   const [taskAssignments, setTaskAssignments] = useState<TaskAssignment[]>([])
   const [childrenProgress, setChildrenProgress] = useState<ChildProgress[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedChild, setSelectedChild] = useState<string>('all')
+  const [selectedChildren, setSelectedChildren] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const supabase = createClient()
 
   const CARDS_PER_PAGE = 3
+
+  // Toggle child selection
+  const toggleChildSelection = (childId: string) => {
+    setSelectedChildren(prev => {
+      if (prev.includes(childId)) {
+        return prev.filter(id => id !== childId)
+      } else {
+        return [...prev, childId]
+      }
+    })
+    // Reset to first page when filter changes
+    setCurrentPage(0)
+  }
+
+  // Select all children
+  const selectAllChildren = () => {
+    setSelectedChildren(childrenProgress.map(child => child.id))
+    setCurrentPage(0)
+  }
+
+  // Clear all selections
+  const clearAllSelections = () => {
+    setSelectedChildren([])
+    setCurrentPage(0)
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -260,11 +285,11 @@ export default function DailyTasksPage() {
   function getStatusText(status: TaskAssignment['completion_status']) {
     switch (status) {
       case 'completed':
-        return { text: 'Completed', color: 'text-green-700' }
+        return { text: t('daily.status.completed'), color: 'text-green-700' }
       case 'pending_review':
-        return { text: 'Pending Review', color: 'text-yellow-700' }
+        return { text: t('daily.status.pendingReview'), color: 'text-yellow-700' }
       case 'not_started':
-        return { text: 'Not Started', color: 'text-red-700' }
+        return { text: t('daily.status.notStarted'), color: 'text-red-700' }
     }
   }
 
@@ -272,9 +297,10 @@ export default function DailyTasksPage() {
   const groupedTasks: GroupedTask[] = []
   const taskMap = new Map<string, GroupedTask>()
 
-  const filteredAssignments = selectedChild === 'all'
+  // Filter assignments based on selected children
+  const filteredAssignments = selectedChildren.length === 0
     ? taskAssignments
-    : taskAssignments.filter(a => a.child.id === selectedChild)
+    : taskAssignments.filter(a => selectedChildren.includes(a.child.id))
 
   filteredAssignments.forEach(assignment => {
     if (!taskMap.has(assignment.task_id)) {
@@ -294,11 +320,16 @@ export default function DailyTasksPage() {
 
   groupedTasks.push(...Array.from(taskMap.values()))
 
+  // Filter progress cards based on selected children
+  const filteredChildrenProgress = selectedChildren.length === 0
+    ? childrenProgress
+    : childrenProgress.filter(child => selectedChildren.includes(child.id))
+
   // Pagination for children progress
-  const totalPages = Math.ceil(childrenProgress.length / CARDS_PER_PAGE)
+  const totalPages = Math.ceil(filteredChildrenProgress.length / CARDS_PER_PAGE)
   const startIndex = currentPage * CARDS_PER_PAGE
   const endIndex = startIndex + CARDS_PER_PAGE
-  const visibleChildren = childrenProgress.slice(startIndex, endIndex)
+  const visibleChildren = filteredChildrenProgress.slice(startIndex, endIndex)
 
   const goToNextPage = () => {
     if (currentPage < totalPages - 1) {
@@ -330,7 +361,7 @@ export default function DailyTasksPage() {
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
         </div>
         <div className="relative z-10">
-        {/* Header */}
+        {/* Header with Kids Filter */}
         <motion.div
           className="mb-8 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-8 text-white"
           initial={{ opacity: 0, y: 20 }}
@@ -343,11 +374,81 @@ export default function DailyTasksPage() {
             animate={{ rotate: [-1, 1] }}
             transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
           >
-            Today's Tasks
+            {t('daily.title')}
           </motion.h1>
-          <p className="text-xl text-white/90">
+          <p className="text-xl text-white/90 mb-6">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
+
+          {/* Kids Filter */}
+          {childrenProgress.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-white/30">
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-sm font-black">{t('daily.showTasksFor')}</p>
+                <div className="flex gap-2">
+                  <motion.button
+                    onClick={selectAllChildren}
+                    className="text-xs px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {t('tasks.select_all') || 'Select All'}
+                  </motion.button>
+                  {selectedChildren.length > 0 && (
+                    <motion.button
+                      onClick={clearAllSelections}
+                      className="text-xs px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {t('tasks.clear_filters') || 'Clear All'}
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {childrenProgress.map((child) => {
+                  const isSelected = selectedChildren.includes(child.id)
+                  return (
+                    <motion.button
+                      key={child.id}
+                      onClick={() => toggleChildSelection(child.id)}
+                      className={`
+                        flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all
+                        ${isSelected
+                          ? 'bg-white text-purple-600 shadow-lg'
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                        }
+                      `}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {child.profile_photo_url ? (
+                        <Image
+                          src={child.profile_photo_url}
+                          alt={child.name}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-white/40 flex items-center justify-center">
+                          <span className="text-xs font-black">
+                            {child.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                      <span>{child.name}</span>
+                      {isSelected && <span className="text-sm">✓</span>}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Progress Overview with Carousel */}
@@ -405,7 +506,7 @@ export default function DailyTasksPage() {
                         {/* Progress Bar */}
                         <div className="mb-2">
                           <div className="flex justify-between text-sm mb-1">
-                            <span className="text-gray-600 font-medium">Progress</span>
+                            <span className="text-gray-600 font-medium">{t('daily.progress')}</span>
                             <span className="font-black text-gray-900">
                               {child.completed_tasks}/{child.total_tasks}
                             </span>
@@ -475,29 +576,6 @@ export default function DailyTasksPage() {
           </div>
         )}
 
-        {/* Filter */}
-        <motion.div
-          className="mb-6 flex gap-4 items-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <label htmlFor="filter-child" className="text-sm font-black text-white">
-            Show tasks for:
-          </label>
-          <select
-            id="filter-child"
-            value={selectedChild}
-            onChange={(e) => setSelectedChild(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-3xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="all">All Children</option>
-            {childrenProgress.map(child => (
-              <option key={child.id} value={child.id}>{child.name}</option>
-            ))}
-          </select>
-        </motion.div>
-
         {/* Task List - Deduplicated */}
         {groupedTasks.length === 0 ? (
           <motion.div
@@ -511,9 +589,9 @@ export default function DailyTasksPage() {
               animate={{ rotate: [-5, 5] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
             >
-              No tasks for today
+              {t('daily.noTasks')}
             </motion.p>
-            <p className="text-gray-400 mt-2">Create some tasks to get started</p>
+            <p className="text-gray-400 mt-2">{t('daily.createTasksPrompt')}</p>
           </motion.div>
         ) : (
           <div className="space-y-4">
@@ -558,7 +636,7 @@ export default function DailyTasksPage() {
                       {/* Task Details */}
                       <div className="flex gap-2">
                         <span className="text-xs px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-gray-600 font-medium">
-                          {groupedTask.task.category}
+                          {t(`tasks.categories.${groupedTask.task.category}`)}
                         </span>
                         <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                           groupedTask.task.priority === 'high'
@@ -567,14 +645,14 @@ export default function DailyTasksPage() {
                             ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-700'
                             : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700'
                         }`}>
-                          {groupedTask.task.priority} priority
+                          {t(`tasks.priorities.${groupedTask.task.priority}`)}
                         </span>
                       </div>
                     </div>
 
                     {/* Children Assigned */}
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-3">Assigned to:</p>
+                      <p className="text-sm font-medium text-gray-600 mb-3">{t('daily.assignedTo')}</p>
                       <div className="flex flex-wrap gap-4">
                         {groupedTask.assignments.map((assignment) => {
                           const status = getStatusText(assignment.completion_status)

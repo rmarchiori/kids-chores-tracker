@@ -414,6 +414,30 @@
     "cool": "Legal",
     "older_style": "Estilo 9-12 anos"
   },
+  "daily": {
+    "title": "Tarefas de Hoje",
+    "showTasksFor": "Mostrar tarefas para:",
+    "allChildren": "Todas as Crianças",
+    "noTasks": "Nenhuma tarefa para hoje",
+    "createTasksPrompt": "Crie algumas tarefas para começar",
+    "assignedTo": "Atribuído a:",
+    "progress": "Progresso",
+    "status": {
+      "notStarted": "Não Iniciado",
+      "pendingReview": "Aguardando Revisão",
+      "completed": "Concluído"
+    }
+  },
+  "childTasks": {
+    "title": "Tarefas de {{name}}",
+    "completedToday": "{{completed}} de {{total}} tarefas concluídas hoje!",
+    "tasksToDo": "Tarefas a Fazer",
+    "completedTodayTitle": "Concluídas Hoje!",
+    "greatJob": "Bom trabalho!",
+    "noTasksAssigned": "Nenhuma tarefa atribuída ainda!",
+    "iDidThis": "Eu Fiz Isso!",
+    "markComplete": "Marcar como Concluído"
+  },
   "settings": {
     "title": "Configurações",
     "theme_preference": "Preferência de Tema",
