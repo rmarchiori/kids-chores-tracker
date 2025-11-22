@@ -95,7 +95,7 @@ export async function GET(request: Request) {
         task_assignments!inner(
           id,
           child_id,
-          children(id, name, age_group)
+          children(id, name, age_group, profile_photo_url)
         )
       `)
       .eq('family_id', familyMember.family_id)
