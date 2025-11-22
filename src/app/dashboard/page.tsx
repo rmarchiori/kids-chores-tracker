@@ -282,17 +282,25 @@ export default function DashboardPage() {
           </motion.button>
 
           {/* Progress Card */}
-          <motion.div
-            className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-3xl shadow-2xl p-6 text-white opacity-75"
-            whileHover={{ scale: 1.02 }}
+          <motion.button
+            onClick={() => router.push('/analytics')}
+            className="bg-gradient-to-br from-emerald-400 to-green-400 rounded-3xl shadow-2xl p-6 text-left text-white"
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            <div className="text-5xl mb-4">📈</div>
+            <motion.div
+              className="text-5xl mb-4"
+              animate={{ rotate: [-5, 5] }}
+              transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', delay: 1.4 }}
+            >
+              📈
+            </motion.div>
             <h3 className="text-xl font-bold mb-2">{t('cards.progress.title')}</h3>
             <p className="text-white/90 text-sm">
               {t('cards.progress.description')}
             </p>
-          </motion.div>
+          </motion.button>
 
           {/* Settings Card */}
           <motion.button

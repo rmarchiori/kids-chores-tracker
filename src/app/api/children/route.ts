@@ -17,7 +17,7 @@ const CreateChildSchema = z.object({
  */
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -66,7 +66,7 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

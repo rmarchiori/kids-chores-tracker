@@ -20,7 +20,7 @@ export async function PATCH(
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

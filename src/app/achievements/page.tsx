@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { useTranslation } from '@/hooks/useTranslation'
 import { motion } from 'framer-motion'
 
 interface Achievement {
@@ -21,6 +22,7 @@ interface Child {
 }
 
 export default function AchievementsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [children, setChildren] = useState<Child[]>([])
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
@@ -165,7 +167,7 @@ export default function AchievementsPage() {
             >
               <div className="text-6xl mb-4">🎯</div>
               <h2 className="text-2xl font-black mb-2">No Achievements Yet</h2>
-              <p className="text-white/90">Complete tasks to unlock achievements!</p>
+              <p className="text-white/90">{t('achievements.description')}</p>
             </motion.div>
           )}
         </div>

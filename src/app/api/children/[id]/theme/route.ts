@@ -34,7 +34,7 @@ export async function PATCH(
   const { id } = await params
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Authentication: Verify user is logged in
     const { data: { user }, error: authError } = await supabase.auth.getUser()

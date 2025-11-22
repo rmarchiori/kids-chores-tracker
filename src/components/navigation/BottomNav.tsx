@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -18,32 +18,49 @@ import {
 } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
 
-const mainNavigation = [
-  { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
-  { name: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
-  { name: 'nav.children', href: '/children', icon: UsersIcon },
-  { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
+const mainNavigationItems = [
+  { key: 'nav.home', href: '/dashboard', icon: HomeIcon },
+  { key: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
+  { key: 'nav.children', href: '/children', icon: UsersIcon },
+  { key: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
 ]
 
-const allNavigation = [
-  { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
-  { name: 'nav.family', href: '/family/settings', icon: UsersIcon },
-  { name: 'nav.children', href: '/children', icon: UsersIcon },
-  { name: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
-  { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
-  { name: 'nav.calendar', href: '/calendar', icon: CalendarIcon },
-  { name: 'nav.reviews', href: '/reviews', icon: CheckCircleIcon },
-  { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
-  { name: 'nav.analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'nav.rewards', href: '/rewards', icon: GiftIcon },
-  { name: 'nav.cast', href: '/settings/cast', icon: TvIcon },
-  { name: 'nav.settings', href: '/settings', icon: CogIcon },
+const allNavigationItems = [
+  { key: 'nav.home', href: '/dashboard', icon: HomeIcon },
+  { key: 'nav.family', href: '/family/settings', icon: UsersIcon },
+  { key: 'nav.children', href: '/children', icon: UsersIcon },
+  { key: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
+  { key: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
+  { key: 'nav.calendar', href: '/calendar', icon: CalendarIcon },
+  { key: 'nav.reviews', href: '/reviews', icon: CheckCircleIcon },
+  { key: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
+  { key: 'nav.analytics', href: '/analytics', icon: ChartBarIcon },
+  { key: 'nav.rewards', href: '/rewards', icon: GiftIcon },
+  { key: 'nav.cast', href: '/settings/cast', icon: TvIcon },
+  { key: 'nav.settings', href: '/settings', icon: CogIcon },
 ]
 
 export function BottomNav() {
   const pathname = usePathname()
-  const { t } = useTranslation()
+  const { t, isLoading } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Memoize translated navigation items to prevent flash
+  const mainNavigation = useMemo(() => {
+    if (isLoading) return []
+    return mainNavigationItems.map(item => ({
+      ...item,
+      name: t(item.key)
+    }))
+  }, [t, isLoading])
+
+  const allNavigation = useMemo(() => {
+    if (isLoading) return []
+    return allNavigationItems.map(item => ({
+      ...item,
+      name: t(item.key)
+    }))
+  }, [t, isLoading])
 
   return (
     <>
@@ -76,7 +93,7 @@ export function BottomNav() {
 
                 return (
                   <Link
-                    key={item.name}
+                    key={item.key}
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
                     className={`
@@ -89,7 +106,7 @@ export function BottomNav() {
                     `}
                   >
                     <Icon className="w-8 h-8 mb-2" />
-                    <span className="text-xs font-bold text-center">{t(item.name)}</span>
+                    <span className="text-xs font-bold text-center">{item.name}</span>
                   </Link>
                 )
               })}
@@ -107,7 +124,7 @@ export function BottomNav() {
 
             return (
               <Link
-                key={item.name}
+                key={item.key}
                 href={item.href}
                 className={`
                   flex flex-col items-center justify-center
@@ -118,7 +135,7 @@ export function BottomNav() {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon className="w-6 h-6" />
-                <span className="text-xs mt-1">{t(item.name)}</span>
+                <span className="text-xs mt-1">{item.name}</span>
               </Link>
             )
           })}

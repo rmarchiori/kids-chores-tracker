@@ -55,6 +55,7 @@
     "role": "Role",
     "selectRole": "Select a role",
     "sendInvitation": "Send Invitation",
+    "sendingInvitation": "Sending Invitation...",
     "remove": "Remove",
     "cancel": "Cancel",
     "admin": "Admin",
@@ -66,7 +67,23 @@
     "pending": "Pending",
     "accepted": "Accepted",
     "rejected": "Rejected",
-    "expired": "Expired"
+    "expired": "Expired",
+    "loadingSettings": "Loading family settings...",
+    "accessDenied": "Access Denied",
+    "onlyAdminsCanManage": "Only family admins can manage family settings.",
+    "backToHome": "Back to Home",
+    "manageDescription": "Manage your family members and invite others to join",
+    "noMembersFound": "No family members found",
+    "lastAdmin": "Last Admin",
+    "roleDescription": "Parent: Can manage children and tasks.\nTeen: Can view tasks and help manage siblings.",
+    "userAlreadyMember": "This user is already a member of your family",
+    "pendingInvitationExists": "There is already a pending invitation for this email",
+    "invitationSent": "Invitation sent to {{email}}!",
+    "confirmRemoveMember": "Are you sure you want to remove {{email}} from your family?",
+    "memberRemoved": "{{email}} has been removed from your family",
+    "confirmCancelInvitation": "Cancel invitation for {{email}}?",
+    "invitationCancelled": "Invitation for {{email}} has been cancelled",
+    "notPartOfFamily": "You are not part of any family"
   },
   "invitation": {
     "title": "Family Invitation",
@@ -206,9 +223,12 @@
     "delete_confirm": "Are you sure you want to delete this task?",
     "delete_warning": "This action cannot be undone.",
     "filter_by": "Filter by",
+    "filters": "Filters",
+    "clear_filters": "Clear All",
     "all_tasks": "All Tasks",
     "all_categories": "All Categories",
     "all_priorities": "All Priorities",
+    "selected": "selected",
     "categories": {
       "cleaning": "Cleaning",
       "homework": "Homework",
@@ -388,11 +408,64 @@
   },
   "theme": {
     "auto": "Auto",
+    "age-default": "Age Default",
     "age_based": "Age-based",
     "bright": "Bright",
     "young_style": "5-8 style",
     "cool": "Cool",
     "older_style": "9-12 style"
+  },
+  "daily": {
+    "title": "Today's Tasks",
+    "showTasksFor": "Show tasks for:",
+    "allChildren": "All Children",
+    "noTasks": "No tasks for today",
+    "createTasksPrompt": "Create some tasks to get started",
+    "assignedTo": "Assigned to:",
+    "progress": "Progress",
+    "selectAll": "Select All",
+    "clearAll": "Clear All",
+    "status": {
+      "notStarted": "Not Started",
+      "pendingReview": "Pending Review",
+      "completed": "Completed"
+    }
+  },
+  "childTasks": {
+    "title": "{{name}}'s Tasks",
+    "completedToday": "{{completed}} of {{total}} tasks completed today!",
+    "tasksToDo": "Tasks To Do",
+    "completedTodayTitle": "Completed Today!",
+    "greatJob": "Great job!",
+    "noTasksAssigned": "No tasks assigned yet!",
+    "iDidThis": "I Did This!",
+    "markComplete": "Mark Complete",
+    "modal": {
+      "titleYoung": "🎉 Great job!",
+      "titleOlder": "Task Completed!",
+      "titleMultiple": "Complete {{count}} Tasks!",
+      "taskProgress": "Task {{current}} of {{total}}",
+      "useSameRating": "Use same rating for all tasks",
+      "rateEffortYoung": "How did you do? ⭐",
+      "rateEffortOlder": "Rate your effort:",
+      "addNotesYoung": "Want to tell us more? (optional)",
+      "addNotesOlder": "Add notes (optional):",
+      "notesPlaceholderYoung": "Tell us about it...",
+      "notesPlaceholderOlder": "How did it go? Any challenges?",
+      "charactersRemaining": "{{count}}/500 characters",
+      "errorSelectRating": "Please select a star rating",
+      "errorNotesTooLong": "Notes must be 500 characters or less",
+      "errorRateAllTasks": "Please rate all tasks before submitting",
+      "previousTask": "Previous",
+      "nextTask": "Next Task →",
+      "submitSingle": "Submit",
+      "submitMultiple": "Complete {{count}} {{tasks}}",
+      "submitting": "Saving...",
+      "taskSingular": "Task",
+      "taskPlural": "Tasks",
+      "doneYoung": "✨ Done!",
+      "doneOlder": "Submit"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -457,12 +530,27 @@
       "completions_failed": "Failed to fetch completions"
     }
   },
+  "completions": {
+    "title": "Completion History",
+    "description": "View all completed tasks by your children",
+    "filterByChild": "Filter by child:",
+    "allChildren": "All Children",
+    "noCompletions": "No completions yet",
+    "noCompletionsDescription": "Completed tasks will appear here"
+  },
+  "reviews": {
+    "title": "Tasks to Review",
+    "tasksWaiting": "{{count}} task{{plural}} waiting for your review",
+    "allCaughtUp": "All caught up!",
+    "noTasksPending": "No tasks pending review"
+  },
   "rewards": {
     "title": "Rewards Store",
     "add_reward": "Add Reward",
     "create_reward": "Create Reward",
     "cancel": "Cancel",
     "loading": "Loading...",
+    "selectChild": "Select Child",
     "form": {
       "create_title": "Create New Reward",
       "name_label": "Reward Name",
@@ -483,7 +571,24 @@
     "no_rewards": "No rewards available yet.",
     "create_prompt": "Create some rewards to motivate your children!"
   },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "description": "Complete some tasks to see the leaderboard!"
+  },
+  "taskLibrary": {
+    "title": "Task Library",
+    "description": "Choose from {{count}} pre-made tasks to get started quickly!",
+    "searchPlaceholder": "Search tasks...",
+    "category": "Category",
+    "ageGroup": "Age Group",
+    "noResults": "No tasks found",
+    "tryAdjusting": "Try adjusting your filters",
+    "showing": "Showing {{filtered}} of {{total}} tasks",
+    "browseLibrary": "Browse Task Library (50+ Pre-Made Tasks)"
+  },
   "achievements": {
+    "title": "Achievements",
+    "description": "Complete tasks to unlock achievements!",
     "first_task": {
       "name": "First Task",
       "description": "Complete your first task"

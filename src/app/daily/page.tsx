@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 interface TaskAssignment {
   task_id: string
@@ -64,14 +65,51 @@ interface ChildProgress {
   not_started_tasks: number
 }
 
+interface GroupedTask {
+  task: TaskAssignment['task']
+  assignments: Array<{
+    child: TaskAssignment['child']
+    completion_status: TaskAssignment['completion_status']
+    completion_id?: string
+  }>
+}
+
 export default function DailyTasksPage() {
   const router = useRouter()
   const { t } = useTranslation()
   const [taskAssignments, setTaskAssignments] = useState<TaskAssignment[]>([])
   const [childrenProgress, setChildrenProgress] = useState<ChildProgress[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedChild, setSelectedChild] = useState<string>('all')
+  const [selectedChildren, setSelectedChildren] = useState<string[]>([])
+  const [currentPage, setCurrentPage] = useState(0)
   const supabase = createClient()
+
+  const CARDS_PER_PAGE = 3
+
+  // Toggle child selection
+  const toggleChildSelection = (childId: string) => {
+    setSelectedChildren(prev => {
+      if (prev.includes(childId)) {
+        return prev.filter(id => id !== childId)
+      } else {
+        return [...prev, childId]
+      }
+    })
+    // Reset to first page when filter changes
+    setCurrentPage(0)
+  }
+
+  // Select all children
+  const selectAllChildren = () => {
+    setSelectedChildren(childrenProgress.map(child => child.id))
+    setCurrentPage(0)
+  }
+
+  // Clear all selections
+  const clearAllSelections = () => {
+    setSelectedChildren([])
+    setCurrentPage(0)
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -233,20 +271,77 @@ export default function DailyTasksPage() {
     }
   }
 
-  function getStatusBadge(status: TaskAssignment['completion_status']) {
+  function getStatusBorder(status: TaskAssignment['completion_status']) {
     switch (status) {
       case 'completed':
-        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 shadow-lg">✓ Completed</span>
+        return 'border-4 border-green-500'
       case 'pending_review':
-        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 shadow-lg">⏳ Pending Review</span>
+        return 'border-4 border-yellow-500'
       case 'not_started':
-        return <span className="px-3 py-1 rounded-3xl text-xs font-black bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 shadow-lg">○ Not Started</span>
+        return 'border-4 border-red-500'
     }
   }
 
-  const filteredAssignments = selectedChild === 'all'
+  function getStatusText(status: TaskAssignment['completion_status']) {
+    switch (status) {
+      case 'completed':
+        return { text: t('daily.status.completed'), color: 'text-green-700' }
+      case 'pending_review':
+        return { text: t('daily.status.pendingReview'), color: 'text-yellow-700' }
+      case 'not_started':
+        return { text: t('daily.status.notStarted'), color: 'text-red-700' }
+    }
+  }
+
+  // Group tasks by task_id
+  const groupedTasks: GroupedTask[] = []
+  const taskMap = new Map<string, GroupedTask>()
+
+  // Filter assignments based on selected children
+  const filteredAssignments = selectedChildren.length === 0
     ? taskAssignments
-    : taskAssignments.filter(a => a.child.id === selectedChild)
+    : taskAssignments.filter(a => selectedChildren.includes(a.child.id))
+
+  filteredAssignments.forEach(assignment => {
+    if (!taskMap.has(assignment.task_id)) {
+      taskMap.set(assignment.task_id, {
+        task: assignment.task,
+        assignments: []
+      })
+    }
+
+    const grouped = taskMap.get(assignment.task_id)!
+    grouped.assignments.push({
+      child: assignment.child,
+      completion_status: assignment.completion_status,
+      completion_id: assignment.completion_id
+    })
+  })
+
+  groupedTasks.push(...Array.from(taskMap.values()))
+
+  // Filter progress cards based on selected children
+  const filteredChildrenProgress = selectedChildren.length === 0
+    ? childrenProgress
+    : childrenProgress.filter(child => selectedChildren.includes(child.id))
+
+  // Pagination for children progress
+  const totalPages = Math.ceil(filteredChildrenProgress.length / CARDS_PER_PAGE)
+  const startIndex = currentPage * CARDS_PER_PAGE
+  const endIndex = startIndex + CARDS_PER_PAGE
+  const visibleChildren = filteredChildrenProgress.slice(startIndex, endIndex)
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  const goToPreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
 
   if (loading) {
     return (
@@ -266,7 +361,7 @@ export default function DailyTasksPage() {
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 80%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
         </div>
         <div className="relative z-10">
-        {/* Header */}
+        {/* Header with Kids Filter */}
         <motion.div
           className="mb-8 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl p-8 text-white"
           initial={{ opacity: 0, y: 20 }}
@@ -279,107 +374,210 @@ export default function DailyTasksPage() {
             animate={{ rotate: [-1, 1] }}
             transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
           >
-            Today's Tasks
+            {t('daily.title')}
           </motion.h1>
-          <p className="text-xl text-white/90">
+          <p className="text-xl text-white/90 mb-6">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
+
+          {/* Kids Filter */}
+          {childrenProgress.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-white/30">
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-sm font-black">{t('daily.showTasksFor')}</p>
+                <div className="flex gap-2">
+                  <motion.button
+                    onClick={selectAllChildren}
+                    className="text-xs px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {t('daily.selectAll')}
+                  </motion.button>
+                  {selectedChildren.length > 0 && (
+                    <motion.button
+                      onClick={clearAllSelections}
+                      className="text-xs px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {t('daily.clearAll')}
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {childrenProgress.map((child) => {
+                  const isSelected = selectedChildren.includes(child.id)
+                  return (
+                    <motion.button
+                      key={child.id}
+                      onClick={() => toggleChildSelection(child.id)}
+                      className={`
+                        flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all
+                        ${isSelected
+                          ? 'bg-white text-purple-600 shadow-lg'
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                        }
+                      `}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {child.profile_photo_url ? (
+                        <Image
+                          src={child.profile_photo_url}
+                          alt={child.name}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-white/40 flex items-center justify-center">
+                          <span className="text-xs font-black">
+                            {child.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                      <span>{child.name}</span>
+                      {isSelected && <span className="text-sm">✓</span>}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </motion.div>
 
-        {/* Progress Overview */}
+        {/* Progress Overview with Carousel */}
         {childrenProgress.length > 0 && (
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {childrenProgress.map((child, index) => (
-              <motion.div
-                key={child.id}
-                className="bg-white rounded-3xl p-6 shadow-2xl border border-gray-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  {child.profile_photo_url ? (
-                    <motion.div
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Image
-                        src={child.profile_photo_url}
-                        alt={child.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full"
+          <div className="mb-8">
+            <div className="relative">
+              {/* Carousel Container */}
+              <div className="w-full overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentPage}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {visibleChildren.map((child, index) => (
+                      <motion.div
+                        key={child.id}
+                        className="bg-white rounded-3xl p-6 shadow-2xl border border-gray-200"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        whileHover={{ scale: 1.05, y: -5 }}
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          {child.profile_photo_url ? (
+                            <motion.div
+                              whileHover={{ rotate: 360 }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              <Image
+                                src={child.profile_photo_url}
+                                alt={child.name}
+                                width={40}
+                                height={40}
+                                className="rounded-full"
+                              />
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center"
+                              whileHover={{ rotate: 360 }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              <span className="text-lg font-black text-white">
+                                {child.name.charAt(0)}
+                              </span>
+                            </motion.div>
+                          )}
+                          <p className="font-black text-gray-900">{child.name}</p>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mb-2">
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-gray-600 font-medium">{t('daily.progress')}</span>
+                            <span className="font-black text-gray-900">
+                              {child.completed_tasks}/{child.total_tasks}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-3">
+                            <motion.div
+                              className="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(child.completed_tasks / child.total_tasks) * 100}%` }}
+                              transition={{ duration: 1, delay: index * 0.2 }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Status Counts */}
+                        <div className="flex gap-3 text-sm font-medium">
+                          <span className="text-green-700">✓ {child.completed_tasks}</span>
+                          <span className="text-yellow-700">⏳ {child.pending_review_tasks}</span>
+                          <span className="text-gray-600">○ {child.not_started_tasks}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Carousel Navigation */}
+              {totalPages > 1 && (
+                <>
+                  <motion.button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 0}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed z-10"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronLeftIcon className="w-6 h-6 text-gray-700" />
+                  </motion.button>
+
+                  <motion.button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages - 1}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed z-10"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <ChevronRightIcon className="w-6 h-6 text-gray-700" />
+                  </motion.button>
+
+                  {/* Page Indicators */}
+                  <div className="flex justify-center gap-2 mt-4">
+                    {Array.from({ length: totalPages }).map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPage(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentPage
+                            ? 'bg-white w-6'
+                            : 'bg-white/50'
+                        }`}
                       />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <span className="text-lg font-black text-white">
-                        {child.name.charAt(0)}
-                      </span>
-                    </motion.div>
-                  )}
-                  <p className="font-black text-gray-900">{child.name}</p>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-2">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600 font-medium">Progress</span>
-                    <span className="font-black text-gray-900">
-                      {child.completed_tasks}/{child.total_tasks}
-                    </span>
+                    ))}
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <motion.div
-                      className="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(child.completed_tasks / child.total_tasks) * 100}%` }}
-                      transition={{ duration: 1, delay: index * 0.2 }}
-                    />
-                  </div>
-                </div>
-
-                {/* Status Counts */}
-                <div className="flex gap-3 text-sm font-medium">
-                  <span className="text-green-700">✓ {child.completed_tasks}</span>
-                  <span className="text-yellow-700">⏳ {child.pending_review_tasks}</span>
-                  <span className="text-gray-600">○ {child.not_started_tasks}</span>
-                </div>
-              </motion.div>
-            ))}
+                </>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Filter */}
-        <motion.div
-          className="mb-6 flex gap-4 items-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <label htmlFor="filter-child" className="text-sm font-black text-gray-700">
-            Show tasks for:
-          </label>
-          <select
-            id="filter-child"
-            value={selectedChild}
-            onChange={(e) => setSelectedChild(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-3xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="all">All Children</option>
-            {childrenProgress.map(child => (
-              <option key={child.id} value={child.id}>{child.name}</option>
-            ))}
-          </select>
-        </motion.div>
-
-        {/* Task List */}
-        {filteredAssignments.length === 0 ? (
+        {/* Task List - Deduplicated */}
+        {groupedTasks.length === 0 ? (
           <motion.div
             className="text-center py-16 bg-white rounded-3xl shadow-2xl"
             initial={{ opacity: 0, y: 20 }}
@@ -391,15 +589,15 @@ export default function DailyTasksPage() {
               animate={{ rotate: [-5, 5] }}
               transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
             >
-              No tasks for today
+              {t('daily.noTasks')}
             </motion.p>
-            <p className="text-gray-400 mt-2">Create some tasks to get started</p>
+            <p className="text-gray-400 mt-2">{t('daily.createTasksPrompt')}</p>
           </motion.div>
         ) : (
           <div className="space-y-4">
-            {filteredAssignments.map((assignment, index) => (
+            {groupedTasks.map((groupedTask, index) => (
               <motion.div
-                key={`${assignment.task_id}-${assignment.child_id}`}
+                key={groupedTask.task.id}
                 className="bg-white rounded-3xl p-6 shadow-2xl hover:shadow-xl transition-shadow border border-gray-200"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -408,20 +606,20 @@ export default function DailyTasksPage() {
               >
                 <div className="flex items-start gap-4">
                   {/* Task Image */}
-                  {assignment.task.image_url && (
+                  {groupedTask.task.image_url && (
                     <div className="flex-shrink-0">
-                      {assignment.task.image_source === 'emoji' ? (
+                      {groupedTask.task.image_source === 'emoji' ? (
                         <motion.span
                           className="text-5xl inline-block"
                           animate={{ rotate: [-5, 5] }}
                           transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
                         >
-                          {assignment.task.image_url}
+                          {groupedTask.task.image_url}
                         </motion.span>
                       ) : (
                         <Image
-                          src={assignment.task.image_url}
-                          alt={assignment.task.image_alt_text || assignment.task.title}
+                          src={groupedTask.task.image_url}
+                          alt={groupedTask.task.image_alt_text || groupedTask.task.title}
                           width={48}
                           height={48}
                           className="object-contain"
@@ -432,28 +630,72 @@ export default function DailyTasksPage() {
 
                   {/* Content */}
                   <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="font-black text-xl text-gray-900">{assignment.task.title}</h3>
-                        <p className="text-sm text-gray-600 font-medium">Assigned to: {assignment.child.name}</p>
+                    <div className="mb-4">
+                      <h3 className="font-black text-xl text-gray-900 mb-2">{groupedTask.task.title}</h3>
+
+                      {/* Task Details */}
+                      <div className="flex gap-2">
+                        <span className="text-xs px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-gray-600 font-medium">
+                          {t(`tasks.categories.${groupedTask.task.category}`)}
+                        </span>
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${
+                          groupedTask.task.priority === 'high'
+                            ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-700'
+                            : groupedTask.task.priority === 'medium'
+                            ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-700'
+                            : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700'
+                        }`}>
+                          {t(`tasks.priorities.${groupedTask.task.priority}`)}
+                        </span>
                       </div>
-                      {getStatusBadge(assignment.completion_status)}
                     </div>
 
-                    {/* Task Details */}
-                    <div className="flex gap-2 mt-2">
-                      <span className="text-xs px-3 py-1 bg-gradient-to-r from-gray-100 to-gray-200 rounded-full text-gray-600 font-medium">
-                        {assignment.task.category}
-                      </span>
-                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                        assignment.task.priority === 'high'
-                          ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-700'
-                          : assignment.task.priority === 'medium'
-                          ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-700'
-                          : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700'
-                      }`}>
-                        {assignment.task.priority} priority
-                      </span>
+                    {/* Children Assigned */}
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-3">{t('daily.assignedTo')}</p>
+                      <div className="flex flex-wrap gap-4">
+                        {groupedTask.assignments.map((assignment) => {
+                          const status = getStatusText(assignment.completion_status)
+                          return (
+                            <motion.div
+                              key={assignment.child.id}
+                              className="flex flex-col items-center gap-2 cursor-pointer"
+                              onClick={() => router.push(`/children/${assignment.child.id}/tasks`)}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              {/* Child Photo with Status Border */}
+                              <div className="relative">
+                                {assignment.child.profile_photo_url ? (
+                                  <Image
+                                    src={assignment.child.profile_photo_url}
+                                    alt={assignment.child.name}
+                                    width={56}
+                                    height={56}
+                                    className={`rounded-full ${getStatusBorder(assignment.completion_status)}`}
+                                  />
+                                ) : (
+                                  <div className={`w-14 h-14 rounded-full ${getStatusBorder(assignment.completion_status)} bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center`}>
+                                    <span className="text-xl font-black text-white">
+                                      {assignment.child.name.charAt(0)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Child Name */}
+                              <p className="text-xs font-bold text-gray-700 text-center max-w-[80px] truncate">
+                                {assignment.child.name}
+                              </p>
+
+                              {/* Status Text */}
+                              <p className={`text-xs font-medium ${status.color}`}>
+                                {status.text}
+                              </p>
+                            </motion.div>
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -55,6 +55,7 @@
     "role": "Função",
     "selectRole": "Selecione uma função",
     "sendInvitation": "Enviar Convite",
+    "sendingInvitation": "Enviando Convite...",
     "remove": "Remover",
     "cancel": "Cancelar",
     "admin": "Administrador",
@@ -66,7 +67,23 @@
     "pending": "Pendente",
     "accepted": "Aceito",
     "rejected": "Rejeitado",
-    "expired": "Expirado"
+    "expired": "Expirado",
+    "loadingSettings": "Carregando configurações da família...",
+    "accessDenied": "Acesso Negado",
+    "onlyAdminsCanManage": "Apenas administradores da família podem gerenciar configurações da família.",
+    "backToHome": "Voltar ao Início",
+    "manageDescription": "Gerencie os membros da sua família e convide outras pessoas para participar",
+    "noMembersFound": "Nenhum membro da família encontrado",
+    "lastAdmin": "Último Administrador",
+    "roleDescription": "Pai/Mãe: Pode gerenciar crianças e tarefas.\nAdolescente: Pode visualizar tarefas e ajudar a gerenciar irmãos.",
+    "userAlreadyMember": "Este usuário já é membro da sua família",
+    "pendingInvitationExists": "Já existe um convite pendente para este e-mail",
+    "invitationSent": "Convite enviado para {{email}}!",
+    "confirmRemoveMember": "Tem certeza de que deseja remover {{email}} da sua família?",
+    "memberRemoved": "{{email}} foi removido da sua família",
+    "confirmCancelInvitation": "Cancelar convite para {{email}}?",
+    "invitationCancelled": "Convite para {{email}} foi cancelado",
+    "notPartOfFamily": "Você não faz parte de nenhuma família"
   },
   "invitation": {
     "title": "Convite da Família",
@@ -206,9 +223,12 @@
     "delete_confirm": "Tem certeza de que deseja excluir esta tarefa?",
     "delete_warning": "Esta ação não pode ser desfeita.",
     "filter_by": "Filtrar por",
+    "filters": "Filtros",
+    "clear_filters": "Limpar Tudo",
     "all_tasks": "Todas as Tarefas",
     "all_categories": "Todas as Categorias",
     "all_priorities": "Todas as Prioridades",
+    "selected": "selecionadas",
     "categories": {
       "cleaning": "Limpeza",
       "homework": "Lição de Casa",
@@ -388,11 +408,64 @@
   },
   "theme": {
     "auto": "Automático",
+    "age-default": "Padrão por Idade",
     "age_based": "Baseado na Idade",
     "bright": "Brilhante",
     "young_style": "Estilo 5-8 anos",
     "cool": "Legal",
     "older_style": "Estilo 9-12 anos"
+  },
+  "daily": {
+    "title": "Tarefas de Hoje",
+    "showTasksFor": "Mostrar tarefas para:",
+    "allChildren": "Todas as Crianças",
+    "noTasks": "Nenhuma tarefa para hoje",
+    "createTasksPrompt": "Crie algumas tarefas para começar",
+    "assignedTo": "Atribuído a:",
+    "progress": "Progresso",
+    "selectAll": "Selecionar Tudo",
+    "clearAll": "Limpar Tudo",
+    "status": {
+      "notStarted": "Não Iniciado",
+      "pendingReview": "Aguardando Revisão",
+      "completed": "Concluído"
+    }
+  },
+  "childTasks": {
+    "title": "Tarefas de {{name}}",
+    "completedToday": "{{completed}} de {{total}} tarefas concluídas hoje!",
+    "tasksToDo": "Tarefas a Fazer",
+    "completedTodayTitle": "Concluídas Hoje!",
+    "greatJob": "Bom trabalho!",
+    "noTasksAssigned": "Nenhuma tarefa atribuída ainda!",
+    "iDidThis": "Eu Fiz Isso!",
+    "markComplete": "Marcar como Concluído",
+    "modal": {
+      "titleYoung": "🎉 Ótimo trabalho!",
+      "titleOlder": "Tarefa Concluída!",
+      "titleMultiple": "Completar {{count}} Tarefas!",
+      "taskProgress": "Tarefa {{current}} de {{total}}",
+      "useSameRating": "Usar a mesma avaliação para todas as tarefas",
+      "rateEffortYoung": "Como você se saiu? ⭐",
+      "rateEffortOlder": "Avalie seu esforço:",
+      "addNotesYoung": "Quer nos contar mais? (opcional)",
+      "addNotesOlder": "Adicionar notas (opcional):",
+      "notesPlaceholderYoung": "Conte-nos sobre isso...",
+      "notesPlaceholderOlder": "Como foi? Algum desafio?",
+      "charactersRemaining": "{{count}}/500 caracteres",
+      "errorSelectRating": "Por favor, selecione uma avaliação em estrelas",
+      "errorNotesTooLong": "As notas devem ter 500 caracteres ou menos",
+      "errorRateAllTasks": "Por favor, avalie todas as tarefas antes de enviar",
+      "previousTask": "Anterior",
+      "nextTask": "Próxima Tarefa →",
+      "submitSingle": "Enviar",
+      "submitMultiple": "Completar {{count}} {{tasks}}",
+      "submitting": "Salvando...",
+      "taskSingular": "Tarefa",
+      "taskPlural": "Tarefas",
+      "doneYoung": "✨ Pronto!",
+      "doneOlder": "Enviar"
+    }
   },
   "settings": {
     "title": "Configurações",
@@ -457,12 +530,27 @@
       "completions_failed": "Falha ao buscar conclusões"
     }
   },
+  "completions": {
+    "title": "Histórico de Conclusões",
+    "description": "Visualizar todas as tarefas concluídas pelas suas crianças",
+    "filterByChild": "Filtrar por criança:",
+    "allChildren": "Todas as Crianças",
+    "noCompletions": "Nenhuma conclusão ainda",
+    "noCompletionsDescription": "Tarefas concluídas aparecerão aqui"
+  },
+  "reviews": {
+    "title": "Tarefas para Revisar",
+    "tasksWaiting": "{{count}} tarefa{{plural}} aguardando sua revisão",
+    "allCaughtUp": "Tudo em dia!",
+    "noTasksPending": "Nenhuma tarefa aguardando revisão"
+  },
   "rewards": {
     "title": "Loja de Recompensas",
     "add_reward": "Adicionar Recompensa",
     "create_reward": "Criar Recompensa",
     "cancel": "Cancelar",
     "loading": "Carregando...",
+    "selectChild": "Selecionar Criança",
     "form": {
       "create_title": "Criar Nova Recompensa",
       "name_label": "Nome da Recompensa",
@@ -483,7 +571,24 @@
     "no_rewards": "Nenhuma recompensa disponível ainda.",
     "create_prompt": "Crie algumas recompensas para motivar suas crianças!"
   },
+  "leaderboard": {
+    "title": "Tabela de Líderes",
+    "description": "Complete algumas tarefas para ver a tabela de líderes!"
+  },
+  "taskLibrary": {
+    "title": "Biblioteca de Tarefas",
+    "description": "Escolha entre {{count}} tarefas pré-prontas para começar rapidamente!",
+    "searchPlaceholder": "Buscar tarefas...",
+    "category": "Categoria",
+    "ageGroup": "Faixa Etária",
+    "noResults": "Nenhuma tarefa encontrada",
+    "tryAdjusting": "Tente ajustar seus filtros",
+    "showing": "Mostrando {{filtered}} de {{total}} tarefas",
+    "browseLibrary": "Navegar Biblioteca de Tarefas (50+ Tarefas Pré-Prontas)"
+  },
   "achievements": {
+    "title": "Conquistas",
+    "description": "Complete tarefas para desbloquear conquistas!",
     "first_task": {
       "name": "Primeira Tarefa",
       "description": "Concluir sua primeira tarefa"

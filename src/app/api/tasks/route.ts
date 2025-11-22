@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { CreateTaskSchema } from '@/lib/schemas'
 import { z } from 'zod'
 
+// Mark route as dynamic since it uses cookies for auth
+export const dynamic = 'force-dynamic'
+
 // Type definitions for task with assignments
 interface TaskAssignment {
   id: string
@@ -42,7 +45,7 @@ interface TaskWithAssignments {
  */
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -92,7 +95,7 @@ export async function GET(request: Request) {
         task_assignments!inner(
           id,
           child_id,
-          children(id, name, age_group)
+          children(id, name, age_group, profile_photo_url)
         )
       `)
       .eq('family_id', familyMember.family_id)
@@ -134,7 +137,7 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

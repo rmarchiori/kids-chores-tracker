@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
 import {
   HomeIcon,
   UsersIcon,
@@ -18,25 +19,34 @@ import {
 import { useTranslation } from '@/hooks/useTranslation'
 import { useSidebar } from '@/contexts/SidebarContext'
 
-const navigation = [
-  { name: 'nav.home', href: '/dashboard', icon: HomeIcon },
-  { name: 'nav.family', href: '/family/settings', icon: UsersIcon },
-  { name: 'nav.children', href: '/children', icon: UsersIcon },
-  { name: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
-  { name: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
-  { name: 'nav.calendar', href: '/calendar', icon: CalendarIcon },
-  { name: 'nav.reviews', href: '/reviews', icon: CheckCircleIcon },
-  { name: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
-  { name: 'nav.analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'nav.rewards', href: '/rewards', icon: GiftIcon },
-  { name: 'nav.cast', href: '/settings/cast', icon: TvIcon },
-  { name: 'nav.settings', href: '/settings', icon: CogIcon },
+const navigationItems = [
+  { key: 'nav.home', href: '/dashboard', icon: HomeIcon },
+  { key: 'nav.family', href: '/family/settings', icon: UsersIcon },
+  { key: 'nav.children', href: '/children', icon: UsersIcon },
+  { key: 'nav.today', href: '/daily', icon: ClipboardDocumentListIcon },
+  { key: 'nav.tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
+  { key: 'nav.calendar', href: '/calendar', icon: CalendarIcon },
+  { key: 'nav.reviews', href: '/reviews', icon: CheckCircleIcon },
+  { key: 'nav.completions', href: '/completions', icon: CheckCircleIcon },
+  { key: 'nav.analytics', href: '/analytics', icon: ChartBarIcon },
+  { key: 'nav.rewards', href: '/rewards', icon: GiftIcon },
+  { key: 'nav.cast', href: '/settings/cast', icon: TvIcon },
+  { key: 'nav.settings', href: '/settings', icon: CogIcon },
 ]
 
 export function Sidebar() {
   const { collapsed, setCollapsed } = useSidebar()
   const pathname = usePathname()
-  const { t } = useTranslation()
+  const { t, isLoading } = useTranslation()
+
+  // Memoize translated navigation items to prevent flash
+  const navigation = useMemo(() => {
+    if (isLoading) return []
+    return navigationItems.map(item => ({
+      ...item,
+      name: t(item.key)
+    }))
+  }, [t, isLoading])
 
   return (
     <aside
@@ -75,7 +85,7 @@ export function Sidebar() {
 
           return (
             <Link
-              key={item.name}
+              key={item.key}
               href={item.href}
               className={`
                 flex items-center px-3 py-2 rounded-lg
@@ -85,11 +95,11 @@ export function Sidebar() {
                   : 'text-gray-700 hover:bg-gray-100'}
                 ${collapsed ? 'justify-center' : 'justify-start'}
               `}
-              title={collapsed ? t(item.name) : undefined}
+              title={collapsed ? item.name : undefined}
             >
               <Icon className="w-6 h-6 flex-shrink-0" />
               {!collapsed && (
-                <span className="ml-3 text-sm font-medium">{t(item.name)}</span>
+                <span className="ml-3 text-sm font-medium">{item.name}</span>
               )}
             </Link>
           )

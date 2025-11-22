@@ -9,7 +9,7 @@ import { TaskImageSchema } from '@/lib/schemas'
  */
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user - verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

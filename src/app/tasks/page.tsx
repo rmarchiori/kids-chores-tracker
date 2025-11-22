@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, XMarkIcon, ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -32,6 +32,7 @@ interface Task {
       id: string
       name: string
       age_group: string
+      profile_photo_url?: string | null
     }
   }>
 }
@@ -39,16 +40,61 @@ interface Task {
 export default function TasksPage() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [filterPriority, setFilterPriority] = useState<string>('all')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([])
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+  const [priorityDropdownOpen, setPriorityDropdownOpen] = useState(false)
+  const categoryRef = useRef<HTMLDivElement>(null)
+  const priorityRef = useRef<HTMLDivElement>(null)
+
+  const categories = ['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime', 'other']
+  const priorities = ['low', 'medium', 'high']
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    )
+  }
+
+  const togglePriority = (priority: string) => {
+    setSelectedPriorities(prev =>
+      prev.includes(priority)
+        ? prev.filter(p => p !== priority)
+        : [...prev, priority]
+    )
+  }
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setCategoryDropdownOpen(false)
+      }
+      if (priorityRef.current && !priorityRef.current.contains(event.target as Node)) {
+        setPriorityDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const clearFilters = () => {
+    setSelectedCategories([])
+    setSelectedPriorities([])
+  }
+
+  const hasActiveFilters = selectedCategories.length > 0 || selectedPriorities.length > 0
 
   // Build query params for API
   const params = new URLSearchParams()
-  if (filterCategory !== 'all') {
-    params.append('category', filterCategory)
+  if (selectedCategories.length > 0) {
+    selectedCategories.forEach(cat => params.append('category', cat))
   }
-  if (filterPriority !== 'all') {
-    params.append('priority', filterPriority)
+  if (selectedPriorities.length > 0) {
+    selectedPriorities.forEach(pri => params.append('priority', pri))
   }
   const apiUrl = `/api/tasks?${params.toString()}`
 
@@ -120,6 +166,7 @@ export default function TasksPage() {
           >
             <h1 className="text-3xl font-black text-white">{t('tasks.title')}</h1>
             <motion.button
+              type="button"
               onClick={() => router.push('/tasks/new')}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
               aria-label={t('tasks.new_task')}
@@ -134,53 +181,146 @@ export default function TasksPage() {
 
           {/* Filters */}
           <motion.div
-            className="mb-6 flex flex-wrap gap-4"
+            className="mb-6 bg-white rounded-3xl shadow-2xl p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-800">{t('tasks.filters')}</h2>
+              <AnimatePresence>
+                {hasActiveFilters && (
+                  <motion.button
+                    type="button"
+                    onClick={clearFilters}
+                    className="flex items-center gap-1 text-sm text-pink-600 hover:text-pink-700 font-medium"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                    {t('tasks.clear_filters')}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Category Filter */}
-            <div>
-              <label htmlFor="category-filter" className="block text-sm font-bold text-white mb-1">
+            <div className="mb-4" ref={categoryRef}>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.category')}
               </label>
-              <select
-                id="category-filter"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
-                aria-label={t('tasks.category')}
-              >
-                <option value="all">{t('tasks.all_categories')}</option>
-                <option value="cleaning">{t('tasks.categories.cleaning')}</option>
-                <option value="homework">{t('tasks.categories.homework')}</option>
-                <option value="hygiene">{t('tasks.categories.hygiene')}</option>
-                <option value="outdoor">{t('tasks.categories.outdoor')}</option>
-                <option value="helping">{t('tasks.categories.helping')}</option>
-                <option value="meals">{t('tasks.categories.meals')}</option>
-                <option value="pets">{t('tasks.categories.pets')}</option>
-                <option value="bedtime">{t('tasks.categories.bedtime')}</option>
-                <option value="other">{t('tasks.categories.other')}</option>
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCategoryDropdownOpen(!categoryDropdownOpen)
+                  }}
+                  className="w-full px-4 py-2 text-left bg-white border-2 border-gray-300 rounded-xl hover:border-pink-400 transition-colors flex items-center justify-between"
+                >
+                  <span className="text-sm text-gray-700">
+                    {selectedCategories.length === 0
+                      ? t('tasks.all_categories')
+                      : `${selectedCategories.length} ${t('tasks.selected')}`}
+                  </span>
+                  <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {categoryDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto"
+                    >
+                      {categories.map((category) => (
+                        <button
+                          key={category}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            toggleCategory(category)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-pink-50 flex items-center gap-2 transition-colors"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                            selectedCategories.includes(category)
+                              ? 'bg-pink-500 border-pink-500'
+                              : 'border-gray-300'
+                          }`}>
+                            {selectedCategories.includes(category) && (
+                              <CheckIcon className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-700">{t(`tasks.categories.${category}`)}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Priority Filter */}
-            <div>
-              <label htmlFor="priority-filter" className="block text-sm font-bold text-white mb-1">
+            <div ref={priorityRef}>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.priority')}
               </label>
-              <select
-                id="priority-filter"
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
-                aria-label={t('tasks.priority')}
-              >
-                <option value="all">{t('tasks.all_priorities')}</option>
-                <option value="low">{t('tasks.priorities.low')}</option>
-                <option value="medium">{t('tasks.priorities.medium')}</option>
-                <option value="high">{t('tasks.priorities.high')}</option>
-              </select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setPriorityDropdownOpen(!priorityDropdownOpen)
+                  }}
+                  className="w-full px-4 py-2 text-left bg-white border-2 border-gray-300 rounded-xl hover:border-pink-400 transition-colors flex items-center justify-between"
+                >
+                  <span className="text-sm text-gray-700">
+                    {selectedPriorities.length === 0
+                      ? t('tasks.all_priorities')
+                      : `${selectedPriorities.length} ${t('tasks.selected')}`}
+                  </span>
+                  <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${priorityDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {priorityDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl"
+                    >
+                      {priorities.map((priority) => (
+                        <button
+                          key={priority}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            togglePriority(priority)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-pink-50 flex items-center gap-2 transition-colors"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                            selectedPriorities.includes(priority)
+                              ? 'bg-pink-500 border-pink-500'
+                              : 'border-gray-300'
+                          }`}>
+                            {selectedPriorities.includes(priority) && (
+                              <CheckIcon className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-700">{t(`tasks.priorities.${priority}`)}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </motion.div>
 
@@ -213,6 +353,7 @@ export default function TasksPage() {
                 {t('tasks.no_tasks')}
               </motion.p>
               <motion.button
+                type="button"
                 onClick={() => router.push('/tasks/new')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
                 aria-label={t('tasks.add_first_task')}
@@ -236,13 +377,13 @@ export default function TasksPage() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -5 }}
                 >
-                  <TaskCard
-                    task={task}
-                    onClick={() => handleTaskClick(task.id)}
-                  />
+                  <div onClick={() => handleTaskClick(task.id)} className="cursor-pointer">
+                    <TaskCard task={task} />
+                  </div>
 
                   {/* Delete Button (appears on hover) */}
                   <motion.button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDelete(task.id, task.title)
@@ -254,13 +395,6 @@ export default function TasksPage() {
                   >
                     {t('common.delete')}
                   </motion.button>
-
-                  {/* Assignment Info */}
-                  {task.task_assignments && task.task_assignments.length > 0 && (
-                    <div className="mt-2 text-xs text-gray-500">
-                      {t('tasks.assign_to')}: {task.task_assignments.map(a => a.children.name).join(', ')}
-                    </div>
-                  )}
                 </motion.div>
               ))}
             </div>

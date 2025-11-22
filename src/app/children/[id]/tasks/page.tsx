@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
 import Image from 'next/image'
-import { TaskCompletionModal } from '@/components/TaskCompletionModal'
+import { MultiTaskCompletionModal } from '@/components/MultiTaskCompletionModal'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { motion } from 'framer-motion'
 
@@ -73,8 +73,7 @@ export default function ChildTasksPage() {
   const [child, setChild] = useState<Child | null>(null)
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
-  const [completingTaskId, setCompletingTaskId] = useState<string | null>(null)
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [selectedTasks, setSelectedTasks] = useState<Task[]>([])
   const [showCompletionModal, setShowCompletionModal] = useState(false)
   const [showMessage, setShowMessage] = useState<string | null>(null)
   const supabase = createClient()
@@ -197,34 +196,35 @@ export default function ChildTasksPage() {
   }
 
   function handleCompleteTask(task: Task) {
-    setSelectedTask(task)
+    setSelectedTasks([task])
     setShowCompletionModal(true)
   }
 
-  async function handleSubmitCompletion(rating: number, notes: string) {
-    if (!selectedTask) return
-
+  async function handleSubmitCompletion(completions: Array<{ taskId: string, rating: number, notes: string }>) {
     try {
-      setCompletingTaskId(selectedTask.id)
+      // Submit all completions in parallel
+      await Promise.all(
+        completions.map(async ({ taskId, rating, notes }) => {
+          const response = await fetch(`/api/tasks/${taskId}/complete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              child_id: childId,
+              child_rating: rating,
+              child_notes: notes || undefined,
+            }),
+          })
 
-      const response = await fetch(`/api/tasks/${selectedTask.id}/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          child_id: childId,
-          child_rating: rating,
-          child_notes: notes || undefined,
-        }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to complete task')
-      }
+          if (!response.ok) {
+            const error = await response.json()
+            throw new Error(error.error || 'Failed to complete task')
+          }
+        })
+      )
 
       // Close modal
       setShowCompletionModal(false)
-      setSelectedTask(null)
+      setSelectedTasks([])
 
       // Show positive message
       const messages = child?.age_group === '5-8' ? POSITIVE_MESSAGES_YOUNG : POSITIVE_MESSAGES_OLDER
@@ -237,10 +237,8 @@ export default function ChildTasksPage() {
       // Refresh tasks
       await fetchChildAndTasks()
     } catch (error) {
-      console.error('Error completing task:', error)
+      console.error('Error completing tasks:', error)
       throw error // Re-throw to let modal handle the error
-    } finally {
-      setCompletingTaskId(null)
     }
   }
 
@@ -313,9 +311,9 @@ export default function ChildTasksPage() {
             </motion.div>
           )}
           <div>
-            <h1 className="text-3xl font-black">{child.name}'s Tasks</h1>
+            <h1 className="text-3xl font-black">{t('childTasks.title', { name: child.name })}</h1>
             <p className="text-lg text-white/90 flex items-center gap-2">
-              {completedTasks.length} of {tasks.length} tasks completed today!
+              {t('childTasks.completedToday', { completed: completedTasks.length, total: tasks.length })}
               <motion.span
                 className="text-2xl"
                 animate={{ rotate: [-10, 10] }}
@@ -337,7 +335,7 @@ export default function ChildTasksPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Tasks To Do
+            {t('childTasks.tasksToDo')}
           </motion.h2>
           <div className="grid gap-4">
             {pendingTasks.map((task, index) => (
@@ -383,7 +381,6 @@ export default function ChildTasksPage() {
                 {/* Complete Button */}
                 <motion.button
                   onClick={() => handleCompleteTask(task)}
-                  disabled={completingTaskId === task.id}
                   className={`
                     w-full py-4 rounded-3xl font-black text-xl transition-all shadow-2xl
                     ${child.age_group === '5-8'
@@ -391,17 +388,12 @@ export default function ChildTasksPage() {
                       : 'bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500'
                     }
                     text-white
-                    disabled:opacity-50 disabled:cursor-not-allowed
                   `}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 >
-                  {completingTaskId === task.id ? (
-                    <span>{t('common.saving')}</span>
-                  ) : (
-                    <span>✓ {child.age_group === '5-8' ? 'I Did This!' : 'Mark Complete'}</span>
-                  )}
+                  <span>✓ {child.age_group === '5-8' ? t('childTasks.iDidThis') : t('childTasks.markComplete')}</span>
                 </motion.button>
               </motion.div>
             ))}
@@ -424,7 +416,7 @@ export default function ChildTasksPage() {
             >
               ✓
             </motion.span>
-            Completed Today!
+            {t('childTasks.completedTodayTitle')}
           </motion.h2>
           <div className="grid gap-4">
             {completedTasks.map((task, index) => (
@@ -459,7 +451,7 @@ export default function ChildTasksPage() {
                   <div className="flex-1">
                     <h3 className="text-xl font-black text-white">{task.title}</h3>
                     <p className="text-white/90 flex items-center gap-1">
-                      Great job!
+                      {t('childTasks.greatJob')}
                       <motion.span
                         animate={{ scale: [1, 1.2, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
@@ -494,21 +486,21 @@ export default function ChildTasksPage() {
             >
               📋
             </motion.div>
-            <p className="text-2xl font-black">No tasks assigned yet!</p>
+            <p className="text-2xl font-black">{t('childTasks.noTasksAssigned')}</p>
           </motion.div>
         </motion.div>
       )}
 
       {/* Task Completion Modal */}
-      {child && selectedTask && (
-        <TaskCompletionModal
+      {child && selectedTasks.length > 0 && (
+        <MultiTaskCompletionModal
           isOpen={showCompletionModal}
           onClose={() => {
             setShowCompletionModal(false)
-            setSelectedTask(null)
+            setSelectedTasks([])
           }}
           onSubmit={handleSubmitCompletion}
-          taskTitle={selectedTask.title}
+          tasks={selectedTasks}
           ageGroup={child.age_group}
         />
       )}

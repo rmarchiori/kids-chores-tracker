@@ -17,6 +17,16 @@ interface TaskCardProps {
     category: string
     priority: string
     status?: 'pending' | 'completed' | 'pending_review'
+    task_assignments?: Array<{
+      id: string
+      child_id: string
+      children: {
+        id: string
+        name: string
+        age_group: string
+        profile_photo_url?: string | null
+      }
+    }>
   }
   onClick?: () => void
   showDescription?: boolean
@@ -101,8 +111,48 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
           </p>
         )}
 
-        {/* Status Badge and Category/Priority for parent view */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
+        {/* Assigned Children - Show if present */}
+        {task.task_assignments && task.task_assignments.length > 0 && (
+          <div className="mb-3">
+            <span className="text-xs font-medium text-gray-600 mb-2 block">{t('tasks.assign_to')}:</span>
+            <div className="flex flex-wrap gap-4">
+              {task.task_assignments.map((assignment) => (
+                <div
+                  key={assignment.id}
+                  className="flex flex-col items-center gap-2"
+                >
+                  {/* Child Photo */}
+                  <div className="relative">
+                    {assignment.children.profile_photo_url ? (
+                      <Image
+                        src={assignment.children.profile_photo_url}
+                        alt={assignment.children.name}
+                        width={56}
+                        height={56}
+                        className="rounded-full border-2 border-gray-200 shadow-md"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full border-2 border-gray-200 shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
+                        <span className="text-xl font-bold text-white">
+                          {assignment.children.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Child Name */}
+                  <p className="text-xs font-bold text-gray-700 text-center max-w-[80px] truncate">
+                    {assignment.children.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Badges: Status, Category, Priority */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Status Badge */}
           <span
             className={`
               px-3 py-1 rounded-full text-xs font-medium
@@ -120,13 +170,31 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
             {getStatusLabel(status)}
           </span>
 
-          {theme === 'parent' && (
-            <div className="flex gap-2 text-xs text-gray-500" aria-label={`${t('tasks.category')}: ${t(`tasks.categories.${task.category}`)}, ${t('tasks.priority')}: ${t(`tasks.priorities.${task.priority}`)}`}>
-              <span>{t(`tasks.categories.${task.category}`)}</span>
-              <span aria-hidden="true">•</span>
-              <span>{t(`tasks.priorities.${task.priority}`)}</span>
-            </div>
-          )}
+          {/* Category Badge */}
+          <span
+            className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border border-blue-200"
+            aria-label={`${t('tasks.category')}: ${t(`tasks.categories.${task.category}`)}`}
+          >
+            {t(`tasks.categories.${task.category}`)}
+          </span>
+
+          {/* Priority Badge */}
+          <span
+            className={`
+              px-3 py-1 rounded-full text-xs font-medium border
+              ${
+                task.priority === 'high'
+                  ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300'
+                  : task.priority === 'medium'
+                  ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300'
+                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border-gray-300'
+              }
+            `}
+            aria-label={`${t('tasks.priority')}: ${t(`tasks.priorities.${task.priority}`)}`}
+          >
+            {task.priority === 'high' ? '🔴 ' : task.priority === 'medium' ? '🟡 ' : '⚪ '}
+            {t(`tasks.priorities.${task.priority}`)}
+          </span>
         </div>
       </button>
     </ThemeCard>

@@ -118,9 +118,9 @@ export default function ReviewsPage() {
           >
             ⭐
           </motion.div>
-          <h1 className="text-4xl font-black mb-2">Tasks to Review</h1>
+          <h1 className="text-4xl font-black mb-2">{t('reviews.title')}</h1>
           <p className="text-white/90 text-lg">
-            {pendingReviews.length} task{pendingReviews.length !== 1 ? 's' : ''} waiting for your review
+            {t('reviews.tasksWaiting', { count: pendingReviews.length, plural: pendingReviews.length !== 1 ? 's' : '' })}
           </p>
         </motion.div>
 
@@ -140,8 +140,8 @@ export default function ReviewsPage() {
             >
               🎉
             </motion.div>
-            <p className="text-2xl font-black">All caught up!</p>
-            <p className="text-white/90 mt-2 text-lg">No tasks pending review</p>
+            <p className="text-2xl font-black">{t('reviews.allCaughtUp')}</p>
+            <p className="text-white/90 mt-2 text-lg">{t('reviews.noTasksPending')}</p>
           </motion.div>
         ) : (
           <div className="space-y-4">

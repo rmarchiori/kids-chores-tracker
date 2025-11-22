@@ -216,7 +216,7 @@ export default function RewardsPage() {
             >
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2 text-gray-700">Select Child</label>
+                  <label className="block text-sm font-bold mb-2 text-gray-700">{t('rewards.selectChild')}</label>
                   <select
                     value={selectedChild?.id || ''}
                     onChange={(e) => {
