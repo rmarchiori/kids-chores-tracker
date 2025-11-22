@@ -228,6 +228,7 @@
     "all_tasks": "All Tasks",
     "all_categories": "All Categories",
     "all_priorities": "All Priorities",
+    "selected": "selected",
     "categories": {
       "cleaning": "Cleaning",
       "homework": "Homework",

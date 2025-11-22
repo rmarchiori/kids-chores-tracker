@@ -17,6 +17,16 @@ interface TaskCardProps {
     category: string
     priority: string
     status?: 'pending' | 'completed' | 'pending_review'
+    task_assignments?: Array<{
+      id: string
+      child_id: string
+      children: {
+        id: string
+        name: string
+        age_group: string
+        profile_photo_url?: string | null
+      }
+    }>
   }
   onClick?: () => void
   showDescription?: boolean
@@ -99,6 +109,44 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
           <p className={`text-sm ${themeClasses.textSecondary} mb-2`}>
             {task.description}
           </p>
+        )}
+
+        {/* Assigned Children - Show if present */}
+        {task.task_assignments && task.task_assignments.length > 0 && (
+          <div className="mb-3 flex items-center gap-2">
+            <span className="text-xs font-medium text-gray-600">{t('tasks.assign_to')}:</span>
+            <div className="flex -space-x-2">
+              {task.task_assignments.map((assignment) => (
+                <div
+                  key={assignment.id}
+                  className="relative group/avatar"
+                  title={assignment.children.name}
+                >
+                  {assignment.children.profile_photo_url ? (
+                    <Image
+                      src={assignment.children.profile_photo_url}
+                      alt={assignment.children.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full border-2 border-white shadow-md"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">
+                        {assignment.children.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  {/* Tooltip on hover */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover/avatar:opacity-100 transition-opacity pointer-events-none z-10">
+                    <div className="bg-gray-900 text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                      {assignment.children.name}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Badges: Status, Category, Priority */}

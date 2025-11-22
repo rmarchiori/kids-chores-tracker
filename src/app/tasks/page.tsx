@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import useSWR from 'swr'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, XMarkIcon, ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -43,6 +42,10 @@ export default function TasksPage() {
   const router = useRouter()
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([])
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false)
+  const [priorityDropdownOpen, setPriorityDropdownOpen] = useState(false)
+  const categoryRef = useRef<HTMLDivElement>(null)
+  const priorityRef = useRef<HTMLDivElement>(null)
 
   const categories = ['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime', 'other']
   const priorities = ['low', 'medium', 'high']
@@ -62,6 +65,21 @@ export default function TasksPage() {
         : [...prev, priority]
     )
   }
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+        setCategoryDropdownOpen(false)
+      }
+      if (priorityRef.current && !priorityRef.current.contains(event.target as Node)) {
+        setPriorityDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const clearFilters = () => {
     setSelectedCategories([])
@@ -188,50 +206,114 @@ export default function TasksPage() {
             </div>
 
             {/* Category Filter */}
-            <div className="mb-4">
+            <div className="mb-4" ref={categoryRef}>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.category')}
               </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    onClick={() => toggleCategory(category)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedCategories.includes(category)
-                        ? 'bg-pink-500 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {t(`tasks.categories.${category}`)}
-                  </motion.button>
-                ))}
+              <div className="relative">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setCategoryDropdownOpen(!categoryDropdownOpen)
+                  }}
+                  className="w-full px-4 py-2 text-left bg-white border-2 border-gray-300 rounded-xl hover:border-pink-400 transition-colors flex items-center justify-between"
+                >
+                  <span className="text-sm text-gray-700">
+                    {selectedCategories.length === 0
+                      ? t('tasks.all_categories')
+                      : `${selectedCategories.length} ${t('tasks.selected')}`}
+                  </span>
+                  <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {categoryDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-64 overflow-y-auto"
+                    >
+                      {categories.map((category) => (
+                        <button
+                          key={category}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            toggleCategory(category)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-pink-50 flex items-center gap-2 transition-colors"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                            selectedCategories.includes(category)
+                              ? 'bg-pink-500 border-pink-500'
+                              : 'border-gray-300'
+                          }`}>
+                            {selectedCategories.includes(category) && (
+                              <CheckIcon className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-700">{t(`tasks.categories.${category}`)}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
             {/* Priority Filter */}
-            <div>
+            <div ref={priorityRef}>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.priority')}
               </label>
-              <div className="flex flex-wrap gap-2">
-                {priorities.map((priority) => (
-                  <motion.button
-                    key={priority}
-                    onClick={() => togglePriority(priority)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                      selectedPriorities.includes(priority)
-                        ? 'bg-pink-500 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {t(`tasks.priorities.${priority}`)}
-                  </motion.button>
-                ))}
+              <div className="relative">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setPriorityDropdownOpen(!priorityDropdownOpen)
+                  }}
+                  className="w-full px-4 py-2 text-left bg-white border-2 border-gray-300 rounded-xl hover:border-pink-400 transition-colors flex items-center justify-between"
+                >
+                  <span className="text-sm text-gray-700">
+                    {selectedPriorities.length === 0
+                      ? t('tasks.all_priorities')
+                      : `${selectedPriorities.length} ${t('tasks.selected')}`}
+                  </span>
+                  <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${priorityDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {priorityDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute z-10 w-full mt-2 bg-white border-2 border-gray-200 rounded-xl shadow-xl"
+                    >
+                      {priorities.map((priority) => (
+                        <button
+                          key={priority}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            togglePriority(priority)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-pink-50 flex items-center gap-2 transition-colors"
+                        >
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                            selectedPriorities.includes(priority)
+                              ? 'bg-pink-500 border-pink-500'
+                              : 'border-gray-300'
+                          }`}>
+                            {selectedPriorities.includes(priority) && (
+                              <CheckIcon className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-700">{t(`tasks.priorities.${priority}`)}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
@@ -290,45 +372,6 @@ export default function TasksPage() {
                 >
                   <div onClick={() => handleTaskClick(task.id)} className="cursor-pointer">
                     <TaskCard task={task} />
-
-                    {/* Assigned Children Photos */}
-                    {task.task_assignments && task.task_assignments.length > 0 && (
-                      <div className="mt-3 flex items-center gap-2">
-                        <span className="text-xs font-medium text-gray-600">{t('tasks.assign_to')}:</span>
-                        <div className="flex -space-x-2">
-                          {task.task_assignments.map((assignment) => (
-                            <motion.div
-                              key={assignment.id}
-                              className="relative group/avatar"
-                              whileHover={{ scale: 1.2, zIndex: 10 }}
-                              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                            >
-                              {assignment.children.profile_photo_url ? (
-                                <Image
-                                  src={assignment.children.profile_photo_url}
-                                  alt={assignment.children.name}
-                                  width={32}
-                                  height={32}
-                                  className="rounded-full border-2 border-white shadow-md"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
-                                  <span className="text-xs font-bold text-white">
-                                    {assignment.children.name.charAt(0)}
-                                  </span>
-                                </div>
-                              )}
-                              {/* Tooltip on hover */}
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover/avatar:opacity-100 transition-opacity pointer-events-none">
-                                <div className="bg-gray-900 text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
-                                  {assignment.children.name}
-                                </div>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   {/* Delete Button (appears on hover) */}
