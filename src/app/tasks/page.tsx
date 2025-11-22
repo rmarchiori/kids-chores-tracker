@@ -166,6 +166,7 @@ export default function TasksPage() {
           >
             <h1 className="text-3xl font-black text-white">{t('tasks.title')}</h1>
             <motion.button
+              type="button"
               onClick={() => router.push('/tasks/new')}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
               aria-label={t('tasks.new_task')}
@@ -190,6 +191,7 @@ export default function TasksPage() {
               <AnimatePresence>
                 {hasActiveFilters && (
                   <motion.button
+                    type="button"
                     onClick={clearFilters}
                     className="flex items-center gap-1 text-sm text-pink-600 hover:text-pink-700 font-medium"
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -212,6 +214,7 @@ export default function TasksPage() {
               </label>
               <div className="relative">
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault()
                     setCategoryDropdownOpen(!categoryDropdownOpen)
@@ -237,6 +240,7 @@ export default function TasksPage() {
                       {categories.map((category) => (
                         <button
                           key={category}
+                          type="button"
                           onClick={(e) => {
                             e.preventDefault()
                             toggleCategory(category)
@@ -268,6 +272,7 @@ export default function TasksPage() {
               </label>
               <div className="relative">
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault()
                     setPriorityDropdownOpen(!priorityDropdownOpen)
@@ -293,6 +298,7 @@ export default function TasksPage() {
                       {priorities.map((priority) => (
                         <button
                           key={priority}
+                          type="button"
                           onClick={(e) => {
                             e.preventDefault()
                             togglePriority(priority)
@@ -347,6 +353,7 @@ export default function TasksPage() {
                 {t('tasks.no_tasks')}
               </motion.p>
               <motion.button
+                type="button"
                 onClick={() => router.push('/tasks/new')}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-3xl shadow-2xl hover:from-pink-500 hover:to-rose-500 transition-colors"
                 aria-label={t('tasks.add_first_task')}
@@ -376,6 +383,7 @@ export default function TasksPage() {
 
                   {/* Delete Button (appears on hover) */}
                   <motion.button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDelete(task.id, task.title)

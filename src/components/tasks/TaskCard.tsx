@@ -113,36 +113,37 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
 
         {/* Assigned Children - Show if present */}
         {task.task_assignments && task.task_assignments.length > 0 && (
-          <div className="mb-3 flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-600">{t('tasks.assign_to')}:</span>
-            <div className="flex -space-x-2">
+          <div className="mb-3">
+            <span className="text-xs font-medium text-gray-600 mb-2 block">{t('tasks.assign_to')}:</span>
+            <div className="flex flex-wrap gap-4">
               {task.task_assignments.map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="relative group/avatar"
-                  title={assignment.children.name}
+                  className="flex flex-col items-center gap-2"
                 >
-                  {assignment.children.profile_photo_url ? (
-                    <Image
-                      src={assignment.children.profile_photo_url}
-                      alt={assignment.children.name}
-                      width={32}
-                      height={32}
-                      className="rounded-full border-2 border-white shadow-md"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
-                      <span className="text-xs font-bold text-white">
-                        {assignment.children.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  {/* Tooltip on hover */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover/avatar:opacity-100 transition-opacity pointer-events-none z-10">
-                    <div className="bg-gray-900 text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
-                      {assignment.children.name}
-                    </div>
+                  {/* Child Photo */}
+                  <div className="relative">
+                    {assignment.children.profile_photo_url ? (
+                      <Image
+                        src={assignment.children.profile_photo_url}
+                        alt={assignment.children.name}
+                        width={56}
+                        height={56}
+                        className="rounded-full border-2 border-gray-200 shadow-md"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full border-2 border-gray-200 shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
+                        <span className="text-xl font-bold text-white">
+                          {assignment.children.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Child Name */}
+                  <p className="text-xs font-bold text-gray-700 text-center max-w-[80px] truncate">
+                    {assignment.children.name}
+                  </p>
                 </div>
               ))}
             </div>
