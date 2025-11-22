@@ -18,6 +18,7 @@ import {
   UserIcon
 } from '@heroicons/react/24/outline'
 import { motion } from 'framer-motion'
+import { useTranslation } from '@/hooks/useTranslation'
 
 // Validation schema for invitation
 const invitationSchema = z.object({
@@ -57,6 +58,7 @@ export default function FamilySettingsPage() {
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null)
   const [members, setMembers] = useState<FamilyMember[]>([])
   const [invitations, setInvitations] = useState<Invitation[]>([])
+  const { t } = useTranslation()
 
   const {
     register,
@@ -88,7 +90,7 @@ export default function FamilySettingsPage() {
           .single()
 
         if (membershipError || !membership) {
-          setError('You are not part of any family')
+          setError(t('family.notPartOfFamily'))
           return
         }
 
@@ -97,7 +99,7 @@ export default function FamilySettingsPage() {
 
         // Only admins can access this page
         if (membership.role !== 'admin') {
-          setError('Only family admins can manage family settings')
+          setError(t('family.onlyAdminsCanManage'))
           return
         }
 
@@ -144,7 +146,7 @@ export default function FamilySettingsPage() {
       // Check if user is already a member
       const existingMember = members.find(m => m.email.toLowerCase() === data.email.toLowerCase())
       if (existingMember) {
-        setError('This user is already a member of your family')
+        setError(t('family.userAlreadyMember'))
         return
       }
 
@@ -153,7 +155,7 @@ export default function FamilySettingsPage() {
         inv => inv.invited_email.toLowerCase() === data.email.toLowerCase() && inv.status === 'pending'
       )
       if (existingInvitation) {
-        setError('There is already a pending invitation for this email')
+        setError(t('family.pendingInvitationExists'))
         return
       }
 
@@ -174,7 +176,7 @@ export default function FamilySettingsPage() {
         throw new Error(result.error || 'Failed to send invitation')
       }
 
-      setSuccess(`Invitation sent to ${data.email}!`)
+      setSuccess(t('family.invitationSent', { email: data.email }))
       setInvitations([result.invitation, ...invitations])
       reset()
 
@@ -188,7 +190,7 @@ export default function FamilySettingsPage() {
 
   // Handle member removal
   const handleRemoveMember = async (memberId: string, memberEmail: string) => {
-    if (!confirm(`Are you sure you want to remove ${memberEmail} from your family?`)) {
+    if (!confirm(t('family.confirmRemoveMember', { email: memberEmail }))) {
       return
     }
 
@@ -206,7 +208,7 @@ export default function FamilySettingsPage() {
         throw new Error(result.error || 'Failed to remove member')
       }
 
-      setSuccess(`${memberEmail} has been removed from your family`)
+      setSuccess(t('family.memberRemoved', { email: memberEmail }))
       setMembers(members.filter(m => m.id !== memberId))
 
     } catch (err) {
@@ -217,7 +219,7 @@ export default function FamilySettingsPage() {
 
   // Handle invitation cancellation
   const handleCancelInvitation = async (invitationId: string, email: string) => {
-    if (!confirm(`Cancel invitation for ${email}?`)) {
+    if (!confirm(t('family.confirmCancelInvitation', { email }))) {
       return
     }
 
@@ -235,7 +237,7 @@ export default function FamilySettingsPage() {
         throw new Error(result.error || 'Failed to cancel invitation')
       }
 
-      setSuccess(`Invitation for ${email} has been cancelled`)
+      setSuccess(t('family.invitationCancelled', { email }))
       setInvitations(invitations.filter(inv => inv.id !== invitationId))
 
     } catch (err) {
@@ -250,7 +252,7 @@ export default function FamilySettingsPage() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-700">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-white font-medium">Loading family settings...</p>
+            <p className="text-white font-medium">{t('family.loadingSettings')}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -276,9 +278,9 @@ export default function FamilySettingsPage() {
             transition={{ duration: 0.5 }}
           >
             <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-3xl font-black text-gray-900 mb-3">Access Denied</h2>
+            <h2 className="text-3xl font-black text-gray-900 mb-3">{t('family.accessDenied')}</h2>
             <p className="text-gray-700 mb-6 font-medium">
-              Only family admins can manage family settings.
+              {t('family.onlyAdminsCanManage')}
             </p>
             <motion.button
               onClick={() => router.push('/dashboard')}
@@ -287,7 +289,7 @@ export default function FamilySettingsPage() {
               whileTap={{ scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              Back to Home
+              {t('family.backToHome')}
             </motion.button>
           </motion.div>
         </div>
@@ -321,10 +323,10 @@ export default function FamilySettingsPage() {
               <UserGroupIcon className="w-20 h-20 mx-auto mb-4 text-white" />
             </motion.div>
             <h1 className="text-5xl font-black text-white mb-3">
-              Family Settings
+              {t('family.settings')}
             </h1>
             <p className="text-xl text-white/90">
-              Manage your family members and invite others to join
+              {t('family.manageDescription')}
             </p>
           </motion.div>
 
@@ -361,14 +363,14 @@ export default function FamilySettingsPage() {
         >
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
             <EnvelopeIcon className="w-7 h-7 mr-3 text-cyan-600" />
-            Invite Family Member
+            {t('family.inviteMember')}
           </h2>
 
           <form onSubmit={handleSubmit(onSubmitInvitation)} className="space-y-4">
             {/* Email Input */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                {t('family.email')}
               </label>
               <input
                 {...register('email')}
@@ -386,7 +388,7 @@ export default function FamilySettingsPage() {
             {/* Role Selection */}
             <div>
               <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                Role
+                {t('family.role')}
               </label>
               <select
                 {...register('role')}
@@ -394,17 +396,15 @@ export default function FamilySettingsPage() {
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={submitting}
               >
-                <option value="">Select a role...</option>
-                <option value="parent">Parent</option>
-                <option value="teen">Teen</option>
+                <option value="">{t('family.selectRole')}</option>
+                <option value="parent">{t('family.parent')}</option>
+                <option value="teen">{t('family.teen')}</option>
               </select>
               {errors.role && (
                 <p className="mt-2 text-sm text-red-600">{errors.role.message}</p>
               )}
               <p className="mt-2 text-xs text-gray-500">
-                <strong>Parent:</strong> Can manage children and tasks.
-                <br />
-                <strong>Teen:</strong> Can view tasks and help manage siblings.
+                {t('family.roleDescription')}
               </p>
             </div>
 
@@ -420,12 +420,12 @@ export default function FamilySettingsPage() {
               {submitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Sending Invitation...
+                  {t('family.sendingInvitation')}
                 </>
               ) : (
                 <>
                   <EnvelopeIcon className="w-5 h-5 mr-2" />
-                  Send Invitation
+                  {t('family.sendInvitation')}
                 </>
               )}
             </motion.button>
@@ -442,11 +442,11 @@ export default function FamilySettingsPage() {
         >
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
             <UserGroupIcon className="w-7 h-7 mr-3 text-cyan-600" />
-            Family Members ({members.length})
+            {`${t('family.members')} (${members.length})`}
           </h2>
 
           {members.length === 0 ? (
-            <p className="text-gray-600 text-center py-8 font-medium">No family members found</p>
+            <p className="text-gray-600 text-center py-8 font-medium">{t('family.noMembersFound')}</p>
           ) : (
             <div className="space-y-4">
               {members.map((member, index) => {
@@ -502,7 +502,7 @@ export default function FamilySettingsPage() {
 
                     {isOnlyAdmin && (
                       <div className="ml-4 px-3 py-1 bg-purple-100 rounded-lg text-xs text-purple-700 font-bold">
-                        Last Admin
+                        {t('family.lastAdmin')}
                       </div>
                     )}
                   </motion.div>
@@ -523,7 +523,7 @@ export default function FamilySettingsPage() {
           >
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
               <ClockIcon className="w-7 h-7 mr-3 text-yellow-600" />
-              Pending Invitations ({invitations.length})
+              {`${t('family.invitations')} (${invitations.length})`}
             </h2>
 
             <div className="space-y-4">
@@ -541,8 +541,8 @@ export default function FamilySettingsPage() {
                       {invitation.invited_email}
                     </p>
                     <p className="text-sm text-gray-700 font-medium">
-                      Role: {invitation.invited_role} •
-                      Expires: {new Date(invitation.expires_at).toLocaleDateString()}
+                      {`${t('family.role')}:`} {invitation.invited_role} •
+                      {` ${t('family.expiresAt')}:`} {new Date(invitation.expires_at).toLocaleDateString()}
                     </p>
                   </div>
                   <motion.button
@@ -551,7 +551,7 @@ export default function FamilySettingsPage() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                   >
-                    Cancel
+                    {t('family.cancel')}
                   </motion.button>
                 </motion.div>
               ))}
