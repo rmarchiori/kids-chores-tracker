@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskForm } from '@/components/tasks/TaskForm'
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { TaskLibraryBrowser } from '@/components/tasks/TaskLibraryBrowser'
+import { ArrowLeftIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { Child } from '@/lib/schemas'
 import { motion } from 'framer-motion'
@@ -17,6 +18,8 @@ export default function NewTaskPage() {
   const [familyId, setFamilyId] = useState<string | null>(null)
   const [children, setChildren] = useState<Child[]>([])
   const [loading, setLoading] = useState(true)
+  const [showLibrary, setShowLibrary] = useState(false)
+  const [libraryTaskData, setLibraryTaskData] = useState<any>(null)
 
   useEffect(() => {
     loadFamilyData()
@@ -66,6 +69,19 @@ export default function NewTaskPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleLibraryTaskSelect(libraryTask: any) {
+    // Convert library task to form data
+    setLibraryTaskData({
+      title: libraryTask.title,
+      description: libraryTask.description,
+      category: libraryTask.category,
+      priority: libraryTask.priority,
+      image_url: libraryTask.image_url,
+      image_alt_text: libraryTask.image_alt_text,
+      image_source: libraryTask.image_source
+    })
   }
 
   async function handleSubmit(data: any, subtasks: any[]) {
@@ -163,6 +179,24 @@ export default function NewTaskPage() {
             </p>
           </motion.div>
 
+          {/* Browse Library Button */}
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+          >
+            <motion.button
+              onClick={() => setShowLibrary(true)}
+              className="w-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <SparklesIcon className="w-6 h-6" />
+              <span>Browse Task Library (50+ Pre-Made Tasks)</span>
+            </motion.button>
+          </motion.div>
+
           {/* Task Form */}
           <motion.div
             className="bg-white rounded-3xl shadow-2xl p-6"
@@ -173,6 +207,7 @@ export default function NewTaskPage() {
           >
             <TaskForm
               familyId={familyId}
+              initialData={libraryTaskData}
               onSubmit={handleSubmit}
               submitLabel={t('tasks.create_task')}
               availableChildren={children.map(child => ({
@@ -181,6 +216,13 @@ export default function NewTaskPage() {
               }))}
             />
           </motion.div>
+
+          {/* Task Library Browser Modal */}
+          <TaskLibraryBrowser
+            isOpen={showLibrary}
+            onClose={() => setShowLibrary(false)}
+            onSelectTask={handleLibraryTaskSelect}
+          />
         </div>
       </div>
     </DashboardLayout>
