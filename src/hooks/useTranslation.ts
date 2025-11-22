@@ -6,15 +6,18 @@ import { getClientLocale, type Language } from '@/lib/i18n'
 type Translations = Record<string, any>
 
 export function useTranslation() {
-  // Read locale from cookie ONCE on mount - never update it
-  // If language changes, the page will reload and this will re-initialize
-  const [locale] = useState<Language>(() => {
-    if (typeof window === 'undefined') return 'en-CA'
-    return getClientLocale()
-  })
-
+  // Read locale from cookie on mount - use effect to ensure client-side reading
+  const [locale, setLocale] = useState<Language>('en-CA')
   const [translations, setTranslations] = useState<Translations>({})
   const [isLoading, setIsLoading] = useState(true)
+
+  // Read locale from cookie on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const clientLocale = getClientLocale()
+      setLocale(clientLocale)
+    }
+  }, [])
 
   useEffect(() => {
     // Cleanup flag to prevent state updates after unmount
