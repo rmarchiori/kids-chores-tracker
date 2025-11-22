@@ -95,16 +95,17 @@ export function StarRating({
         ))}
       </div>
 
-      {/* Label */}
-      {showLabel && displayValue > 0 && (
+      {/* Label - Always reserve space to prevent height changes */}
+      {showLabel && (
         <div className={`
-          text-center px-4 py-2 rounded-lg transition-all
+          text-center px-4 py-2 rounded-lg transition-all min-h-[3rem]
+          ${displayValue > 0 ? 'opacity-100' : 'opacity-0'}
           ${ageGroup === '5-8'
             ? 'bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 font-bold text-lg'
             : 'bg-blue-50 text-blue-800 font-medium'
           }
         `}>
-          {currentLabel}
+          {displayValue > 0 ? currentLabel : '\u00A0'}
         </div>
       )}
 
