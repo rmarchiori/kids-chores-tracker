@@ -13,7 +13,7 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     const { id: taskId, subtaskId } = await params
 
     // Get current user

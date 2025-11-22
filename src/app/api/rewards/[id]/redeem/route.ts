@@ -12,7 +12,7 @@ export async function POST(
   { params }: RouteParams
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     const { id: rewardId } = await params
     const body = await request.json()
     const { child_id } = body

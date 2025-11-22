@@ -21,7 +21,7 @@ export async function GET(
 ) {
   const { id } = await params
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -75,7 +75,7 @@ export async function PATCH(
 ) {
   const { id } = await params
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -147,7 +147,7 @@ export async function DELETE(
 ) {
   const { id } = await params
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

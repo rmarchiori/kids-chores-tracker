@@ -12,7 +12,7 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     const { id: childId } = await params
 
     // Get current user

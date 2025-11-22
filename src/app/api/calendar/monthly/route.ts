@@ -5,7 +5,7 @@ import { doesTaskOccurOnDate } from '@/lib/utils/rrule-generator'
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

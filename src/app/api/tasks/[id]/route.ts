@@ -3,6 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { UpdateTaskSchema } from '@/lib/schemas'
 import { z } from 'zod'
 
+// Mark route as dynamic since it uses cookies for auth
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/tasks/[id]
  * Get a specific task by ID
@@ -19,7 +22,7 @@ export async function GET(
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -83,7 +86,7 @@ export async function PATCH(
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -223,7 +226,7 @@ export async function DELETE(
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser()

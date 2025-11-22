@@ -17,7 +17,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     const taskId = params.id
 
     // Verify user has access to this task
@@ -80,7 +80,7 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     const taskId = params.id
 
     // Verify user has access
