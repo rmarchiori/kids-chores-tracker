@@ -392,7 +392,7 @@ export default function DailyTasksPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {t('tasks.select_all') || 'Select All'}
+                    {t('daily.selectAll')}
                   </motion.button>
                   {selectedChildren.length > 0 && (
                     <motion.button
@@ -404,7 +404,7 @@ export default function DailyTasksPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      {t('tasks.clear_filters') || 'Clear All'}
+                      {t('daily.clearAll')}
                     </motion.button>
                   )}
                 </div>

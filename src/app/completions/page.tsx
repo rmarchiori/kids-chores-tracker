@@ -108,8 +108,8 @@ export default function CompletionsPage() {
           >
             📊
           </motion.div>
-          <h1 className="text-4xl font-black mb-2">Completion History</h1>
-          <p className="text-white/90 text-lg">View all completed tasks by your children</p>
+          <h1 className="text-4xl font-black mb-2">{t('completions.title')}</h1>
+          <p className="text-white/90 text-lg">{t('completions.description')}</p>
         </motion.div>
 
         {/* Filters */}
@@ -120,7 +120,7 @@ export default function CompletionsPage() {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <label htmlFor="filter-child" className="text-sm font-black text-gray-700">
-            Filter by child:
+            {t('completions.filterByChild')}
           </label>
           <select
             id="filter-child"
@@ -128,7 +128,7 @@ export default function CompletionsPage() {
             onChange={(e) => setFilterChild(e.target.value)}
             className="px-4 py-2 border-2 border-cyan-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold"
           >
-            <option value="all">All Children</option>
+            <option value="all">{t('completions.allChildren')}</option>
             {children.map(child => (
               <option key={child.id} value={child.id}>{child.name}</option>
             ))}
@@ -151,8 +151,8 @@ export default function CompletionsPage() {
             >
               📋
             </motion.div>
-            <p className="text-2xl font-black">No completions yet</p>
-            <p className="text-white/90 mt-2 text-lg">Completed tasks will appear here</p>
+            <p className="text-2xl font-black">{t('completions.noCompletions')}</p>
+            <p className="text-white/90 mt-2 text-lg">{t('completions.noCompletionsDescription')}</p>
           </motion.div>
         ) : (
           <div className="space-y-4">

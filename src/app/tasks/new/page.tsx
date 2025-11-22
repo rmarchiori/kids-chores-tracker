@@ -193,7 +193,7 @@ export default function NewTaskPage() {
               whileTap={{ scale: 0.98 }}
             >
               <SparklesIcon className="w-6 h-6" />
-              <span>Browse Task Library (50+ Pre-Made Tasks)</span>
+              <span>{t('taskLibrary.browseLibrary')}</span>
             </motion.button>
           </motion.div>
 

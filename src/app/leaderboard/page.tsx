@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
+import { useTranslation } from '@/hooks/useTranslation'
 import { motion } from 'framer-motion'
 
 interface LeaderboardEntry {
@@ -15,6 +16,7 @@ interface LeaderboardEntry {
 }
 
 export default function LeaderboardPage() {
+  const { t } = useTranslation()
   const [data, setData] = useState<LeaderboardEntry[]>([])
   const [timeframe, setTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('weekly')
   const [loading, setLoading] = useState(true)
@@ -151,7 +153,7 @@ export default function LeaderboardPage() {
             >
               <div className="text-6xl mb-4">📊</div>
               <h2 className="text-2xl font-black mb-2">No Data Yet</h2>
-              <p className="text-white/90">Complete some tasks to see the leaderboard!</p>
+              <p className="text-white/90">{t('leaderboard.description')}</p>
             </motion.div>
           )}
         </div>

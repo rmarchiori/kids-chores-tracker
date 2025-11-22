@@ -422,6 +422,8 @@
     "createTasksPrompt": "Créez des tâches pour commencer",
     "assignedTo": "Assigné à:",
     "progress": "Progrès",
+    "selectAll": "Tout Sélectionner",
+    "clearAll": "Tout Effacer",
     "status": {
       "notStarted": "Non Commencé",
       "pendingReview": "En Attente de Révision",
@@ -436,7 +438,33 @@
     "greatJob": "Bon travail!",
     "noTasksAssigned": "Aucune tâche assignée pour le moment!",
     "iDidThis": "J'ai Fait Ça!",
-    "markComplete": "Marquer comme Terminé"
+    "markComplete": "Marquer comme Terminé",
+    "modal": {
+      "titleYoung": "🎉 Excellent travail!",
+      "titleOlder": "Tâche Terminée!",
+      "titleMultiple": "Compléter {{count}} Tâches!",
+      "taskProgress": "Tâche {{current}} de {{total}}",
+      "useSameRating": "Utiliser la même évaluation pour toutes les tâches",
+      "rateEffortYoung": "Comment as-tu fait? ⭐",
+      "rateEffortOlder": "Évalue ton effort:",
+      "addNotesYoung": "Veux-tu nous en dire plus? (optionnel)",
+      "addNotesOlder": "Ajouter des notes (optionnel):",
+      "notesPlaceholderYoung": "Raconte-nous...",
+      "notesPlaceholderOlder": "Comment ça s'est passé? Des défis?",
+      "charactersRemaining": "{{count}}/500 caractères",
+      "errorSelectRating": "Veuillez sélectionner une évaluation en étoiles",
+      "errorNotesTooLong": "Les notes doivent contenir 500 caractères ou moins",
+      "errorRateAllTasks": "Veuillez évaluer toutes les tâches avant de soumettre",
+      "previousTask": "Précédent",
+      "nextTask": "Tâche Suivante →",
+      "submitSingle": "Soumettre",
+      "submitMultiple": "Compléter {{count}} {{tasks}}",
+      "submitting": "Enregistrement...",
+      "taskSingular": "Tâche",
+      "taskPlural": "Tâches",
+      "doneYoung": "✨ Terminé!",
+      "doneOlder": "Soumettre"
+    }
   },
   "settings": {
     "title": "Paramètres",
@@ -501,12 +529,27 @@
       "completions_failed": "Échec de la récupération des complétions"
     }
   },
+  "completions": {
+    "title": "Historique de complétion",
+    "description": "Voir toutes les tâches complétées par vos enfants",
+    "filterByChild": "Filtrer par enfant:",
+    "allChildren": "Tous les Enfants",
+    "noCompletions": "Aucune complétion pour l'instant",
+    "noCompletionsDescription": "Les tâches complétées apparaîtront ici"
+  },
+  "reviews": {
+    "title": "Tâches à réviser",
+    "tasksWaiting": "{{count}} tâche{{plural}} en attente de votre révision",
+    "allCaughtUp": "Tout est à jour!",
+    "noTasksPending": "Aucune tâche en attente de révision"
+  },
   "rewards": {
     "title": "Magasin de récompenses",
     "add_reward": "Ajouter une récompense",
     "create_reward": "Créer une récompense",
     "cancel": "Annuler",
     "loading": "Chargement...",
+    "selectChild": "Sélectionner l'enfant",
     "form": {
       "create_title": "Créer une nouvelle récompense",
       "name_label": "Nom de la récompense",
@@ -527,7 +570,24 @@
     "no_rewards": "Aucune récompense disponible pour l'instant.",
     "create_prompt": "Créez des récompenses pour motiver vos enfants!"
   },
+  "leaderboard": {
+    "title": "Classement",
+    "description": "Complétez des tâches pour voir le classement!"
+  },
+  "taskLibrary": {
+    "title": "Bibliothèque de tâches",
+    "description": "Choisissez parmi {{count}} tâches pré-faites pour commencer rapidement!",
+    "searchPlaceholder": "Rechercher des tâches...",
+    "category": "Catégorie",
+    "ageGroup": "Groupe d'âge",
+    "noResults": "Aucune tâche trouvée",
+    "tryAdjusting": "Essayez d'ajuster vos filtres",
+    "showing": "Affichage de {{filtered}} sur {{total}} tâches",
+    "browseLibrary": "Parcourir la bibliothèque de tâches (50+ tâches pré-faites)"
+  },
   "achievements": {
+    "title": "Réalisations",
+    "description": "Complétez des tâches pour débloquer des réalisations!",
     "first_task": {
       "name": "Première tâche",
       "description": "Compléter votre première tâche"

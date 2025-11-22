@@ -141,7 +141,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
               <SparklesIcon className="w-8 h-8" />
-              <h2 className="text-2xl font-black">Task Library</h2>
+              <h2 className="text-2xl font-black">{t('taskLibrary.title')}</h2>
             </div>
             <button
               onClick={onClose}
@@ -151,7 +151,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
             </button>
           </div>
           <p className="text-white/90">
-            Choose from {libraryTasks.length} pre-made tasks to get started quickly!
+            {t('taskLibrary.description', { count: libraryTasks.length })}
           </p>
         </div>
 
@@ -165,7 +165,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
+                placeholder={t('taskLibrary.searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -175,7 +175,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Category
+                {t('taskLibrary.category')}
               </label>
               <select
                 value={selectedCategory}
@@ -189,7 +189,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Age Group
+                {t('taskLibrary.ageGroup')}
               </label>
               <select
                 value={selectedAgeGroup}
@@ -212,8 +212,8 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
             </div>
           ) : filteredTasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <p className="text-xl text-gray-500 font-medium mb-2">No tasks found</p>
-              <p className="text-gray-400">Try adjusting your filters</p>
+              <p className="text-xl text-gray-500 font-medium mb-2">{t('taskLibrary.noResults')}</p>
+              <p className="text-gray-400">{t('taskLibrary.tryAdjusting')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -274,7 +274,7 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
         {/* Footer */}
         <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
           <p className="text-sm text-gray-600">
-            Showing {filteredTasks.length} of {libraryTasks.length} tasks
+            {t('taskLibrary.showing', { filtered: filteredTasks.length, total: libraryTasks.length })}
           </p>
           <button
             onClick={onClose}

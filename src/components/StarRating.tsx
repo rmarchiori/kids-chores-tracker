@@ -83,10 +83,9 @@ export function StarRating({
             disabled={readonly}
             className={`
               ${SIZE_CLASSES[size]}
-              transition-all duration-150
-              ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}
+              transition-transform duration-200
+              ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-105'}
               ${rating <= displayValue ? 'text-yellow-400' : 'text-gray-300'}
-              ${!readonly && rating <= hoverValue ? 'animate-pulse' : ''}
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded
             `}
             aria-label={`${rating} star${rating > 1 ? 's' : ''}`}

@@ -111,7 +111,7 @@ export function MultiTaskCompletionModal({
     })
 
     if (invalidTasks.length > 0) {
-      setError('Please rate all tasks before submitting')
+      setError(t('childTasks.modal.errorRateAllTasks'))
       return
     }
 
@@ -119,7 +119,7 @@ export function MultiTaskCompletionModal({
     for (const task of tasks) {
       const completion = completions.get(task.id)
       if (completion && completion.notes.length > 500) {
-        setError('Notes must be 500 characters or less')
+        setError(t('childTasks.modal.errorNotesTooLong'))
         return
       }
     }
@@ -214,13 +214,13 @@ export function MultiTaskCompletionModal({
                 `}
               >
                 {tasks.length === 1
-                  ? (ageGroup === '5-8' ? '🎉 Great job!' : 'Task Completed!')
-                  : `Complete ${tasks.length} Tasks!`
+                  ? (ageGroup === '5-8' ? t('childTasks.modal.titleYoung') : t('childTasks.modal.titleOlder'))
+                  : t('childTasks.modal.titleMultiple', { count: tasks.length })
                 }
               </h2>
               {tasks.length > 1 && (
                 <p className="text-sm text-gray-600">
-                  Task {currentTaskIndex + 1} of {tasks.length}
+                  {t('childTasks.modal.taskProgress', { current: currentTaskIndex + 1, total: tasks.length })}
                 </p>
               )}
             </div>
@@ -304,7 +304,7 @@ export function MultiTaskCompletionModal({
                   className="w-4 h-4 text-blue-600 rounded"
                 />
                 <span className="text-sm font-medium text-blue-900">
-                  Use same rating for all tasks
+                  {t('childTasks.modal.useSameRating')}
                 </span>
               </label>
             </div>
@@ -316,7 +316,7 @@ export function MultiTaskCompletionModal({
               block mb-3 font-semibold
               ${ageGroup === '5-8' ? 'text-lg' : 'text-base'}
             `}>
-              {ageGroup === '5-8' ? 'How did you do? ⭐' : 'Rate your effort:'}
+              {ageGroup === '5-8' ? t('childTasks.modal.rateEffortYoung') : t('childTasks.modal.rateEffortOlder')}
             </label>
             <StarRating
               value={useSameRating ? globalRating : currentCompletion.rating}
@@ -329,15 +329,15 @@ export function MultiTaskCompletionModal({
           {/* Notes Section */}
           <div className="mb-6">
             <label htmlFor="completion-notes" className="block mb-2 font-semibold text-sm">
-              {ageGroup === '5-8' ? 'Want to tell us more? (optional)' : 'Add notes (optional):'}
+              {ageGroup === '5-8' ? t('childTasks.modal.addNotesYoung') : t('childTasks.modal.addNotesOlder')}
             </label>
             <textarea
               id="completion-notes"
               value={currentCompletion.notes}
               onChange={(e) => handleNotesChange(e.target.value)}
               placeholder={ageGroup === '5-8'
-                ? 'Tell us about it...'
-                : 'How did it go? Any challenges?'
+                ? t('childTasks.modal.notesPlaceholderYoung')
+                : t('childTasks.modal.notesPlaceholderOlder')
               }
               maxLength={500}
               rows={3}
@@ -351,7 +351,7 @@ export function MultiTaskCompletionModal({
               `}
             />
             <p className="text-xs text-gray-500 mt-1">
-              {currentCompletion.notes.length}/500 characters
+              {t('childTasks.modal.charactersRemaining', { count: currentCompletion.notes.length })}
             </p>
           </div>
 
@@ -372,7 +372,7 @@ export function MultiTaskCompletionModal({
                   disabled={currentTaskIndex === 0}
                   className="px-4 py-2 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  Previous
+                  {t('childTasks.modal.previousTask')}
                 </button>
                 {currentTaskIndex < tasks.length - 1 ? (
                   <button
@@ -386,7 +386,7 @@ export function MultiTaskCompletionModal({
                       }
                     `}
                   >
-                    Next Task →
+                    {t('childTasks.modal.nextTask')}
                   </button>
                 ) : (
                   <button
@@ -402,7 +402,16 @@ export function MultiTaskCompletionModal({
                       ${allRated ? 'shadow-lg hover:shadow-xl' : ''}
                     `}
                   >
-                    {submitting ? t('common.saving') : (ageGroup === '5-8' ? '✨ Done!' : `Complete ${tasks.length} ${tasks.length === 1 ? 'Task' : 'Tasks'}`)}
+                    {submitting
+                      ? t('childTasks.modal.submitting')
+                      : (ageGroup === '5-8'
+                        ? t('childTasks.modal.doneYoung')
+                        : t('childTasks.modal.submitMultiple', {
+                            count: tasks.length,
+                            tasks: tasks.length === 1 ? t('childTasks.modal.taskSingular') : t('childTasks.modal.taskPlural')
+                          })
+                      )
+                    }
                   </button>
                 )}
               </>
@@ -430,7 +439,7 @@ export function MultiTaskCompletionModal({
                     ${currentCompletion.rating > 0 ? 'shadow-lg hover:shadow-xl' : ''}
                   `}
                 >
-                  {submitting ? t('common.saving') : (ageGroup === '5-8' ? '✨ Done!' : 'Submit')}
+                  {submitting ? t('childTasks.modal.submitting') : (ageGroup === '5-8' ? t('childTasks.modal.doneYoung') : t('childTasks.modal.doneOlder'))}
                 </button>
               </>
             )}

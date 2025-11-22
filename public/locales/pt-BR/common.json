@@ -422,6 +422,8 @@
     "createTasksPrompt": "Crie algumas tarefas para começar",
     "assignedTo": "Atribuído a:",
     "progress": "Progresso",
+    "selectAll": "Selecionar Tudo",
+    "clearAll": "Limpar Tudo",
     "status": {
       "notStarted": "Não Iniciado",
       "pendingReview": "Aguardando Revisão",
@@ -436,7 +438,33 @@
     "greatJob": "Bom trabalho!",
     "noTasksAssigned": "Nenhuma tarefa atribuída ainda!",
     "iDidThis": "Eu Fiz Isso!",
-    "markComplete": "Marcar como Concluído"
+    "markComplete": "Marcar como Concluído",
+    "modal": {
+      "titleYoung": "🎉 Ótimo trabalho!",
+      "titleOlder": "Tarefa Concluída!",
+      "titleMultiple": "Completar {{count}} Tarefas!",
+      "taskProgress": "Tarefa {{current}} de {{total}}",
+      "useSameRating": "Usar a mesma avaliação para todas as tarefas",
+      "rateEffortYoung": "Como você se saiu? ⭐",
+      "rateEffortOlder": "Avalie seu esforço:",
+      "addNotesYoung": "Quer nos contar mais? (opcional)",
+      "addNotesOlder": "Adicionar notas (opcional):",
+      "notesPlaceholderYoung": "Conte-nos sobre isso...",
+      "notesPlaceholderOlder": "Como foi? Algum desafio?",
+      "charactersRemaining": "{{count}}/500 caracteres",
+      "errorSelectRating": "Por favor, selecione uma avaliação em estrelas",
+      "errorNotesTooLong": "As notas devem ter 500 caracteres ou menos",
+      "errorRateAllTasks": "Por favor, avalie todas as tarefas antes de enviar",
+      "previousTask": "Anterior",
+      "nextTask": "Próxima Tarefa →",
+      "submitSingle": "Enviar",
+      "submitMultiple": "Completar {{count}} {{tasks}}",
+      "submitting": "Salvando...",
+      "taskSingular": "Tarefa",
+      "taskPlural": "Tarefas",
+      "doneYoung": "✨ Pronto!",
+      "doneOlder": "Enviar"
+    }
   },
   "settings": {
     "title": "Configurações",
@@ -501,12 +529,27 @@
       "completions_failed": "Falha ao buscar conclusões"
     }
   },
+  "completions": {
+    "title": "Histórico de Conclusões",
+    "description": "Visualizar todas as tarefas concluídas pelas suas crianças",
+    "filterByChild": "Filtrar por criança:",
+    "allChildren": "Todas as Crianças",
+    "noCompletions": "Nenhuma conclusão ainda",
+    "noCompletionsDescription": "Tarefas concluídas aparecerão aqui"
+  },
+  "reviews": {
+    "title": "Tarefas para Revisar",
+    "tasksWaiting": "{{count}} tarefa{{plural}} aguardando sua revisão",
+    "allCaughtUp": "Tudo em dia!",
+    "noTasksPending": "Nenhuma tarefa aguardando revisão"
+  },
   "rewards": {
     "title": "Loja de Recompensas",
     "add_reward": "Adicionar Recompensa",
     "create_reward": "Criar Recompensa",
     "cancel": "Cancelar",
     "loading": "Carregando...",
+    "selectChild": "Selecionar Criança",
     "form": {
       "create_title": "Criar Nova Recompensa",
       "name_label": "Nome da Recompensa",
@@ -527,7 +570,24 @@
     "no_rewards": "Nenhuma recompensa disponível ainda.",
     "create_prompt": "Crie algumas recompensas para motivar suas crianças!"
   },
+  "leaderboard": {
+    "title": "Tabela de Líderes",
+    "description": "Complete algumas tarefas para ver a tabela de líderes!"
+  },
+  "taskLibrary": {
+    "title": "Biblioteca de Tarefas",
+    "description": "Escolha entre {{count}} tarefas pré-prontas para começar rapidamente!",
+    "searchPlaceholder": "Buscar tarefas...",
+    "category": "Categoria",
+    "ageGroup": "Faixa Etária",
+    "noResults": "Nenhuma tarefa encontrada",
+    "tryAdjusting": "Tente ajustar seus filtros",
+    "showing": "Mostrando {{filtered}} de {{total}} tarefas",
+    "browseLibrary": "Navegar Biblioteca de Tarefas (50+ Tarefas Pré-Prontas)"
+  },
   "achievements": {
+    "title": "Conquistas",
+    "description": "Complete tarefas para desbloquear conquistas!",
     "first_task": {
       "name": "Primeira Tarefa",
       "description": "Concluir sua primeira tarefa"
