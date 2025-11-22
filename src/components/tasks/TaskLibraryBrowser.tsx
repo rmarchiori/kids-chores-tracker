@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslation } from '@/hooks/useTranslation'
+import { translateLibraryTask } from '@/lib/task-library-translations'
 import { motion } from 'framer-motion'
 import { MagnifyingGlassIcon, XMarkIcon, SparklesIcon } from '@heroicons/react/24/outline'
 
@@ -217,56 +218,63 @@ export function TaskLibraryBrowser({ isOpen, onClose, onSelectTask }: TaskLibrar
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredTasks.map((task, index) => (
-                <motion.button
-                  key={task.id}
-                  onClick={() => handleSelectTask(task)}
-                  className="text-left bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-purple-500 hover:shadow-lg transition-all group"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {/* Task Icon */}
-                  <div className="flex items-start gap-3 mb-3">
-                    {task.image_url && task.image_source === 'emoji' && (
-                      <span className="text-3xl">{task.image_url}</span>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
-                        {task.title}
-                      </h3>
-                      {task.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          {task.description}
-                        </p>
+              {filteredTasks.map((task, index) => {
+                const { title, description } = translateLibraryTask(
+                  task.title,
+                  task.description || '',
+                  t
+                )
+                return (
+                  <motion.button
+                    key={task.id}
+                    onClick={() => handleSelectTask(task)}
+                    className="text-left bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-purple-500 hover:shadow-lg transition-all group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {/* Task Icon */}
+                    <div className="flex items-start gap-3 mb-3">
+                      {task.image_url && task.image_source === 'emoji' && (
+                        <span className="text-3xl">{task.image_url}</span>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-gray-900 mb-1 group-hover:text-purple-600 transition-colors">
+                          {title}
+                        </h3>
+                        {description && (
+                          <p className="text-sm text-gray-600 line-clamp-2">
+                            {description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Task Details */}
+                    <div className="flex flex-wrap gap-2">
+                      <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
+                        {t(`tasks.categories.${task.category}`)}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        task.priority === 'high'
+                          ? 'bg-red-100 text-red-700'
+                          : task.priority === 'medium'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}>
+                        {t(`tasks.priorities.${task.priority}`)}
+                      </span>
+                      {task.recommended_age_group && task.recommended_age_group !== 'both' && (
+                        <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                          {task.recommended_age_group}
+                        </span>
                       )}
                     </div>
-                  </div>
-
-                  {/* Task Details */}
-                  <div className="flex flex-wrap gap-2">
-                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">
-                      {t(`tasks.categories.${task.category}`)}
-                    </span>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      task.priority === 'high'
-                        ? 'bg-red-100 text-red-700'
-                        : task.priority === 'medium'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}>
-                      {t(`tasks.priorities.${task.priority}`)}
-                    </span>
-                    {task.recommended_age_group && task.recommended_age_group !== 'both' && (
-                      <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                        {task.recommended_age_group}
-                      </span>
-                    )}
-                  </div>
-                </motion.button>
-              ))}
+                  </motion.button>
+                )
+              })}
             </div>
           )}
         </div>
