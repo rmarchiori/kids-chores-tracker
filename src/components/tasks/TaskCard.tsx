@@ -101,8 +101,9 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
           </p>
         )}
 
-        {/* Status Badge and Category/Priority for parent view */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
+        {/* Badges: Status, Category, Priority */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Status Badge */}
           <span
             className={`
               px-3 py-1 rounded-full text-xs font-medium
@@ -120,13 +121,31 @@ export function TaskCard({ task, onClick, showDescription = true }: TaskCardProp
             {getStatusLabel(status)}
           </span>
 
-          {theme === 'parent' && (
-            <div className="flex gap-2 text-xs text-gray-500" aria-label={`${t('tasks.category')}: ${t(`tasks.categories.${task.category}`)}, ${t('tasks.priority')}: ${t(`tasks.priorities.${task.priority}`)}`}>
-              <span>{t(`tasks.categories.${task.category}`)}</span>
-              <span aria-hidden="true">•</span>
-              <span>{t(`tasks.priorities.${task.priority}`)}</span>
-            </div>
-          )}
+          {/* Category Badge */}
+          <span
+            className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border border-blue-200"
+            aria-label={`${t('tasks.category')}: ${t(`tasks.categories.${task.category}`)}`}
+          >
+            {t(`tasks.categories.${task.category}`)}
+          </span>
+
+          {/* Priority Badge */}
+          <span
+            className={`
+              px-3 py-1 rounded-full text-xs font-medium border
+              ${
+                task.priority === 'high'
+                  ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300'
+                  : task.priority === 'medium'
+                  ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300'
+                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border-gray-300'
+              }
+            `}
+            aria-label={`${t('tasks.priority')}: ${t(`tasks.priorities.${task.priority}`)}`}
+          >
+            {task.priority === 'high' ? '🔴 ' : task.priority === 'medium' ? '🟡 ' : '⚪ '}
+            {t(`tasks.priorities.${task.priority}`)}
+          </span>
         </div>
       </button>
     </ThemeCard>

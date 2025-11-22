@@ -223,6 +223,8 @@
     "delete_confirm": "Tem certeza de que deseja excluir esta tarefa?",
     "delete_warning": "Esta ação não pode ser desfeita.",
     "filter_by": "Filtrar por",
+    "filters": "Filtros",
+    "clear_filters": "Limpar Tudo",
     "all_tasks": "Todas as Tarefas",
     "all_categories": "Todas as Categorias",
     "all_priorities": "Todas as Prioridades",

@@ -223,6 +223,8 @@
     "delete_confirm": "Are you sure you want to delete this task?",
     "delete_warning": "This action cannot be undone.",
     "filter_by": "Filter by",
+    "filters": "Filters",
+    "clear_filters": "Clear All",
     "all_tasks": "All Tasks",
     "all_categories": "All Categories",
     "all_priorities": "All Priorities",

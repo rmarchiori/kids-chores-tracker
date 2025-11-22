@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import useSWR from 'swr'
 import { DashboardLayout } from '@/components/navigation/DashboardLayout'
 import { TaskCard } from '@/components/tasks/TaskCard'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/hooks/useTranslation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -32,6 +33,7 @@ interface Task {
       id: string
       name: string
       age_group: string
+      profile_photo_url?: string | null
     }
   }>
 }
@@ -39,16 +41,42 @@ interface Task {
 export default function TasksPage() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [filterCategory, setFilterCategory] = useState<string>('all')
-  const [filterPriority, setFilterPriority] = useState<string>('all')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([])
+
+  const categories = ['cleaning', 'homework', 'hygiene', 'outdoor', 'helping', 'meals', 'pets', 'bedtime', 'other']
+  const priorities = ['low', 'medium', 'high']
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    )
+  }
+
+  const togglePriority = (priority: string) => {
+    setSelectedPriorities(prev =>
+      prev.includes(priority)
+        ? prev.filter(p => p !== priority)
+        : [...prev, priority]
+    )
+  }
+
+  const clearFilters = () => {
+    setSelectedCategories([])
+    setSelectedPriorities([])
+  }
+
+  const hasActiveFilters = selectedCategories.length > 0 || selectedPriorities.length > 0
 
   // Build query params for API
   const params = new URLSearchParams()
-  if (filterCategory !== 'all') {
-    params.append('category', filterCategory)
+  if (selectedCategories.length > 0) {
+    selectedCategories.forEach(cat => params.append('category', cat))
   }
-  if (filterPriority !== 'all') {
-    params.append('priority', filterPriority)
+  if (selectedPriorities.length > 0) {
+    selectedPriorities.forEach(pri => params.append('priority', pri))
   }
   const apiUrl = `/api/tasks?${params.toString()}`
 
@@ -134,53 +162,77 @@ export default function TasksPage() {
 
           {/* Filters */}
           <motion.div
-            className="mb-6 flex flex-wrap gap-4"
+            className="mb-6 bg-white rounded-3xl shadow-2xl p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-800">{t('tasks.filters')}</h2>
+              <AnimatePresence>
+                {hasActiveFilters && (
+                  <motion.button
+                    onClick={clearFilters}
+                    className="flex items-center gap-1 text-sm text-pink-600 hover:text-pink-700 font-medium"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                    {t('tasks.clear_filters')}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Category Filter */}
-            <div>
-              <label htmlFor="category-filter" className="block text-sm font-bold text-white mb-1">
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.category')}
               </label>
-              <select
-                id="category-filter"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
-                aria-label={t('tasks.category')}
-              >
-                <option value="all">{t('tasks.all_categories')}</option>
-                <option value="cleaning">{t('tasks.categories.cleaning')}</option>
-                <option value="homework">{t('tasks.categories.homework')}</option>
-                <option value="hygiene">{t('tasks.categories.hygiene')}</option>
-                <option value="outdoor">{t('tasks.categories.outdoor')}</option>
-                <option value="helping">{t('tasks.categories.helping')}</option>
-                <option value="meals">{t('tasks.categories.meals')}</option>
-                <option value="pets">{t('tasks.categories.pets')}</option>
-                <option value="bedtime">{t('tasks.categories.bedtime')}</option>
-                <option value="other">{t('tasks.categories.other')}</option>
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <motion.button
+                    key={category}
+                    onClick={() => toggleCategory(category)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedCategories.includes(category)
+                        ? 'bg-pink-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {t(`tasks.categories.${category}`)}
+                  </motion.button>
+                ))}
+              </div>
             </div>
 
             {/* Priority Filter */}
             <div>
-              <label htmlFor="priority-filter" className="block text-sm font-bold text-white mb-1">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('tasks.priority')}
               </label>
-              <select
-                id="priority-filter"
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-3xl focus:outline-none focus:ring-2 focus:ring-pink-500 shadow-lg"
-                aria-label={t('tasks.priority')}
-              >
-                <option value="all">{t('tasks.all_priorities')}</option>
-                <option value="low">{t('tasks.priorities.low')}</option>
-                <option value="medium">{t('tasks.priorities.medium')}</option>
-                <option value="high">{t('tasks.priorities.high')}</option>
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {priorities.map((priority) => (
+                  <motion.button
+                    key={priority}
+                    onClick={() => togglePriority(priority)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                      selectedPriorities.includes(priority)
+                        ? 'bg-pink-500 text-white shadow-lg'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {t(`tasks.priorities.${priority}`)}
+                  </motion.button>
+                ))}
+              </div>
             </div>
           </motion.div>
 
@@ -236,10 +288,48 @@ export default function TasksPage() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -5 }}
                 >
-                  <TaskCard
-                    task={task}
-                    onClick={() => handleTaskClick(task.id)}
-                  />
+                  <div onClick={() => handleTaskClick(task.id)} className="cursor-pointer">
+                    <TaskCard task={task} />
+
+                    {/* Assigned Children Photos */}
+                    {task.task_assignments && task.task_assignments.length > 0 && (
+                      <div className="mt-3 flex items-center gap-2">
+                        <span className="text-xs font-medium text-gray-600">{t('tasks.assign_to')}:</span>
+                        <div className="flex -space-x-2">
+                          {task.task_assignments.map((assignment) => (
+                            <motion.div
+                              key={assignment.id}
+                              className="relative group/avatar"
+                              whileHover={{ scale: 1.2, zIndex: 10 }}
+                              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                            >
+                              {assignment.children.profile_photo_url ? (
+                                <Image
+                                  src={assignment.children.profile_photo_url}
+                                  alt={assignment.children.name}
+                                  width={32}
+                                  height={32}
+                                  className="rounded-full border-2 border-white shadow-md"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full border-2 border-white shadow-md bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center">
+                                  <span className="text-xs font-bold text-white">
+                                    {assignment.children.name.charAt(0)}
+                                  </span>
+                                </div>
+                              )}
+                              {/* Tooltip on hover */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover/avatar:opacity-100 transition-opacity pointer-events-none">
+                                <div className="bg-gray-900 text-white text-xs rounded-lg py-1 px-2 whitespace-nowrap">
+                                  {assignment.children.name}
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Delete Button (appears on hover) */}
                   <motion.button
@@ -254,13 +344,6 @@ export default function TasksPage() {
                   >
                     {t('common.delete')}
                   </motion.button>
-
-                  {/* Assignment Info */}
-                  {task.task_assignments && task.task_assignments.length > 0 && (
-                    <div className="mt-2 text-xs text-gray-500">
-                      {t('tasks.assign_to')}: {task.task_assignments.map(a => a.children.name).join(', ')}
-                    </div>
-                  )}
                 </motion.div>
               ))}
             </div>
